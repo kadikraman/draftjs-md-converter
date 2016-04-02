@@ -1,0 +1,28 @@
+.Editor {
+  width: 40%;
+  display: inline-block;
+  border: 1px solid #E2E2E2;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.75);
+  background-color: #F8F8F8;
+  font-size: 14px;
+  cursor: text;
+  min-height: 80px;
+  padding: 10px;
+}
+
+.Markdown {
+  width: 40%;
+  display: inline-block;
+}
+
+.StyleButton {
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
+}
+
+.--active {
+  font-weight: bold;
+}

@@ -1,0 +1,28 @@
+{
+  "name": "draftjs-md-converter",
+  "version": "0.0.1",
+  "description": "Converter for converting Draft.js state into Markdown and vice versa",
+  "main": "converter.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kadikraman/draftjs-md-converter.git"
+  },
+  "keywords": [
+    "Draft.js",
+    "Markdown",
+    "converter",
+    "react",
+    "rich",
+    "text",
+    "editor"
+  ],
+  "author": "Kadi Kraman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kadikraman/draftjs-md-converter/issues"
+  },
+  "homepage": "https://github.com/kadikraman/draftjs-md-converter#readme"
+}
