@@ -3,6 +3,11 @@ const inlineStyles = [
     type: 'BOLD',
     symbol: '__',
     regex: /__(.*?)__/
+  },
+  {
+    type: 'ITALIC',
+    symbol: '*',
+    regex: /\*(.*?)\*/
   }
 ]
 
@@ -14,8 +19,8 @@ function mdToDraftjs(mdString) {
   var text = mdString;
   var inlineStyleRanges = [];
   inlineStyles.forEach(style => {
-    const found = text.match(style.regex);
-    if (found) {
+    var found = text.match(style.regex);
+    while (found) {
       var split = text.split(found[0]);
       inlineStyleRanges.push({
         offset: split[0].length,
@@ -23,7 +28,8 @@ function mdToDraftjs(mdString) {
         style: style.type
       })
       text = text.replace(found[0], found[1]);
-  }
+      found = text.match(style.regex);
+    }
   })
   const returnValue = [{
     text: text,
