@@ -1,8 +1,10 @@
+/* eslint-disable no-undef, react/react-in-jsx-scope, react/no-multi-comp, react/prop-types */
+
 const { Editor, EditorState, RichUtils, ContentState } = Draft;
 
 const STYLES = [
   { label: 'B', style: 'BOLD' },
-  { label: 'I', style: 'ITALIC' }
+  { label: 'I', style: 'ITALIC' },
 ];
 
 class StyleButton extends React.Component {
@@ -15,14 +17,14 @@ class StyleButton extends React.Component {
   }
 
   render() {
-    const { active } = this.props;
-    let classes = "StyleButton";
+    const { active, label } = this.props;
+    let classes = 'StyleButton';
     if (active) {
-      classes = classes + " --active";
+      classes = classes + ' --active';
     }
     return (
       <div className={classes} onMouseDown={this.onToggle}>
-        {this.props.label}
+        {label}
       </div>
     );
   }
@@ -30,7 +32,7 @@ class StyleButton extends React.Component {
 
 class StyleButtons extends React.Component {
   render() {
-    const { type, editorState } = this.props;
+    const { editorState } = this.props;
     const currentStyle = editorState.getCurrentInlineStyle();
     return (
       <div className="StyleButtons">
