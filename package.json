@@ -4,7 +4,8 @@
   "description": "Converter for converting Draft.js state into Markdown and vice versa",
   "main": "converter.js",
   "scripts": {
-    "test": "node test && echo ✔"
+    "test": "$(npm bin)/mocha",
+    "build": "rm -rf dist && mkdir dist && $(npm bin)/browserify --outfile ./dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -24,5 +25,10 @@
   "bugs": {
     "url": "https://github.com/kadikraman/draftjs-md-converter/issues"
   },
-  "homepage": "https://github.com/kadikraman/draftjs-md-converter#readme"
+  "homepage": "https://github.com/kadikraman/draftjs-md-converter#readme",
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
+  }
 }
