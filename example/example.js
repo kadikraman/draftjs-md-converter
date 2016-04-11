@@ -1,6 +1,6 @@
 /* eslint-disable no-undef, react/react-in-jsx-scope, react/no-multi-comp, react/prop-types */
 
-const { Editor, EditorState, RichUtils, ContentState } = Draft;
+const { Editor, EditorState, RichUtils, ContentState, convertFromRaw } = Draft;
 
 const STYLES = [
   { label: 'B', style: 'BOLD' },
@@ -53,9 +53,18 @@ class StyleButtons extends React.Component {
 class Example extends React.Component {
   constructor(props) {
     super(props);
-    const contentState = ContentState.createFromText(this.props.initialText);
-    const newEditorState = EditorState.createWithContent(contentState);
-    this.state = { editorState: newEditorState };
+    const rawMdBlocks = mdToDraftjs(this.props.initialText);
+    const mdBlocks = convertFromRaw({
+      blocks: rawMdBlocks,
+      entityMap: {
+        type: '',
+        mutability: '',
+        data: ''
+      }
+    });
+    const contentState = ContentState.createFromBlockArray(mdBlocks);
+    const editorState = EditorState.createWithContent(contentState);
+    this.state = { editorState: editorState };
     this.onChange = (editorState) => this.setState({ editorState });
     this.toggleStyle = (toggledStyle) => this.toggleInlineStyle(toggledStyle);
   }
@@ -81,6 +90,6 @@ class Example extends React.Component {
 }
 
 ReactDOM.render(
-  <Example initialText="Hello, world!" />,
+  <Example initialText="*Hello, __bold__ world!*" />,
   document.getElementById('content')
 );

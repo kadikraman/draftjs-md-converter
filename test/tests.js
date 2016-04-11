@@ -72,6 +72,11 @@ describe('mdToDraftjs', () => {
         {
           offset: 12,
           length: 4,
+          style: 'BOLD',
+        },
+        {
+          offset: 12,
+          length: 4,
           style: 'ITALIC',
         },
         {

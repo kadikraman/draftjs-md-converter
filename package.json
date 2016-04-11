@@ -5,7 +5,7 @@
   "main": "converter.js",
   "scripts": {
     "test": "$(npm bin)/mocha --watch",
-    "build": "rm -rf dist && mkdir dist && $(npm bin)/browserify --outfile ./dist/index.js"
+    "build": "rm -rf dist && mkdir dist && $(npm bin)/browserify index.js --outfile ./dist/index.js"
   },
   "repository": {
     "type": "git",

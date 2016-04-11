@@ -13,18 +13,32 @@ const inlineStyles = {
   }
 }
 
-function draftjsToMd(blocks) {
-  return blocks;
-}
-
-
 function mdToDraftjs(mdString) {
   var astString = parse(mdString);
   var text = '';
   const inlineStyleRanges = [];
 
+  const getRawLength = children => {
+    let length = 0;
+    children.forEach(child => {
+      length = length + child.value.length;
+    })
+    return length;
+  }
+
   const parseChildren = (child, style) => {
-    if (child.children) {
+    if (child.children && style) {
+      const rawLength = getRawLength(child.children);
+      inlineStyleRanges.push({
+        offset: text.length,
+        length: rawLength,
+        style: style.type
+      })
+      const newStyle = inlineStyles[child.type]
+      child.children.forEach(child => {
+        parseChildren(child, newStyle);
+      })
+    } else if (child.children) {
       const newStyle = inlineStyles[child.type]
       child.children.forEach(child => {
         parseChildren(child, newStyle);
@@ -57,6 +71,5 @@ function mdToDraftjs(mdString) {
 }
 
 module.exports = {
-  draftjsToMd,
   mdToDraftjs,
 };
