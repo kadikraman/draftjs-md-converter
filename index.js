@@ -81,15 +81,14 @@ function draftjsToMd(blocks) {
   for (var index = 0; index < block.text.length; index++) {
     var character = block.text.charAt(index);
     var stylesStartAtChar = block.inlineStyleRanges.filter(range => range.offset === index);
-    var stylesEndAtChar = block.inlineStyleRanges.filter(range => range.offset + range.length === index);
-
-    stylesEndAtChar.forEach(style => {
-      returnString += markdownDict[style.style]
-    });
+    var stylesEndAtChar = block.inlineStyleRanges.filter(range => range.offset + range.length === index + 1);
     stylesStartAtChar.forEach(style => {
       returnString += markdownDict[style.style]
     });
     returnString += character;
+    stylesEndAtChar.forEach(style => {
+      returnString += markdownDict[style.style]
+    });
   }
   return returnString;
 }

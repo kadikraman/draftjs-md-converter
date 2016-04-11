@@ -57,7 +57,7 @@ describe('draftjsToMd', () => {
     converter.draftjsToMd(blocks).should.equal(expectedMarkdown);
   });
 
-  it('convert nested styles correctly', () => {
+  it('converts nested styles correctly', () => {
     const blocks = [{
       text: 'I am a text with nested styles.',
       type: 'unstyled',
@@ -77,6 +77,24 @@ describe('draftjsToMd', () => {
       entityRanges: [],
     }];
     const expectedMarkdown = 'I am a __text *with* nested__ styles.';
+    converter.draftjsToMd(blocks).should.deep.equal(expectedMarkdown);
+  });
+
+  it('converts the last word correctly if it is styled', () => {
+    const blocks = [{
+      text: 'I am styled all over.',
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges: [
+        {
+          offset: 0,
+          length: 21,
+          style: 'BOLD',
+        },
+      ],
+      entityRanges: [],
+    }];
+    const expectedMarkdown = '__I am styled all over.__';
     converter.draftjsToMd(blocks).should.deep.equal(expectedMarkdown);
   });
 })
