@@ -2,7 +2,7 @@
   "name": "draftjs-md-converter",
   "version": "0.0.1",
   "description": "Converter for converting Draft.js state into Markdown and vice versa",
-  "main": "converter.js",
+  "main": "./dist/index.js",
   "scripts": {
     "test": "$(npm bin)/mocha --watch",
     "build": "rm -rf dist && mkdir dist && $(npm bin)/browserify index.js --outfile ./dist/index.js"
