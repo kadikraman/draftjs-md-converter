@@ -56,4 +56,32 @@ describe('mdToDraftjs', () => {
     }];
     converter.mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
+
+  it('convert nested styles correctly', () => {
+    const markdown = 'I am a __text *with* nested__ styles.';
+    const expectedDraftjs = [{
+      text: 'I am a text with nested styles.',
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges: [
+        {
+          offset: 7,
+          length: 5,
+          style: 'BOLD',
+        },
+        {
+          offset: 12,
+          length: 4,
+          style: 'ITALIC',
+        },
+        {
+          offset: 16,
+          length: 7,
+          style: 'BOLD',
+        },
+      ],
+      entityRanges: [],
+    }];
+    converter.mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  });
 });

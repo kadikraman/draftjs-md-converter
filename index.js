@@ -10,10 +10,6 @@ const inlineStyles = {
   Emphasis: {
     type: 'ITALIC',
     symbol: '*'
-  },
-  Str: {
-    type: 'no style',
-    symbol: ''
   }
 }
 
@@ -21,24 +17,33 @@ function draftjsToMd(blocks) {
   return blocks;
 }
 
+
 function mdToDraftjs(mdString) {
   var astString = parse(mdString);
   var text = '';
   const inlineStyleRanges = [];
-  astString.children.forEach(child => {
-    child.children.forEach(grandChild => {
-      if (!grandChild.children) {
-        text = text + grandChild.value;
-      } else {
-        const inlineStyle = inlineStyles[grandChild.type];
+
+  const parseChildren = (child, style) => {
+    if (child.children) {
+      const newStyle = inlineStyles[child.type]
+      child.children.forEach(child => {
+        parseChildren(child, newStyle);
+      })
+    } else {
+      if (style) {
         inlineStyleRanges.push({
           offset: text.length,
-          length: grandChild.children[0].value.length,
-          style: inlineStyle.type
+          length: child.value.length,
+          style: style.type
         })
-        text = text + grandChild.children[0].value;
       }
-    })
+      text = text + child.value;
+    }
+  }
+
+  astString.children.forEach(child => {
+    const style = inlineStyles[child.type];
+    parseChildren(child, style);
   })
 
   const returnValue = [{
