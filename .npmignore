@@ -1,6 +1,6 @@
-dist
 example
 index.html
 test
 .eslintrc.js
 .travis.yml
+index.js
