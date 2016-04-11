@@ -4,6 +4,18 @@ const expect = chai.expect;
 const should = chai.should();
 
 describe('mdToDraftjs', () => {
+  it('returns unstyled text correctly', () => {
+    const markdown = 'There is no styling anywhere in this text.';
+    const expectedDraftjs = [{
+      text: 'There is no styling anywhere in this text.',
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    }];
+    converter.mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  });
+
   it('converts bold markdown to draftjs blocks', () => {
     const markdown = 'No style __bold__ no style.';
     const expectedDraftjs = [{

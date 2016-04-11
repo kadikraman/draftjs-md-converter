@@ -4,7 +4,7 @@
   "description": "Converter for converting Draft.js state into Markdown and vice versa",
   "main": "converter.js",
   "scripts": {
-    "test": "$(npm bin)/mocha",
+    "test": "$(npm bin)/mocha --watch",
     "build": "rm -rf dist && mkdir dist && $(npm bin)/browserify --outfile ./dist/index.js"
   },
   "repository": {
@@ -32,5 +32,8 @@
     "eslint-config-airbnb": "^6.2.0",
     "eslint-plugin-react": "^4.3.0",
     "mocha": "^2.4.5"
+  },
+  "dependencies": {
+    "markdown-to-ast": "^3.2.3"
   }
 }

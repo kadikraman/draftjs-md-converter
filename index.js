@@ -1,38 +1,46 @@
 'use strict';
 
-const inlineStyles = [
-  {
+const parse = require('markdown-to-ast').parse;
+
+const inlineStyles = {
+  Strong: {
     type: 'BOLD',
-    symbol: '__',
-    regex: /__(.*?)__/,
+    symbol: '__'
   },
-  {
+  Emphasis: {
     type: 'ITALIC',
-    symbol: '*',
-    regex: /\*(.*?)\*/,
+    symbol: '*'
   },
-];
+  Str: {
+    type: 'no style',
+    symbol: ''
+  }
+}
 
 function draftjsToMd(blocks) {
   return blocks;
 }
 
 function mdToDraftjs(mdString) {
-  let text = mdString;
+  var astString = parse(mdString);
+  var text = '';
   const inlineStyleRanges = [];
-  inlineStyles.forEach(style => {
-    let found = text.match(style.regex);
-    while (found) {
-      const split = text.split(found[0]);
-      inlineStyleRanges.push({
-        offset: split[0].length,
-        length: found[1].length,
-        style: style.type,
-      });
-      text = text.replace(found[0], found[1]);
-      found = text.match(style.regex);
-    }
-  });
+  astString.children.forEach(child => {
+    child.children.forEach(grandChild => {
+      if (!grandChild.children) {
+        text = text + grandChild.value;
+      } else {
+        const inlineStyle = inlineStyles[grandChild.type];
+        inlineStyleRanges.push({
+          offset: text.length,
+          length: grandChild.children[0].value.length,
+          style: inlineStyle.type
+        })
+        text = text + grandChild.children[0].value;
+      }
+    })
+  })
+
   const returnValue = [{
     text,
     type: 'unstyled',
