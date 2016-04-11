@@ -13,6 +13,11 @@ const inlineStyles = {
   }
 }
 
+const markdownDict = {
+  BOLD: '__',
+  ITALIC: '*'
+}
+
 function mdToDraftjs(mdString) {
   var astString = parse(mdString);
   var text = '';
@@ -70,6 +75,26 @@ function mdToDraftjs(mdString) {
   return returnValue;
 }
 
+function draftjsToMd(blocks) {
+  const block = blocks[0];
+  let returnString = '';
+  for (var index = 0; index < block.text.length; index++) {
+    var character = block.text.charAt(index);
+    var stylesStartAtChar = block.inlineStyleRanges.filter(range => range.offset === index);
+    var stylesEndAtChar = block.inlineStyleRanges.filter(range => range.offset + range.length === index);
+
+    stylesEndAtChar.forEach(style => {
+      returnString += markdownDict[style.style]
+    });
+    stylesStartAtChar.forEach(style => {
+      returnString += markdownDict[style.style]
+    });
+    returnString += character;
+  }
+  return returnString;
+}
+
 module.exports = {
   mdToDraftjs,
+  draftjsToMd,
 };
