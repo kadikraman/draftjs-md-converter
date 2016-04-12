@@ -1,7 +1,7 @@
-const converter = require('../');
+const mdToDraftjs = require('../src/index.js').mdToDraftjs;
 const chai = require('chai');
-const expect = chai.expect;
-const should = chai.should();
+const expect = chai.expect; // eslint-disable-line no-unused-vars
+const should = chai.should(); // eslint-disable-line no-unused-vars
 
 describe('mdToDraftjs', () => {
   it('returns unstyled text correctly', () => {
@@ -13,7 +13,7 @@ describe('mdToDraftjs', () => {
       inlineStyleRanges: [],
       entityRanges: [],
     }];
-    converter.mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
 
   it('converts bold markdown to draftjs blocks', () => {
@@ -31,7 +31,7 @@ describe('mdToDraftjs', () => {
       ],
       entityRanges: [],
     }];
-    converter.mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
 
   it('converts several italic markdown to draftjs blocks', () => {
@@ -54,7 +54,7 @@ describe('mdToDraftjs', () => {
       ],
       entityRanges: [],
     }];
-    converter.mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
 
   it('convert nested styles correctly', () => {
@@ -87,6 +87,6 @@ describe('mdToDraftjs', () => {
       ],
       entityRanges: [],
     }];
-    converter.mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
 });

@@ -11,25 +11,25 @@ const inlineStyles = {
     type: 'ITALIC',
     symbol: '*'
   }
-}
+};
 
 const markdownDict = {
   BOLD: '__',
   ITALIC: '*'
-}
+};
 
 function mdToDraftjs(mdString) {
-  var astString = parse(mdString);
-  var text = '';
+  const astString = parse(mdString);
+  let text = '';
   const inlineStyleRanges = [];
 
   const getRawLength = children => {
     let length = 0;
     children.forEach(child => {
       length = length + child.value.length;
-    })
+    });
     return length;
-  }
+  };
 
   const parseChildren = (child, style) => {
     if (child.children && style) {
@@ -38,32 +38,32 @@ function mdToDraftjs(mdString) {
         offset: text.length,
         length: rawLength,
         style: style.type
-      })
-      const newStyle = inlineStyles[child.type]
-      child.children.forEach(child => {
-        parseChildren(child, newStyle);
-      })
+      });
+      const newStyle = inlineStyles[child.type];
+      child.children.forEach(grandChild => {
+        parseChildren(grandChild, newStyle);
+      });
     } else if (child.children) {
-      const newStyle = inlineStyles[child.type]
-      child.children.forEach(child => {
-        parseChildren(child, newStyle);
-      })
+      const newStyle = inlineStyles[child.type];
+      child.children.forEach(grandChild => {
+        parseChildren(grandChild, newStyle);
+      });
     } else {
       if (style) {
         inlineStyleRanges.push({
           offset: text.length,
           length: child.value.length,
           style: style.type
-        })
+        });
       }
       text = text + child.value;
     }
-  }
+  };
 
   astString.children.forEach(child => {
     const style = inlineStyles[child.type];
     parseChildren(child, style);
-  })
+  });
 
   const returnValue = [{
     text,
@@ -78,16 +78,18 @@ function mdToDraftjs(mdString) {
 function draftjsToMd(blocks) {
   const block = blocks[0];
   let returnString = '';
-  for (var index = 0; index < block.text.length; index++) {
-    var character = block.text.charAt(index);
-    var stylesStartAtChar = block.inlineStyleRanges.filter(range => range.offset === index);
-    var stylesEndAtChar = block.inlineStyleRanges.filter(range => range.offset + range.length === index + 1);
-    stylesStartAtChar.forEach(style => {
-      returnString += markdownDict[style.style]
+  for (let index = 0; index < block.text.length; index++) {
+    const character = block.text.charAt(index);
+    const stylesStartAtChar = block.inlineStyleRanges.filter(range => range.offset === index);
+    const stylesEndAtChar = block.inlineStyleRanges.filter(range => {
+      return range.offset + range.length === index + 1;
+    });
+    stylesStartAtChar.forEach(currentStyle => {
+      returnString += markdownDict[currentStyle.style];
     });
     returnString += character;
-    stylesEndAtChar.forEach(style => {
-      returnString += markdownDict[style.style]
+    stylesEndAtChar.forEach(currentStyle => {
+      returnString += markdownDict[currentStyle.style];
     });
   }
   return returnString;

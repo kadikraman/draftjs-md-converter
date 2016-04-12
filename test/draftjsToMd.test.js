@@ -1,7 +1,7 @@
-const converter = require('../');
+const draftjsToMd = require('../src/index.js').draftjsToMd;
 const chai = require('chai');
-const expect = chai.expect;
-const should = chai.should();
+const expect = chai.expect; // eslint-disable-line no-unused-vars
+const should = chai.should(); // eslint-disable-line no-unused-vars
 
 describe('draftjsToMd', () => {
   it('returns unstyled text correctly', () => {
@@ -13,8 +13,8 @@ describe('draftjsToMd', () => {
       entityRanges: [],
     }];
     const expectedMarkdown = 'There is no styling anywhere in this text.';
-    converter.draftjsToMd(blocks).should.equal(expectedMarkdown);
-  })
+    draftjsToMd(blocks).should.equal(expectedMarkdown);
+  });
 
   it('converts draftjs blocks to bold markdown', () => {
     const blocks = [{
@@ -31,7 +31,7 @@ describe('draftjsToMd', () => {
       entityRanges: [],
     }];
     const expectedMarkdown = 'No style __bold__ no style.';
-    converter.draftjsToMd(blocks).should.equal(expectedMarkdown);
+    draftjsToMd(blocks).should.equal(expectedMarkdown);
   });
 
   it('converts several italic draftjs blocks to markdown', () => {
@@ -54,7 +54,7 @@ describe('draftjsToMd', () => {
       entityRanges: [],
     }];
     const expectedMarkdown = 'No style *italic* no style *more italic*.';
-    converter.draftjsToMd(blocks).should.equal(expectedMarkdown);
+    draftjsToMd(blocks).should.equal(expectedMarkdown);
   });
 
   it('converts nested styles correctly', () => {
@@ -77,7 +77,7 @@ describe('draftjsToMd', () => {
       entityRanges: [],
     }];
     const expectedMarkdown = 'I am a __text *with* nested__ styles.';
-    converter.draftjsToMd(blocks).should.deep.equal(expectedMarkdown);
+    draftjsToMd(blocks).should.deep.equal(expectedMarkdown);
   });
 
   it('converts the last word correctly if it is styled', () => {
@@ -95,6 +95,6 @@ describe('draftjsToMd', () => {
       entityRanges: [],
     }];
     const expectedMarkdown = '__I am styled all over.__';
-    converter.draftjsToMd(blocks).should.deep.equal(expectedMarkdown);
+    draftjsToMd(blocks).should.deep.equal(expectedMarkdown);
   });
-})
+});

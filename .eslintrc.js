@@ -1,14 +1,14 @@
 module.exports = {
   extends: 'airbnb',
   plugins: [
-    'react',
+    'react'
   ],
   env: {
     mocha: true,
-    node: true,
-    chai: true,
+    node: true
   },
   rules: {
     strict: 0,
+    'comma-dangle': 0
   },
 };

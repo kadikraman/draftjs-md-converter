@@ -64,8 +64,8 @@ class Example extends React.Component {
     });
     const contentState = ContentState.createFromBlockArray(mdBlocks);
     const editorState = EditorState.createWithContent(contentState);
-    this.state = { editorState: editorState };
-    this.onChange = (editorState) => this.setState({ editorState });
+    this.state = { editorState };
+    this.onChange = (newEditorState) => this.setState({ newEditorState });
     this.toggleStyle = (toggledStyle) => this.toggleInlineStyle(toggledStyle);
   }
 

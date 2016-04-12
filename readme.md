@@ -9,3 +9,8 @@ Converts content from Draft.js blocks to Markdown and vice versa.
 ```
 npm test
 ```
+
+## Run tests with a watcher
+```
+npm run test-dev
+```
