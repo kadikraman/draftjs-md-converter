@@ -23,17 +23,9 @@ function mdToDraftjs(mdString) {
   let text = '';
   const inlineStyleRanges = [];
 
-  const getRawLength = children => {
-    let length = 0;
-    children.forEach(child => {
-      length = length + child.value.length;
-    });
-    return length;
-  };
-
   const parseChildren = (child, style) => {
     if (child.children && style) {
-      const rawLength = getRawLength(child.children);
+      const rawLength = child.children.reduce((prev, current) => prev + current.value.length, 0);
       inlineStyleRanges.push({
         offset: text.length,
         length: rawLength,
@@ -77,21 +69,21 @@ function mdToDraftjs(mdString) {
 
 function draftjsToMd(blocks) {
   const block = blocks[0];
-  let returnString = '';
-  for (let index = 0; index < block.text.length; index++) {
-    const character = block.text.charAt(index);
+  const returnString = block.text.split('').reduce((text, currentChar, index) => {
+    let newText = text;
     const stylesStartAtChar = block.inlineStyleRanges.filter(range => range.offset === index);
     const stylesEndAtChar = block.inlineStyleRanges.filter(range => {
       return range.offset + range.length === index + 1;
     });
     stylesStartAtChar.forEach(currentStyle => {
-      returnString += markdownDict[currentStyle.style];
+      newText += markdownDict[currentStyle.style];
     });
-    returnString += character;
+    newText += currentChar;
     stylesEndAtChar.forEach(currentStyle => {
-      returnString += markdownDict[currentStyle.style];
+      newText += markdownDict[currentStyle.style];
     });
-  }
+    return newText;
+  }, '');
   return returnString;
 }
 
