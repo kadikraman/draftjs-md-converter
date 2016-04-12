@@ -69,19 +69,30 @@ function mdToDraftjs(mdString) {
 
 function draftjsToMd(blocks) {
   const block = blocks[0];
+  const appliedStyles = [];
   const returnString = block.text.split('').reduce((text, currentChar, index) => {
     let newText = text;
+
+    // find all styled at this character
     const stylesStartAtChar = block.inlineStyleRanges.filter(range => range.offset === index);
-    const stylesEndAtChar = block.inlineStyleRanges.filter(range => {
-      return range.offset + range.length === index + 1;
-    });
+
+    // add the symbol to the md string and push the style in the applied styles stack
     stylesStartAtChar.forEach(currentStyle => {
       newText += markdownDict[currentStyle.style];
+      appliedStyles.push({
+        symbol: markdownDict[currentStyle.style],
+        end: currentStyle.offset + currentStyle.length - 1
+      });
     });
+
+    // add the current character to the md string
     newText += currentChar;
-    stylesEndAtChar.forEach(currentStyle => {
-      newText += markdownDict[currentStyle.style];
-    });
+
+    // apply the 'ending' tags for any styles that end in the current position in order (stack)
+    while (appliedStyles.length !== 0 && appliedStyles[appliedStyles.length - 1].end === index) {
+      const endingStyle = appliedStyles.pop();
+      newText += endingStyle.symbol;
+    }
     return newText;
   }, '');
   return returnString;
@@ -89,5 +100,5 @@ function draftjsToMd(blocks) {
 
 module.exports = {
   mdToDraftjs,
-  draftjsToMd,
+  draftjsToMd
 };

@@ -11,7 +11,7 @@ describe('mdToDraftjs', () => {
       type: 'unstyled',
       depth: 0,
       inlineStyleRanges: [],
-      entityRanges: [],
+      entityRanges: []
     }];
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
@@ -23,7 +23,7 @@ describe('mdToDraftjs', () => {
       type: 'unstyled',
       depth: 0,
       inlineStyleRanges: [],
-      entityRanges: [],
+      entityRanges: []
     }];
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
@@ -38,10 +38,10 @@ describe('mdToDraftjs', () => {
         {
           offset: 9,
           length: 4,
-          style: 'BOLD',
+          style: 'BOLD'
         },
       ],
-      entityRanges: [],
+      entityRanges: []
     }];
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
@@ -61,15 +61,15 @@ describe('mdToDraftjs', () => {
         {
           offset: 25,
           length: 11,
-          style: 'ITALIC',
+          style: 'ITALIC'
         },
       ],
-      entityRanges: [],
+      entityRanges: []
     }];
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
 
-  it('convert nested styles correctly', () => {
+  it('converts nested styles correctly', () => {
     const markdown = 'I am a __text *with* nested__ styles.';
     const expectedDraftjs = [{
       text: 'I am a text with nested styles.',
@@ -95,7 +95,30 @@ describe('mdToDraftjs', () => {
           offset: 16,
           length: 7,
           style: 'BOLD',
+        }
+      ],
+      entityRanges: []
+    }];
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  });
+
+  it('converts two styles applied to the same word correctly', () => {
+    const markdown = '__*Potato*__';
+    const expectedDraftjs = [{
+      text: 'Potato',
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges: [
+        {
+          offset: 0,
+          length: 6,
+          style: 'BOLD',
         },
+        {
+          offset: 0,
+          length: 6,
+          style: 'ITALIC',
+        }
       ],
       entityRanges: [],
     }];

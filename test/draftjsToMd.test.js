@@ -10,7 +10,7 @@ describe('draftjsToMd', () => {
       type: 'unstyled',
       depth: 0,
       inlineStyleRanges: [],
-      entityRanges: [],
+      entityRanges: []
     }];
     const expectedMarkdown = '';
     draftjsToMd(blocks).should.equal(expectedMarkdown);
@@ -22,7 +22,7 @@ describe('draftjsToMd', () => {
       type: 'unstyled',
       depth: 0,
       inlineStyleRanges: [],
-      entityRanges: [],
+      entityRanges: []
     }];
     const expectedMarkdown = 'There is no styling anywhere in this text.';
     draftjsToMd(blocks).should.equal(expectedMarkdown);
@@ -37,10 +37,10 @@ describe('draftjsToMd', () => {
         {
           offset: 9,
           length: 4,
-          style: 'BOLD',
+          style: 'BOLD'
         },
       ],
-      entityRanges: [],
+      entityRanges: []
     }];
     const expectedMarkdown = 'No style __bold__ no style.';
     draftjsToMd(blocks).should.equal(expectedMarkdown);
@@ -55,15 +55,15 @@ describe('draftjsToMd', () => {
         {
           offset: 9,
           length: 6,
-          style: 'ITALIC',
+          style: 'ITALIC'
         },
         {
           offset: 25,
           length: 11,
-          style: 'ITALIC',
+          style: 'ITALIC'
         },
       ],
-      entityRanges: [],
+      entityRanges: []
     }];
     const expectedMarkdown = 'No style *italic* no style *more italic*.';
     draftjsToMd(blocks).should.equal(expectedMarkdown);
@@ -78,18 +78,18 @@ describe('draftjsToMd', () => {
         {
           offset: 7,
           length: 16,
-          style: 'BOLD',
+          style: 'BOLD'
         },
         {
           offset: 12,
           length: 4,
-          style: 'ITALIC',
+          style: 'ITALIC'
         },
       ],
-      entityRanges: [],
+      entityRanges: []
     }];
     const expectedMarkdown = 'I am a __text *with* nested__ styles.';
-    draftjsToMd(blocks).should.deep.equal(expectedMarkdown);
+    draftjsToMd(blocks).should.equal(expectedMarkdown);
   });
 
   it('converts the last word correctly if it is styled', () => {
@@ -104,9 +104,32 @@ describe('draftjsToMd', () => {
           style: 'BOLD',
         },
       ],
-      entityRanges: [],
+      entityRanges: []
     }];
     const expectedMarkdown = '__I am styled all over.__';
-    draftjsToMd(blocks).should.deep.equal(expectedMarkdown);
+    draftjsToMd(blocks).should.equal(expectedMarkdown);
+  });
+
+  it('converts two styles applied to the same word correctly', () => {
+    const blocks = [{
+      text: 'Potato',
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges: [
+        {
+          offset: 0,
+          length: 6,
+          style: 'BOLD'
+        },
+        {
+          offset: 0,
+          length: 6,
+          style: 'ITALIC'
+        }
+      ],
+      entityRanges: []
+    }];
+    const expectedMarkdown = '__*Potato*__';
+    draftjsToMd(blocks).should.equal(expectedMarkdown);
   });
 });
