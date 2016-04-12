@@ -4,6 +4,18 @@ const expect = chai.expect; // eslint-disable-line no-unused-vars
 const should = chai.should(); // eslint-disable-line no-unused-vars
 
 describe('draftjsToMd', () => {
+  it('returns an empty string correctly', () => {
+    const blocks = [{
+      text: '',
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    }];
+    const expectedMarkdown = '';
+    draftjsToMd(blocks).should.equal(expectedMarkdown);
+  });
+
   it('returns unstyled text correctly', () => {
     const blocks = [{
       text: 'There is no styling anywhere in this text.',
