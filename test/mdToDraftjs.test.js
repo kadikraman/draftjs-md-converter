@@ -124,4 +124,81 @@ describe('mdToDraftjs', () => {
     }];
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
+
+  it('converts several paragraphs to markdown correctly', () => {
+    const markdown =
+      '*First __content__* block.\n*Second __content__* block.\n*Third __content__* block.';
+    const expectedDraftjs = [
+      {
+        text: 'First content block.',
+        type: 'unstyled',
+        depth: 0,
+        inlineStyleRanges: [
+          {
+            offset: 0,
+            length: 6,
+            style: 'ITALIC'
+          },
+          {
+            offset: 6,
+            length: 7,
+            style: 'ITALIC'
+          },
+          {
+            offset: 6,
+            length: 7,
+            style: 'BOLD'
+          }
+        ],
+        entityRanges: []
+      },
+      {
+        text: 'Second content block.',
+        type: 'unstyled',
+        depth: 0,
+        inlineStyleRanges: [
+          {
+            offset: 0,
+            length: 7,
+            style: 'ITALIC'
+          },
+          {
+            offset: 7,
+            length: 7,
+            style: 'ITALIC'
+          },
+          {
+            offset: 7,
+            length: 7,
+            style: 'BOLD'
+          }
+        ],
+        entityRanges: []
+      },
+      {
+        text: 'Third content block.',
+        type: 'unstyled',
+        depth: 0,
+        inlineStyleRanges: [
+          {
+            offset: 0,
+            length: 6,
+            style: 'ITALIC'
+          },
+          {
+            offset: 6,
+            length: 7,
+            style: 'ITALIC'
+          },
+          {
+            offset: 6,
+            length: 7,
+            style: 'BOLD'
+          }
+        ],
+        entityRanges: []
+      }
+    ];
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  });
 });

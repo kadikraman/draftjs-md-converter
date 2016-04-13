@@ -18,8 +18,8 @@ const markdownDict = {
   ITALIC: '*'
 };
 
-function mdToDraftjs(mdString) {
-  const astString = parse(mdString);
+const parseMdLine = line => {
+  const astString = parse(line);
   let text = '';
   const inlineStyleRanges = [];
 
@@ -57,44 +57,59 @@ function mdToDraftjs(mdString) {
     parseChildren(child, style);
   });
 
-  const returnValue = [{
+  return {
     text,
-    type: 'unstyled',
-    depth: 0,
-    inlineStyleRanges,
-    entityRanges: [],
-  }];
+    inlineStyleRanges
+  };
+};
+
+function mdToDraftjs(mdString) {
+  const paragraphs = mdString.split('\n');
+  const returnValue = [];
+  paragraphs.forEach(paragraph => {
+    const result = parseMdLine(paragraph);
+    returnValue.push({
+      text: result.text,
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges: result.inlineStyleRanges,
+      entityRanges: [],
+    });
+  });
   return returnValue;
 }
 
 function draftjsToMd(blocks) {
-  const block = blocks[0];
-  const appliedStyles = [];
-  const returnString = block.text.split('').reduce((text, currentChar, index) => {
-    let newText = text;
+  let returnString = '';
+  blocks.forEach((block, blockIndex) => {
+    if (blockIndex !== 0) returnString += '\n';
+    const appliedStyles = [];
+    returnString += block.text.split('').reduce((text, currentChar, index) => {
+      let newText = text;
 
-    // find all styled at this character
-    const stylesStartAtChar = block.inlineStyleRanges.filter(range => range.offset === index);
+      // find all styled at this character
+      const stylesStartAtChar = block.inlineStyleRanges.filter(range => range.offset === index);
 
-    // add the symbol to the md string and push the style in the applied styles stack
-    stylesStartAtChar.forEach(currentStyle => {
-      newText += markdownDict[currentStyle.style];
-      appliedStyles.push({
-        symbol: markdownDict[currentStyle.style],
-        end: currentStyle.offset + currentStyle.length - 1
+      // add the symbol to the md string and push the style in the applied styles stack
+      stylesStartAtChar.forEach(currentStyle => {
+        newText += markdownDict[currentStyle.style];
+        appliedStyles.push({
+          symbol: markdownDict[currentStyle.style],
+          end: currentStyle.offset + currentStyle.length - 1
+        });
       });
-    });
 
-    // add the current character to the md string
-    newText += currentChar;
+      // add the current character to the md string
+      newText += currentChar;
 
-    // apply the 'ending' tags for any styles that end in the current position in order (stack)
-    while (appliedStyles.length !== 0 && appliedStyles[appliedStyles.length - 1].end === index) {
-      const endingStyle = appliedStyles.pop();
-      newText += endingStyle.symbol;
-    }
-    return newText;
-  }, '');
+      // apply the 'ending' tags for any styles that end in the current position in order (stack)
+      while (appliedStyles.length !== 0 && appliedStyles[appliedStyles.length - 1].end === index) {
+        const endingStyle = appliedStyles.pop();
+        newText += endingStyle.symbol;
+      }
+      return newText;
+    }, '');
+  });
   return returnString;
 }
 
