@@ -194,4 +194,25 @@ describe('draftjsToMd', () => {
       '*First __content__* block.\n*Second __content__* block.\n*Third __content__* block.';
     draftjsToMd(blocks).should.equal(expectedMarkdown);
   });
+
+  it('converts unordered lists to markdown correctly', () => {
+    const blocks = [
+      {
+        text: 'First',
+        type: 'unordered-list-item',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      },
+      {
+        text: 'Second',
+        type: 'unordered-list-item',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      }
+    ];
+    const expectedMarkdown = '- First\n- Second';
+    draftjsToMd(blocks).should.equal(expectedMarkdown);
+  });
 });

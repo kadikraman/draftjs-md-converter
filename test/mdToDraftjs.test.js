@@ -201,4 +201,25 @@ describe('mdToDraftjs', () => {
     ];
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
+
+  it('converts markdown to unordered lists correctly', () => {
+    const markdown = '- First\n- Second';
+    const expectedDraftjs = [
+      {
+        text: 'First',
+        type: 'unordered-list-item',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      },
+      {
+        text: 'Second',
+        type: 'unordered-list-item',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      }
+    ];
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  });
 });

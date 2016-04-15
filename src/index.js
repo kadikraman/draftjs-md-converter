@@ -13,9 +13,20 @@ const inlineStyles = {
   }
 };
 
+const blockStyles = {
+  List: {
+    type: 'unordered-list-item'
+  }
+};
+
 const markdownDict = {
   BOLD: '__',
   ITALIC: '*'
+};
+
+const blockStyleDict = {
+  unstyled: '',
+  'unordered-list-item': '- '
 };
 
 const parseMdLine = line => {
@@ -57,9 +68,20 @@ const parseMdLine = line => {
     parseChildren(child, style);
   });
 
+  // add block style if it exists
+  let blockStyle = 'unstyled';
+  if (astString.children[0]) {
+    const style = blockStyles[astString.children[0].type];
+    if (style) {
+      blockStyle = blockStyles[astString.children[0].type].type;
+    }
+  }
+
+
   return {
     text,
-    inlineStyleRanges
+    inlineStyleRanges,
+    blockStyle
   };
 };
 
@@ -70,7 +92,7 @@ function mdToDraftjs(mdString) {
     const result = parseMdLine(paragraph);
     returnValue.push({
       text: result.text,
-      type: 'unstyled',
+      type: result.blockStyle,
       depth: 0,
       inlineStyleRanges: result.inlineStyleRanges,
       entityRanges: [],
@@ -83,6 +105,9 @@ function draftjsToMd(blocks) {
   let returnString = '';
   blocks.forEach((block, blockIndex) => {
     if (blockIndex !== 0) returnString += '\n';
+
+    // add block style
+    returnString += blockStyleDict[block.type];
     const appliedStyles = [];
     returnString += block.text.split('').reduce((text, currentChar, index) => {
       let newText = text;
