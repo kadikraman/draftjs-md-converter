@@ -14,9 +14,14 @@ const inlineStyles = {
 };
 
 const blockStyles = {
-  List: {
-    type: 'unordered-list-item'
+  List: 'unordered-list-item'
+};
+
+const getBlockStyleForMd = (style, ordered) => {
+  if (style === 'List' && ordered) {
+    return 'ordered-list-item';
   }
+  return blockStyles[style];
 };
 
 const markdownDict = {
@@ -28,6 +33,20 @@ const blockStyleDict = {
   unstyled: '',
   'unordered-list-item': '- '
 };
+
+const getBlockStyle = (currentStyle, appliedBlockStyles) => {
+  if (currentStyle === 'ordered-list-item') {
+    const counter = appliedBlockStyles.reduce((prev, style) => {
+      if (style === 'ordered-list-item') {
+        return prev + 1;
+      }
+      return prev;
+    }, 1);
+    return `${counter}. `;
+  }
+  return blockStyleDict[currentStyle];
+};
+
 
 const parseMdLine = line => {
   const astString = parse(line);
@@ -73,7 +92,7 @@ const parseMdLine = line => {
   if (astString.children[0]) {
     const style = blockStyles[astString.children[0].type];
     if (style) {
-      blockStyle = blockStyles[astString.children[0].type].type;
+      blockStyle = getBlockStyleForMd(astString.children[0].type, astString.children[0].ordered);
     }
   }
 
@@ -103,11 +122,14 @@ function mdToDraftjs(mdString) {
 
 function draftjsToMd(blocks) {
   let returnString = '';
+  const appliedBlockStyles = [];
   blocks.forEach((block, blockIndex) => {
     if (blockIndex !== 0) returnString += '\n';
 
     // add block style
-    returnString += blockStyleDict[block.type];
+    returnString += getBlockStyle(block.type, appliedBlockStyles);
+    appliedBlockStyles.push(block.type);
+
     const appliedStyles = [];
     returnString += block.text.split('').reduce((text, currentChar, index) => {
       let newText = text;

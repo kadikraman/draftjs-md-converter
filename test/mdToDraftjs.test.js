@@ -222,4 +222,32 @@ describe('mdToDraftjs', () => {
     ];
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
+
+  it('converts markdown to ordered lists correctly', () => {
+    const markdown = '1. First\n2. Second\n3. Third';
+    const expectedDraftjs = [
+      {
+        text: 'First',
+        type: 'ordered-list-item',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      },
+      {
+        text: 'Second',
+        type: 'ordered-list-item',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      },
+      {
+        text: 'Third',
+        type: 'ordered-list-item',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      }
+    ];
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  });
 });
