@@ -14,12 +14,23 @@ const inlineStyles = {
 };
 
 const blockStyles = {
-  List: 'unordered-list-item'
+  List: 'unordered-list-item',
+  Header1: 'header-one',
+  Header2: 'header-two',
+  Header3: 'header-three',
+  Header4: 'header-four',
+  Header5: 'header-five',
+  Header6: 'header-six'
 };
 
-const getBlockStyleForMd = (style, ordered) => {
+const getBlockStyleForMd = node => {
+  const style = node.type;
+  const ordered = node.ordered;
+  const depth = node.depth;
   if (style === 'List' && ordered) {
     return 'ordered-list-item';
+  } else if (style === 'Header') {
+    return blockStyles[`${style}${depth}`];
   }
   return blockStyles[style];
 };
@@ -67,9 +78,9 @@ const parseMdLine = line => {
   // add block style if it exists
   let blockStyle = 'unstyled';
   if (astString.children[0]) {
-    const style = blockStyles[astString.children[0].type];
+    const style = getBlockStyleForMd(astString.children[0]);
     if (style) {
-      blockStyle = getBlockStyleForMd(astString.children[0].type, astString.children[0].ordered);
+      blockStyle = style;
     }
   }
 

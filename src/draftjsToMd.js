@@ -7,7 +7,13 @@ const markdownDict = {
 
 const blockStyleDict = {
   unstyled: '',
-  'unordered-list-item': '- '
+  'unordered-list-item': '- ',
+  'header-one': '# ',
+  'header-two': '## ',
+  'header-three': '### ',
+  'header-four': '#### ',
+  'header-five': '##### ',
+  'header-six': '###### ',
 };
 
 const getBlockStyle = (currentStyle, appliedBlockStyles) => {

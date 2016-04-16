@@ -5,15 +5,27 @@
 
 Converts content from Draft.js blocks to Markdown and vice versa.
 
-# Reasoning and background
+## Reasoning and background
 This exists because I needed a highly customisable rich text editor which posts to an external API in Markdown. [Draft.js](https://facebook.github.io/draft-js/) to the rescue! Alas, it doesn't ship with any sort of import or export to or from markdown so I've written my own.
 
-# Installation
+## Installation
 ```
 npm install draftjs-md-converter
 ```
 
-# Usage
+## Support
+The following inline styles are supported:
+
+- bold
+- italic
+- H1 - H6
+
+The following block syles are supported:
+
+- ordered list
+- unordered list
+
+## Usage
 Import `mdToDraftjs` and `draftjsToMd` into the React component. When instantiating the draft.js editor, use the `mdToDraftjs` function to convert the default value (in markdown) to draft.js blocks and use the `ContentState.createFromBlockArray()` function to create the immutable draft.js blocks.
 
 Use the `this.state.editorState.getCurrentContent()` to get the current content and `draftjsToMd(convertToRaw(content).blocks)` to convert it back to markdown. That can be used with whatever onChange functionality used.

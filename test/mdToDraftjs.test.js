@@ -250,4 +250,53 @@ describe('mdToDraftjs', () => {
     ];
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
+
+  it('converts markdown to H1 - H6 correctly', () => {
+    const markdown = '# One\n## Two\n### Three\n#### Four\n##### Five\n###### Six';
+    const expectedDraftjs = [
+      {
+        text: 'One',
+        type: 'header-one',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      },
+      {
+        text: 'Two',
+        type: 'header-two',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      },
+      {
+        text: 'Three',
+        type: 'header-three',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      },
+      {
+        text: 'Four',
+        type: 'header-four',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      },
+      {
+        text: 'Five',
+        type: 'header-five',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      },
+      {
+        text: 'Six',
+        type: 'header-six',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      }
+    ];
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  });
 });

@@ -243,4 +243,53 @@ describe('draftjsToMd', () => {
     const expectedMarkdown = '1. First\n2. Second\n3. Third';
     draftjsToMd(blocks).should.equal(expectedMarkdown);
   });
+
+  it('converts H1 - H6 to markdown correctly', () => {
+    const blocks = [
+      {
+        text: 'One',
+        type: 'header-one',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      },
+      {
+        text: 'Two',
+        type: 'header-two',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      },
+      {
+        text: 'Three',
+        type: 'header-three',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      },
+      {
+        text: 'Four',
+        type: 'header-four',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      },
+      {
+        text: 'Five',
+        type: 'header-five',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      },
+      {
+        text: 'Six',
+        type: 'header-six',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      }
+    ];
+    const expectedMarkdown = '# One\n## Two\n### Three\n#### Four\n##### Five\n###### Six';
+    draftjsToMd(blocks).should.equal(expectedMarkdown);
+  });
 });
