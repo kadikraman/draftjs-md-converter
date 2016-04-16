@@ -5,6 +5,65 @@
 
 Converts content from Draft.js blocks to Markdown and vice versa.
 
+# Reasoning and background
+This exists because I needed a highly customisable rich text editor which posts to an external API in Markdown. [Draft.js](https://facebook.github.io/draft-js/) to the rescue! Alas, it doesn't ship with any sort of import or export to or from markdown so I've written my own.
+
+# Installation
+```
+npm install draftjs-md-converter
+```
+
+# Usage
+Import `mdToDraftjs` and `draftjsToMd` into the React component. When instantiating the draft.js editor, use the `mdToDraftjs` function to convert the default value (in markdown) to draft.js blocks and use the `ContentState.createFromBlockArray()` function to create the immutable draft.js blocks.
+
+Use the `this.state.editorState.getCurrentContent()` to get the current content and `draftjsToMd(convertToRaw(content).blocks)` to convert it back to markdown. That can be used with whatever onChange functionality used.
+
+Below is a code example of the above in some context.
+
+```
+[---]
+
+import { mdToDraftjs, draftjsToMd } from 'draftjs-md-converter';
+import { EditorState, ContentState, convertToRaw, convertFromRaw } from 'draft-js';
+
+[---]
+
+constructor(props) {
+  super(props);
+
+  // some default falue in markdown
+  const defaultValue = this.props.defaultValue;
+  const rawMdBlocks = mdToDraftjs(defaultValue);
+  const mdBlocks = convertFromRaw({
+    blocks: rawMdBlocks,
+    entityMap: {
+      type: '',
+      mutability: '',
+      data: ''
+    }
+  });
+  const contentState = ContentState.createFromBlockArray(mdBlocks);
+  const newEditorState = EditorState.createWithContent(contentState);
+
+  this.state = {
+    editorState: newEditorState,
+  };
+  this.onChange = (editorState) => {
+    this.props.onChange(this.getMarkdown());
+    this.setState({ editorState });
+  };
+}
+
+[---]
+
+getMarkdown() {
+  const content = this.state.editorState.getCurrentContent();
+  return draftjsToMd(convertToRaw(content).blocks);
+}
+
+[---]
+```
+
 ## Run tests
 ```
 npm test
