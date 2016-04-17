@@ -299,4 +299,18 @@ describe('mdToDraftjs', () => {
     ];
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
+
+  it.skip('converts markdown to code blocks correctly', () => {
+    const markdown = '```\nconst country = Estonia;\n```';
+    const expectedDraftjs = [
+      {
+        text: 'const country = Estonia;',
+        type: 'code-block',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      }
+    ];
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  });
 });

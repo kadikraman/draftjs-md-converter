@@ -292,4 +292,18 @@ describe('draftjsToMd', () => {
     const expectedMarkdown = '# One\n## Two\n### Three\n#### Four\n##### Five\n###### Six';
     draftjsToMd(blocks).should.equal(expectedMarkdown);
   });
+
+  it.skip('converts code blocks to markdown correctly', () => {
+    const blocks = [
+      {
+        text: 'const country = Estonia;',
+        type: 'code-block',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: []
+      }
+    ];
+    const expectedMarkdown = '```\nconst country = Estonia;\n```';
+    draftjsToMd(blocks).should.equal(expectedMarkdown);
+  });
 });
