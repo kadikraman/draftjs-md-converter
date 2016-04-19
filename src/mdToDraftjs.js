@@ -94,18 +94,62 @@ const parseMdLine = line => {
 
 function mdToDraftjs(mdString) {
   const paragraphs = mdString.split('\n');
-  const returnValue = [];
+  const blocks = [];
+  let entityMap = {};
+  const linkRegex = /\[(.*)\]\((.*)\)/;
+
   paragraphs.forEach(paragraph => {
-    const result = parseMdLine(paragraph);
-    returnValue.push({
+    let mutableParagraph = paragraph;
+    // this ast library doesn't support urls so add these separately
+    let match = linkRegex.exec(mutableParagraph);
+    const entityRanges = [];
+    while (match) {
+      // add entity to entity map
+      const entityKey = Object.keys(entityMap).length;
+      entityMap[entityKey] = {
+        type: 'LINK',
+        mutability: 'MUTABLE',
+        data: {
+          url: match[2]
+        }
+      };
+
+      // remove the markdown link and leave just the text
+      mutableParagraph = mutableParagraph.replace(match[0], match[1]);
+
+      // add entity to entityRanges
+      entityRanges.push({
+        key: entityKey,
+        length: match[1].length,
+        offset: mutableParagraph.indexOf(match[1])
+      });
+
+      match = linkRegex.exec(mutableParagraph);
+    }
+
+    const result = parseMdLine(mutableParagraph);
+    blocks.push({
       text: result.text,
       type: result.blockStyle,
       depth: 0,
       inlineStyleRanges: result.inlineStyleRanges,
-      entityRanges: [],
+      entityRanges
     });
   });
-  return returnValue;
+
+  // add a default value
+  // not sure why that's needed but Draftjs convertToRaw fails without it
+  if (Object.keys(entityMap).length === 0) {
+    entityMap = {
+      data: '',
+      mutability: '',
+      type: ''
+    };
+  }
+  return {
+    blocks,
+    entityMap
+  };
 }
 
 module.exports.mdToDraftjs = mdToDraftjs;
