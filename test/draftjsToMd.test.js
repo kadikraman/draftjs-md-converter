@@ -344,7 +344,6 @@ describe('draftjsToMd', () => {
       },
       blocks: [
         {
-          key: 'duud4',
           text: 'This is a link in text.',
           type: 'unstyled',
           depth: 0,

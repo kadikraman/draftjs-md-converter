@@ -390,4 +390,35 @@ describe('mdToDraftjs', () => {
     };
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
+
+  it('converts link entities to markdown correctly', () => {
+    const markdown = 'This is a [link](http://red-badger.com/) in text.';
+    const expectedDraftjs = {
+      entityMap: {
+        0: {
+          type: 'LINK',
+          mutability: 'MUTABLE',
+          data: {
+            url: 'http://red-badger.com/'
+          }
+        }
+      },
+      blocks: [
+        {
+          text: 'This is a link in text.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [
+            {
+              offset: 10,
+              length: 4,
+              key: 0
+            }
+          ]
+        }
+      ]
+    };
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  });
 });
