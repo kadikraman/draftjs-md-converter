@@ -330,4 +330,36 @@ describe('draftjsToMd', () => {
     const expectedMarkdown = '```\nconst country = Estonia;\n```';
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
+
+  it('converts link entities to markdown correctly', () => {
+    const raw = {
+      entityMap: {
+        0: {
+          type: 'LINK',
+          mutability: 'MUTABLE',
+          data: {
+            url: 'http://red-badger.com/'
+          }
+        }
+      },
+      blocks: [
+        {
+          key: 'duud4',
+          text: 'This is a link in text.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [
+            {
+              offset: 10,
+              length: 4,
+              key: 0
+            }
+          ]
+        }
+      ]
+    };
+    const expectedMarkdown = 'This is a [link](http://red-badger.com/) in text.';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
 });

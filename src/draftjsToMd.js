@@ -29,6 +29,24 @@ const getBlockStyle = (currentStyle, appliedBlockStyles) => {
   return blockStyleDict[currentStyle];
 };
 
+const getEntityStart = entity => {
+  switch (entity.type) {
+    case 'LINK':
+      return '[';
+    default:
+      return '';
+  }
+};
+
+const getEntityEnd = entity => {
+  switch (entity.type) {
+    case 'LINK':
+      return `](${entity.data.url})`;
+    default:
+      return '';
+  }
+};
+
 function draftjsToMd(raw) {
   let returnString = '';
   const appliedBlockStyles = [];
@@ -55,6 +73,13 @@ function draftjsToMd(raw) {
         });
       });
 
+      // check for entityRanges starting and add if existing
+      const entitiesStartAtChar = block.entityRanges.filter(range => range.offset === index);
+      entitiesStartAtChar.forEach(entity => {
+        newText += getEntityStart(raw.entityMap[entity.key]);
+      });
+
+
       // add the current character to the md string
       newText += currentChar;
 
@@ -63,6 +88,15 @@ function draftjsToMd(raw) {
         const endingStyle = appliedStyles.pop();
         newText += endingStyle.symbol;
       }
+
+      // check for entityRanges ending and add if existing
+      const entitiesEndAtChar = block.entityRanges.filter(range => {
+        return range.offset + range.length - 1 === index;
+      });
+      entitiesEndAtChar.forEach(entity => {
+        newText += getEntityEnd(raw.entityMap[entity.key]);
+      });
+
       return newText;
     }, '');
   });
