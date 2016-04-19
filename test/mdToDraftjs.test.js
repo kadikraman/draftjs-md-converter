@@ -421,4 +421,49 @@ describe('mdToDraftjs', () => {
     };
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
+
+  it('converts markdown to several links correctly', () => {
+    const markdown = 'One [link](http://red-badger.com/). Two [links](http://red-badger.com/).';
+    const expectedDraftjs = {
+      entityMap: {
+        0: {
+          type: 'LINK',
+          mutability: 'MUTABLE',
+          data: {
+            url: 'http://red-badger.com/'
+          }
+        },
+        1: {
+          type: 'LINK',
+          mutability: 'MUTABLE',
+          data: {
+            url: 'http://red-badger.com/'
+          }
+        }
+      },
+      blocks: [
+        {
+          text: 'One link. Two links.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+
+          ],
+          entityRanges: [
+            {
+              offset: 4,
+              length: 4,
+              key: 0
+            },
+            {
+              offset: 14,
+              length: 5,
+              key: 1
+            }
+          ]
+        }
+      ]
+    };
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  });
 });

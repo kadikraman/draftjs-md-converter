@@ -361,4 +361,49 @@ describe('draftjsToMd', () => {
     const expectedMarkdown = 'This is a [link](http://red-badger.com/) in text.';
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
+
+  it('converts several links to markdown correctly', () => {
+    const raw = {
+      entityMap: {
+        0: {
+          type: 'LINK',
+          mutability: 'MUTABLE',
+          data: {
+            url: 'http://red-badger.com/'
+          }
+        },
+        1: {
+          type: 'LINK',
+          mutability: 'MUTABLE',
+          data: {
+            url: 'http://red-badger.com/'
+          }
+        }
+      },
+      blocks: [
+        {
+          text: 'One link. Two links.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+
+          ],
+          entityRanges: [
+            {
+              offset: 4,
+              length: 4,
+              key: 0
+            },
+            {
+              offset: 14,
+              length: 5,
+              key: 1
+            }
+          ]
+        }
+      ]
+    };
+    const expectedMarkdown = 'One [link](http://red-badger.com/). Two [links](http://red-badger.com/).';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
 });

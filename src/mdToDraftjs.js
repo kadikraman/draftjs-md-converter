@@ -36,19 +36,45 @@ const getBlockStyleForMd = node => {
 };
 
 
-const parseMdLine = line => {
+const parseMdLine = (line, existingEntities) => {
   const astString = parse(line);
   let text = '';
   const inlineStyleRanges = [];
+  const entityRanges = [];
+  const entityMap = existingEntities;
+
+  const addInlineStyleRange = (offset, length, style) => {
+    inlineStyleRanges.push({ offset, length, style });
+  };
+
+  const getRawLength = children => {
+    return children.reduce((prev, current) => prev + current.value.length, 0);
+  };
+
+  const addLink = child => {
+    const entityKey = Object.keys(entityMap).length;
+    entityMap[entityKey] = {
+      type: 'LINK',
+      mutability: 'MUTABLE',
+      data: {
+        url: child.url
+      }
+    };
+    entityRanges.push({
+      key: entityKey,
+      length: getRawLength(child.children),
+      offset: text.length
+    });
+  };
 
   const parseChildren = (child, style) => {
+    if (child.type === 'Link') {
+      addLink(child);
+    }
+
     if (child.children && style) {
-      const rawLength = child.children.reduce((prev, current) => prev + current.value.length, 0);
-      inlineStyleRanges.push({
-        offset: text.length,
-        length: rawLength,
-        style: style.type
-      });
+      const rawLength = getRawLength(child.children);
+      addInlineStyleRange(text.length, rawLength, style.type);
       const newStyle = inlineStyles[child.type];
       child.children.forEach(grandChild => {
         parseChildren(grandChild, newStyle);
@@ -59,13 +85,7 @@ const parseMdLine = line => {
         parseChildren(grandChild, newStyle);
       });
     } else {
-      if (style) {
-        inlineStyleRanges.push({
-          offset: text.length,
-          length: child.value.length,
-          style: style.type
-        });
-      }
+      if (style) addInlineStyleRange(text.length, child.value.length, style.type);
       text = text + child.value;
     }
   };
@@ -84,11 +104,12 @@ const parseMdLine = line => {
     }
   }
 
-
   return {
     text,
     inlineStyleRanges,
-    blockStyle
+    entityRanges,
+    blockStyle,
+    entityMap
   };
 };
 
@@ -96,45 +117,17 @@ function mdToDraftjs(mdString) {
   const paragraphs = mdString.split('\n');
   const blocks = [];
   let entityMap = {};
-  const linkRegex = /\[(.*)\]\((.*)\)/;
 
   paragraphs.forEach(paragraph => {
-    let mutableParagraph = paragraph;
-    // this ast library doesn't support urls so add these separately
-    let match = linkRegex.exec(mutableParagraph);
-    const entityRanges = [];
-    while (match) {
-      // add entity to entity map
-      const entityKey = Object.keys(entityMap).length;
-      entityMap[entityKey] = {
-        type: 'LINK',
-        mutability: 'MUTABLE',
-        data: {
-          url: match[2]
-        }
-      };
-
-      // remove the markdown link and leave just the text
-      mutableParagraph = mutableParagraph.replace(match[0], match[1]);
-
-      // add entity to entityRanges
-      entityRanges.push({
-        key: entityKey,
-        length: match[1].length,
-        offset: mutableParagraph.indexOf(match[1])
-      });
-
-      match = linkRegex.exec(mutableParagraph);
-    }
-
-    const result = parseMdLine(mutableParagraph);
+    const result = parseMdLine(paragraph, entityMap);
     blocks.push({
       text: result.text,
       type: result.blockStyle,
       depth: 0,
       inlineStyleRanges: result.inlineStyleRanges,
-      entityRanges
+      entityRanges: result.entityRanges
     });
+    entityMap = result.entityMap;
   });
 
   // add a default value
