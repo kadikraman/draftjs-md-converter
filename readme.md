@@ -45,16 +45,9 @@ constructor(props) {
 
   // some default falue in markdown
   const defaultValue = this.props.defaultValue;
-  const rawMdBlocks = mdToDraftjs(defaultValue);
-  const mdBlocks = convertFromRaw({
-    blocks: rawMdBlocks,
-    entityMap: {
-      type: '',
-      mutability: '',
-      data: ''
-    }
-  });
-  const contentState = ContentState.createFromBlockArray(mdBlocks);
+  const rawData = mdToDraftjs(defaultValue);
+  const raw = convertFromRaw(rawData);
+  const contentState = ContentState.createFromBlockArray(raw);
   const newEditorState = EditorState.createWithContent(contentState);
 
   this.state = {

@@ -94,10 +94,10 @@ const parseMdLine = line => {
 
 function mdToDraftjs(mdString) {
   const paragraphs = mdString.split('\n');
-  const returnValue = [];
+  const blocks = [];
   paragraphs.forEach(paragraph => {
     const result = parseMdLine(paragraph);
-    returnValue.push({
+    blocks.push({
       text: result.text,
       type: result.blockStyle,
       depth: 0,
@@ -105,7 +105,14 @@ function mdToDraftjs(mdString) {
       entityRanges: [],
     });
   });
-  return returnValue;
+  return {
+    blocks,
+    entityMap: {
+      type: '',
+      mutability: '',
+      data: ''
+    }
+  };
 }
 
 module.exports.mdToDraftjs = mdToDraftjs;

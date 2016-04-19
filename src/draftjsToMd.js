@@ -29,10 +29,10 @@ const getBlockStyle = (currentStyle, appliedBlockStyles) => {
   return blockStyleDict[currentStyle];
 };
 
-function draftjsToMd(blocks) {
+function draftjsToMd(raw) {
   let returnString = '';
   const appliedBlockStyles = [];
-  blocks.forEach((block, blockIndex) => {
+  raw.blocks.forEach((block, blockIndex) => {
     if (blockIndex !== 0) returnString += '\n';
 
     // add block style
