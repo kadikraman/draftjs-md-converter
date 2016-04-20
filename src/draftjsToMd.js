@@ -83,12 +83,6 @@ function draftjsToMd(raw) {
       // add the current character to the md string
       newText += currentChar;
 
-      // apply the 'ending' tags for any styles that end in the current position in order (stack)
-      while (appliedStyles.length !== 0 && appliedStyles[appliedStyles.length - 1].end === index) {
-        const endingStyle = appliedStyles.pop();
-        newText += endingStyle.symbol;
-      }
-
       // check for entityRanges ending and add if existing
       const entitiesEndAtChar = block.entityRanges.filter(range => {
         return range.offset + range.length - 1 === index;
@@ -97,6 +91,11 @@ function draftjsToMd(raw) {
         newText += getEntityEnd(raw.entityMap[entity.key]);
       });
 
+      // apply the 'ending' tags for any styles that end in the current position in order (stack)
+      while (appliedStyles.length !== 0 && appliedStyles[appliedStyles.length - 1].end === index) {
+        const endingStyle = appliedStyles.pop();
+        newText += endingStyle.symbol;
+      }
       return newText;
     }, '');
   });

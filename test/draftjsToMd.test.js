@@ -406,4 +406,41 @@ describe('draftjsToMd', () => {
     const expectedMarkdown = 'One [link](http://red-badger.com/). Two [links](http://red-badger.com/).';
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
+
+  it('converts bold links to markdown correctly', () => {
+    const raw = {
+      entityMap: {
+        0: {
+          type: 'LINK',
+          mutability: 'MUTABLE',
+          data: {
+            url: 'http://red-badger.com/'
+          }
+        }
+      },
+      blocks: [
+        {
+          text: 'I am a bold link.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 7,
+              length: 4,
+              style: 'BOLD'
+            }
+          ],
+          entityRanges: [
+            {
+              offset: 7,
+              length: 4,
+              key: 0
+            }
+          ]
+        }
+      ]
+    };
+    const expectedMarkdown = 'I am a __[bold](http://red-badger.com/)__ link.';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
 });

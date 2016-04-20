@@ -466,4 +466,41 @@ describe('mdToDraftjs', () => {
     };
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
+
+  it('converts markdown to bold links correctly', () => {
+    const markdown = 'I am a __[bold](http://red-badger.com/)__ link.';
+    const expectedDraftjs = {
+      entityMap: {
+        0: {
+          type: 'LINK',
+          mutability: 'MUTABLE',
+          data: {
+            url: 'http://red-badger.com/'
+          }
+        }
+      },
+      blocks: [
+        {
+          text: 'I am a bold link.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 7,
+              length: 4,
+              style: 'BOLD'
+            }
+          ],
+          entityRanges: [
+            {
+              offset: 7,
+              length: 4,
+              key: 0
+            }
+          ]
+        }
+      ]
+    };
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  });
 });
