@@ -14,6 +14,7 @@ const blockStyleDict = {
   'header-four': '#### ',
   'header-five': '##### ',
   'header-six': '###### ',
+  'code-block': '```\n'
 };
 
 const getBlockStyle = (currentStyle, appliedBlockStyles) => {
@@ -51,11 +52,13 @@ function draftjsToMd(raw) {
     if (blockIndex !== 0) returnString += '\n';
 
     // add block style
-    returnString += getBlockStyle(block.type, appliedBlockStyles);
+    const blockStyle = getBlockStyle(block.type, appliedBlockStyles);
+    returnString += blockStyle;
     appliedBlockStyles.push(block.type);
 
     const appliedStyles = [];
     returnString += block.text.split('').reduce((text, currentChar, index) => {
+      debugger;
       let newText = text;
 
       // find all styled at this character
@@ -93,8 +96,14 @@ function draftjsToMd(raw) {
         const endingStyle = appliedStyles.pop();
         newText += endingStyle.symbol;
       }
+
       return newText;
     }, '');
+
+    if (block.type === 'code-block') {
+      returnString += '\n```';
+    }
+
   });
   return returnString;
 }
