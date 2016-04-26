@@ -144,7 +144,6 @@ const parseMdLine = (line, existingEntities) => {
 };
 
 function mdToDraftjs(mdString) {
-  debugger;
   const paragraphs = splitMdBlocks(mdString);
   const blocks = [];
   let entityMap = {};
