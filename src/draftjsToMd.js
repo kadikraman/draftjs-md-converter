@@ -18,12 +18,9 @@ const blockStyleDict = {
 
 const getBlockStyle = (currentStyle, appliedBlockStyles) => {
   if (currentStyle === 'ordered-list-item') {
-    const counter = appliedBlockStyles.reduce((prev, style) => {
-      if (style === 'ordered-list-item') {
-        return prev + 1;
-      }
-      return prev;
-    }, 1);
+    const counter = appliedBlockStyles.reduce((prev, style) =>
+      (style === 'ordered-list-item') ? prev + 1 : prev
+    , 1);
     return `${counter}. `;
   }
   return blockStyleDict[currentStyle];
