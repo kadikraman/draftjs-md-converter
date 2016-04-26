@@ -6,7 +6,6 @@ const markdownDict = {
 };
 
 const blockStyleDict = {
-  unstyled: '',
   'unordered-list-item': '- ',
   'header-one': '# ',
   'header-two': '## ',
@@ -14,7 +13,10 @@ const blockStyleDict = {
   'header-four': '#### ',
   'header-five': '##### ',
   'header-six': '###### ',
-  'code-block': '```\n'
+};
+
+const wrappingBlockStyleDict = {
+  'code-block': '```'
 };
 
 const getBlockStyle = (currentStyle, appliedBlockStyles) => {
@@ -24,8 +26,17 @@ const getBlockStyle = (currentStyle, appliedBlockStyles) => {
     , 1);
     return `${counter}. `;
   }
-  return blockStyleDict[currentStyle];
+  return blockStyleDict[currentStyle] || '';
 };
+
+const applyWrappingBlockStyle = (currentStyle, content) => {
+  if (currentStyle in wrappingBlockStyleDict) {
+    const wrappingSymbol = wrappingBlockStyleDict[currentStyle];
+    return `${wrappingSymbol}\n${content}\n${wrappingSymbol}`;
+  }
+
+  return content;
+}
 
 const getEntityStart = entity => {
   switch (entity.type) {
@@ -52,13 +63,11 @@ function draftjsToMd(raw) {
     if (blockIndex !== 0) returnString += '\n';
 
     // add block style
-    const blockStyle = getBlockStyle(block.type, appliedBlockStyles);
-    returnString += blockStyle;
+    returnString += getBlockStyle(block.type, appliedBlockStyles);
     appliedBlockStyles.push(block.type);
 
     const appliedStyles = [];
     returnString += block.text.split('').reduce((text, currentChar, index) => {
-      debugger;
       let newText = text;
 
       // find all styled at this character
@@ -100,9 +109,7 @@ function draftjsToMd(raw) {
       return newText;
     }, '');
 
-    if (block.type === 'code-block') {
-      returnString += '\n```';
-    }
+    returnString = applyWrappingBlockStyle(block.type, returnString);
 
   });
   return returnString;
