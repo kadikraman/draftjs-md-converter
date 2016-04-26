@@ -6,7 +6,6 @@ const markdownDict = {
 };
 
 const blockStyleDict = {
-  unstyled: '',
   'unordered-list-item': '- ',
   'header-one': '# ',
   'header-two': '## ',
@@ -16,18 +15,28 @@ const blockStyleDict = {
   'header-six': '###### ',
 };
 
+const wrappingBlockStyleDict = {
+  'code-block': '```'
+};
+
 const getBlockStyle = (currentStyle, appliedBlockStyles) => {
   if (currentStyle === 'ordered-list-item') {
-    const counter = appliedBlockStyles.reduce((prev, style) => {
-      if (style === 'ordered-list-item') {
-        return prev + 1;
-      }
-      return prev;
-    }, 1);
+    const counter = appliedBlockStyles.reduce((prev, style) =>
+      (style === 'ordered-list-item') ? prev + 1 : prev
+    , 1);
     return `${counter}. `;
   }
-  return blockStyleDict[currentStyle];
+  return blockStyleDict[currentStyle] || '';
 };
+
+const applyWrappingBlockStyle = (currentStyle, content) => {
+  if (currentStyle in wrappingBlockStyleDict) {
+    const wrappingSymbol = wrappingBlockStyleDict[currentStyle];
+    return `${wrappingSymbol}\n${content}\n${wrappingSymbol}`;
+  }
+
+  return content;
+}
 
 const getEntityStart = entity => {
   switch (entity.type) {
@@ -96,8 +105,12 @@ function draftjsToMd(raw) {
         const endingStyle = appliedStyles.pop();
         newText += endingStyle.symbol;
       }
+
       return newText;
     }, '');
+
+    returnString = applyWrappingBlockStyle(block.type, returnString);
+
   });
   return returnString;
 }

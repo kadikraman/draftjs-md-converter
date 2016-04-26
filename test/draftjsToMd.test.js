@@ -315,7 +315,7 @@ describe('draftjsToMd', () => {
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
-  it.skip('converts code blocks to markdown correctly', () => {
+  it('converts code blocks to markdown correctly', () => {
     const raw = {
       blocks: [
         {
