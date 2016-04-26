@@ -37,8 +37,6 @@ const getBlockStyleForMd = node => {
   return blockStyles[style];
 };
 
-
-
 const joinCodeBlocks = (splitMd) => {
   const opening = splitMd.indexOf('```');
   const closing = splitMd.indexOf('```', opening + 1);
@@ -46,7 +44,6 @@ const joinCodeBlocks = (splitMd) => {
   if (opening >= 0 && closing >= 0) {
     const codeBlock = splitMd.slice(opening, closing + 1);
     const codeBlockJoined = codeBlock.join('\n');
-
     const updatedSplitMarkdown = [
       ...splitMd.slice(0, opening),
       codeBlockJoined,
