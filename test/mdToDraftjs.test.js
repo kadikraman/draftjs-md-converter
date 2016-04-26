@@ -391,6 +391,27 @@ describe('mdToDraftjs', () => {
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
 
+  it('converts markdown to code blocks with inline styles correctly', () => {
+    const markdown = '```\nconst *country* = Estonia;\n```';
+    const expectedDraftjs = {
+      blocks: [
+        {
+          text: 'const *country* = Estonia;',
+          type: 'code-block',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        }
+      ],
+      entityMap: {
+        type: '',
+        mutability: '',
+        data: ''
+      }
+    };
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  });
+
   it('converts multiple markdown to code blocks correctly',() => {
     const markdown = 'Cats are cool\n```\nPurr Purr 🐱\n```\nBut birds are too!\n```\nCaw-cawwww! 🐦\n```';
     const expectedDraftjs = {
