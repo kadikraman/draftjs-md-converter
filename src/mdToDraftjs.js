@@ -20,7 +20,8 @@ const blockStyles = {
   Header3: 'header-three',
   Header4: 'header-four',
   Header5: 'header-five',
-  Header6: 'header-six'
+  Header6: 'header-six',
+  CodeBlock: 'code-block',
 };
 
 const getBlockStyleForMd = node => {
@@ -32,9 +33,41 @@ const getBlockStyleForMd = node => {
   } else if (style === 'Header') {
     return blockStyles[`${style}${depth}`];
   }
+
   return blockStyles[style];
 };
 
+
+
+const joinCodeBlocks = (splitMd) => {
+  const opening = splitMd.indexOf('```');
+  const closing = splitMd.indexOf('```', opening + 1);
+
+  if (opening >= 0 && closing >= 0) {
+    const codeBlock = splitMd.slice(opening, closing + 1);
+    const codeBlockJoined = codeBlock.join('\n');
+
+    const updatedSplitMarkdown = [
+      ...splitMd.slice(0, opening),
+      codeBlockJoined,
+      ...splitMd.slice(closing + 1)
+    ];
+
+    return joinCodeBlocks(updatedSplitMarkdown);
+  }
+
+  return splitMd;
+}
+
+const splitMdBlocks = (md) => {
+  const splitMd = md.split('\n');
+
+  // Process the split markdown include the
+  // one syntax where there's an block level opening
+  // and closing symbol with content in the middle.
+  const splitMdWithCodeBlocks = joinCodeBlocks(splitMd);
+  return splitMdWithCodeBlocks;
+}
 
 const parseMdLine = (line, existingEntities) => {
   const astString = parse(line);
@@ -114,7 +147,8 @@ const parseMdLine = (line, existingEntities) => {
 };
 
 function mdToDraftjs(mdString) {
-  const paragraphs = mdString.split('\n');
+  debugger;
+  const paragraphs = splitMdBlocks(mdString);
   const blocks = [];
   let entityMap = {};
 

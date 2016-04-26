@@ -370,7 +370,7 @@ describe('mdToDraftjs', () => {
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
 
-  it.skip('converts markdown to code blocks correctly', () => {
+  it('converts markdown to code blocks correctly', () => {
     const markdown = '```\nconst country = Estonia;\n```';
     const expectedDraftjs = {
       blocks: [
@@ -390,6 +390,79 @@ describe('mdToDraftjs', () => {
     };
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
+
+  it('converts multiple markdown to code blocks correctly',() => {
+    const markdown = 'Cats are cool\n```\nPurr Purr 🐱\n```\nBut birds are too!\n```\nCaw-cawwww! 🐦\n```';
+    const expectedDraftjs = {
+        blocks: [
+          {
+             text:"Cats are cool",
+             type:"unstyled",
+             depth:0,
+             inlineStyleRanges:[],
+             entityRanges:[
+             ]
+          },
+          {
+             text:"Purr Purr 🐱",
+             type:"code-block",
+             depth:0,
+             inlineStyleRanges:[],
+             entityRanges:[]
+          },
+          {
+             text:"But birds are too!",
+             type:"unstyled",
+             depth:0,
+             inlineStyleRanges:[],
+             entityRanges:[]
+          },
+          {
+             text:"Caw-cawwww! 🐦",
+             type:"code-block",
+             depth:0,
+             inlineStyleRanges:[],
+             entityRanges:[]
+          }
+       ],
+       entityMap: {
+         type: '',
+         mutability: '',
+         data: ''
+       }
+    };
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  })
+
+  it('converts markdown to unclosed code blocks correctly',() => {
+    const markdown = '```\nOh no, I only opened a code block';
+    const expectedDraftjs = {
+        blocks: [
+          {
+             text:"",
+             type:"code-block",
+             depth:0,
+             inlineStyleRanges:[],
+             entityRanges:[
+             ]
+          },
+          {
+             text:"Oh no, I only opened a code block",
+             type:"unstyled",
+             depth:0,
+             inlineStyleRanges:[],
+             entityRanges:[]
+          }
+       ],
+       entityMap: {
+         type: '',
+         mutability: '',
+         data: ''
+       }
+    };
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  })
+
 
   it('converts link entities to markdown correctly', () => {
     const markdown = 'This is a [link](http://red-badger.com/) in text.';
