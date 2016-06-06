@@ -443,4 +443,37 @@ describe('draftjsToMd', () => {
     const expectedMarkdown = 'I am a __[bold](http://red-badger.com/)__ link.';
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
+
+  it('converts image media to markdown correctly', () => {
+    const raw = {
+      entityMap: {
+        0: {
+          type: 'image',
+          mutability: 'IMMUTABLE',
+          data: {
+            url: '//images.mine.com/myImage.jpg',
+            fileName: 'My Image Name'
+          }
+        }
+      },
+      blocks: [
+        {
+          key: 'fag2v',
+          text: ' ',
+          type: 'atomic',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [
+            {
+              offset: 0,
+              length: 1,
+              key: 0
+            }
+          ]
+        }
+      ]
+    };
+    const expectedMarkdown = '![My Image Name](//images.mine.com/myImage.jpg)';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
 });
