@@ -32,8 +32,9 @@ const getBlockStyleForMd = node => {
     return 'ordered-list-item';
   } else if (style === 'Header') {
     return blockStyles[`${style}${depth}`];
+  } else if (node.type === 'Paragraph' && node.children && node.children[0] && node.children[0].type === 'Image') { // eslint-disable-line max-len
+    return 'atomic';
   }
-
   return blockStyles[style];
 };
 
@@ -54,7 +55,7 @@ const joinCodeBlocks = (splitMd) => {
   }
 
   return splitMd;
-}
+};
 
 const splitMdBlocks = (md) => {
   const splitMd = md.split('\n');
@@ -64,7 +65,7 @@ const splitMdBlocks = (md) => {
   // and closing symbol with content in the middle.
   const splitMdWithCodeBlocks = joinCodeBlocks(splitMd);
   return splitMdWithCodeBlocks;
-}
+};
 
 const parseMdLine = (line, existingEntities) => {
   const astString = parse(line);
@@ -97,9 +98,32 @@ const parseMdLine = (line, existingEntities) => {
     });
   };
 
+  const addImage = child => {
+    const entityKey = Object.keys(entityMap).length;
+    entityMap[entityKey] = {
+      type: 'image',
+      mutability: 'IMMUTABLE',
+      data: {
+        url: child.url,
+        fileName: child.alt
+      }
+    };
+    entityRanges.push({
+      key: entityKey,
+      length: 1,
+      offset: text.length
+    });
+  };
+
   const parseChildren = (child, style) => {
-    if (child.type === 'Link') {
-      addLink(child);
+    switch (child.type) {
+      case 'Link':
+        addLink(child);
+        break;
+      case 'Image':
+        addImage(child);
+        break;
+      default:
     }
 
     if (child.children && style) {
@@ -116,7 +140,7 @@ const parseMdLine = (line, existingEntities) => {
       });
     } else {
       if (style) addInlineStyleRange(text.length, child.value.length, style.type);
-      text = text + child.value;
+      text = `${text}${child.type === 'Image' ? ' ' : child.value}`;
     }
   };
 
