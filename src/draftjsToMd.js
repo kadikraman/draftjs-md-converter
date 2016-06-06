@@ -42,7 +42,9 @@ const applyAtomicStyle = (block, entityMap, content) => {
   if (block.type !== 'atomic') return content;
   // strip the test that was added in the media block
   const strippedContent = content.substring(0, content.length - block.text.length);
-  return `${strippedContent}![${entityMap[0].data.fileName}](${entityMap[0].data.url})`;
+  const key = block.entityRanges[0].key;
+  const data = entityMap[key].data;
+  return `${strippedContent}![${data.fileName}](${data.url})`;
 };
 
 const getEntityStart = entity => {

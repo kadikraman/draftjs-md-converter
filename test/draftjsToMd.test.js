@@ -447,7 +447,7 @@ describe('draftjsToMd', () => {
   it('converts image media to markdown correctly', () => {
     const raw = {
       entityMap: {
-        0: {
+        1: {
           type: 'image',
           mutability: 'IMMUTABLE',
           data: {
@@ -467,7 +467,7 @@ describe('draftjsToMd', () => {
             {
               offset: 0,
               length: 1,
-              key: 0
+              key: 1
             }
           ]
         }

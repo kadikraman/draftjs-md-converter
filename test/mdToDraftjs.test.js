@@ -454,34 +454,33 @@ describe('mdToDraftjs', () => {
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
 
-  it('converts markdown to unclosed code blocks correctly',() => {
+  it('converts markdown to unclosed code blocks correctly', () => {
     const markdown = '```\nOh no, I only opened a code block';
     const expectedDraftjs = {
-        blocks: [
-          {
-             text:"",
-             type:"code-block",
-             depth:0,
-             inlineStyleRanges:[],
-             entityRanges:[
-             ]
-          },
-          {
-             text:"Oh no, I only opened a code block",
-             type:"unstyled",
-             depth:0,
-             inlineStyleRanges:[],
-             entityRanges:[]
-          }
-       ],
-       entityMap: {
-         type: '',
-         mutability: '',
-         data: ''
-       }
+      blocks: [
+        {
+          text: '',
+          type: 'code-block',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        },
+        {
+          text: 'Oh no, I only opened a code block',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        }
+      ],
+      entityMap: {
+        type: '',
+        mutability: '',
+        data: ''
+      }
     };
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
-  })
+  });
 
 
   it('converts link entities to markdown correctly', () => {
