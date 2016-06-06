@@ -412,48 +412,47 @@ describe('mdToDraftjs', () => {
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
 
-  it('converts multiple markdown to code blocks correctly',() => {
-    const markdown = 'Cats are cool\n```\nPurr Purr 🐱\n```\nBut birds are too!\n```\nCaw-cawwww! 🐦\n```';
+  it('converts multiple markdown to code blocks correctly', () => {
+    const markdown = 'Cats are cool\n```\nPurr Purr 🐱\n```\nBut birds are too!\n```\nCaw-cawwww! 🐦\n```'; // eslint-disable-line max-len
     const expectedDraftjs = {
-        blocks: [
-          {
-             text:"Cats are cool",
-             type:"unstyled",
-             depth:0,
-             inlineStyleRanges:[],
-             entityRanges:[
-             ]
-          },
-          {
-             text:"Purr Purr 🐱",
-             type:"code-block",
-             depth:0,
-             inlineStyleRanges:[],
-             entityRanges:[]
-          },
-          {
-             text:"But birds are too!",
-             type:"unstyled",
-             depth:0,
-             inlineStyleRanges:[],
-             entityRanges:[]
-          },
-          {
-             text:"Caw-cawwww! 🐦",
-             type:"code-block",
-             depth:0,
-             inlineStyleRanges:[],
-             entityRanges:[]
-          }
-       ],
-       entityMap: {
-         type: '',
-         mutability: '',
-         data: ''
-       }
+      blocks: [
+        {
+          text: 'Cats are cool',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        },
+        {
+          text: 'Purr Purr 🐱',
+          type: 'code-block',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        },
+        {
+          text: 'But birds are too!',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        },
+        {
+          text: 'Caw-cawwww! 🐦',
+          type: 'code-block',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        }
+      ],
+      entityMap: {
+        type: '',
+        mutability: '',
+        data: ''
+      }
     };
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
-  })
+  });
 
   it('converts markdown to unclosed code blocks correctly',() => {
     const markdown = '```\nOh no, I only opened a code block';
@@ -589,6 +588,38 @@ describe('mdToDraftjs', () => {
             {
               offset: 7,
               length: 4,
+              key: 0
+            }
+          ]
+        }
+      ]
+    };
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  });
+
+  it('converts markdown to image media correctly', () => {
+    const markdown = '![My Image Name](//images.mine.com/myImage.jpg)';
+    const expectedDraftjs = {
+      entityMap: {
+        0: {
+          type: 'image',
+          mutability: 'IMMUTABLE',
+          data: {
+            url: '//images.mine.com/myImage.jpg',
+            fileName: 'My Image Name'
+          }
+        }
+      },
+      blocks: [
+        {
+          text: ' ',
+          type: 'atomic',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [
+            {
+              offset: 0,
+              length: 1,
               key: 0
             }
           ]

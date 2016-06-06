@@ -24,6 +24,10 @@ The following block syles are supported:
 
 - ordered list
 - unordered list
+- block quote
+
+The following media is supported:
+- images
 
 ## Usage
 Import `mdToDraftjs` and `draftjsToMd` into the React component. When instantiating the draft.js editor, use the `mdToDraftjs` function to convert the default value (in markdown) to draft.js blocks and use the `ContentState.createFromBlockArray()` function to create the immutable draft.js blocks.
@@ -80,5 +84,5 @@ npm run test-dev
 ```
 
 ## To Do
-- block style: block quote
 - block style: code block
+- media: video
