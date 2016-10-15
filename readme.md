@@ -30,9 +30,9 @@ The following media is supported:
 - images
 
 ## Usage
-Import `mdToDraftjs` and `draftjsToMd` into the React component. When instantiating the draft.js editor, use the `mdToDraftjs` function to convert the default value (in markdown) to draft.js blocks and use the `ContentState.createFromBlockArray()` function to create the immutable draft.js blocks.
+Import `mdToDraftjs` and `draftjsToMd` into the React component. When instantiating the draft.js editor, use the `mdToDraftjs` function to convert the default value (in markdown) to draft.js raw js structure and use the `ContentState.createFromBlockArray()` function to create the immutable draft.js raw js structure.
 
-Use the `this.state.editorState.getCurrentContent()` to get the current content and `draftjsToMd(convertToRaw(content).blocks)` to convert it back to markdown. That can be used with whatever onChange functionality used.
+Use the `this.state.editorState.getCurrentContent()` to get the current content and `draftjsToMd(convertToRaw(content))` to convert it back to markdown. That can be used with whatever onChange functionality used.
 
 Below is a code example of the above in some context.
 
@@ -50,8 +50,7 @@ constructor(props) {
   // some default falue in markdown
   const defaultValue = this.props.defaultValue;
   const rawData = mdToDraftjs(defaultValue);
-  const raw = convertFromRaw(rawData);
-  const contentState = ContentState.createFromBlockArray(raw);
+  const contentState = convertFromRaw(rawData);
   const newEditorState = EditorState.createWithContent(contentState);
 
   this.state = {
@@ -67,7 +66,7 @@ constructor(props) {
 
 getMarkdown() {
   const content = this.state.editorState.getCurrentContent();
-  return draftjsToMd(convertToRaw(content).blocks);
+  return draftjsToMd(convertToRaw(content));
 }
 
 [---]
