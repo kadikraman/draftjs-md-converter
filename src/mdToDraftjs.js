@@ -2,7 +2,7 @@
 
 const parse = require('markdown-to-ast').parse;
 
-const inlineStyles = {
+const defaultInlineStyles = {
   Strong: {
     type: 'BOLD',
     symbol: '__'
@@ -13,7 +13,7 @@ const inlineStyles = {
   }
 };
 
-const blockStyles = {
+const defaultBlockStyles = {
   List: 'unordered-list-item',
   Header1: 'header-one',
   Header2: 'header-two',
@@ -24,7 +24,7 @@ const blockStyles = {
   CodeBlock: 'code-block',
 };
 
-const getBlockStyleForMd = node => {
+const getBlockStyleForMd = (node, blockStyles) => {
   const style = node.type;
   const ordered = node.ordered;
   const depth = node.depth;
@@ -67,7 +67,10 @@ const splitMdBlocks = (md) => {
   return splitMdWithCodeBlocks;
 };
 
-const parseMdLine = (line, existingEntities) => {
+const parseMdLine = (line, existingEntities, extraStyles = {}) => {
+  const inlineStyles = { ...defaultInlineStyles, ...extraStyles.inlineStyles };
+  const blockStyles = { ...defaultBlockStyles, ...extraStyles.blockStyles };
+
   const astString = parse(line);
   let text = '';
   const inlineStyleRanges = [];
@@ -78,9 +81,8 @@ const parseMdLine = (line, existingEntities) => {
     inlineStyleRanges.push({ offset, length, style });
   };
 
-  const getRawLength = children => {
-    return children.reduce((prev, current) => prev + current.value.length, 0);
-  };
+  const getRawLength = children =>
+                        children.reduce((prev, current) => prev + current.value.length, 0);
 
   const addLink = child => {
     const entityKey = Object.keys(entityMap).length;
@@ -152,7 +154,7 @@ const parseMdLine = (line, existingEntities) => {
   // add block style if it exists
   let blockStyle = 'unstyled';
   if (astString.children[0]) {
-    const style = getBlockStyleForMd(astString.children[0]);
+    const style = getBlockStyleForMd(astString.children[0], blockStyles);
     if (style) {
       blockStyle = style;
     }
@@ -167,13 +169,13 @@ const parseMdLine = (line, existingEntities) => {
   };
 };
 
-function mdToDraftjs(mdString) {
+function mdToDraftjs(mdString, extraStyles) {
   const paragraphs = splitMdBlocks(mdString);
   const blocks = [];
   let entityMap = {};
 
   paragraphs.forEach(paragraph => {
-    const result = parseMdLine(paragraph, entityMap);
+    const result = parseMdLine(paragraph, entityMap, extraStyles);
     blocks.push({
       text: result.text,
       type: result.blockStyle,

@@ -476,4 +476,85 @@ describe('draftjsToMd', () => {
     const expectedMarkdown = '![My Image Name](//images.mine.com/myImage.jpg)';
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
+
+  describe('custom markdownDict', () => {
+    const customMarkdownDict = {
+      BOLD: '**',
+      STRIKETHROUGH: '~~'
+    };
+
+    it('returns unstyled text correctly', () => {
+      const raw = {
+        blocks: [{
+          text: 'There is no styling anywhere in this text.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        }]
+      };
+      const expectedMarkdown = 'There is no styling anywhere in this text.';
+      draftjsToMd(raw, customMarkdownDict).should.equal(expectedMarkdown);
+    });
+
+    it('converts draftjs blocks to bold markdown with overriden style', () => {
+      const raw = {
+        blocks: [{
+          text: 'No style bold no style.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 9,
+              length: 4,
+              style: 'BOLD'
+            },
+          ],
+          entityRanges: []
+        }]
+      };
+      const expectedMarkdown = 'No style **bold** no style.';
+      draftjsToMd(raw, customMarkdownDict).should.equal(expectedMarkdown);
+    });
+
+    it('converts draftjs blocks to italic markdown with default style', () => {
+      const raw = {
+        blocks: [{
+          text: 'No style italic no style.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 9,
+              length: 6,
+              style: 'ITALIC'
+            },
+          ],
+          entityRanges: []
+        }]
+      };
+      const expectedMarkdown = 'No style *italic* no style.';
+      draftjsToMd(raw, customMarkdownDict).should.equal(expectedMarkdown);
+    });
+
+    it('converts draftjs blocks to strike-through markdown with overriden style', () => {
+      const raw = {
+        blocks: [{
+          text: 'No style strike-through no style.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 9,
+              length: 14,
+              style: 'STRIKETHROUGH'
+            },
+          ],
+          entityRanges: []
+        }]
+      };
+      const expectedMarkdown = 'No style ~~strike-through~~ no style.';
+      draftjsToMd(raw, customMarkdownDict).should.equal(expectedMarkdown);
+    });
+  });
 });
