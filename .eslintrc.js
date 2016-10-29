@@ -1,4 +1,5 @@
 module.exports = {
+  parser: 'babel-eslint',
   extends: 'airbnb',
   env: {
     mocha: true,
@@ -7,8 +8,5 @@ module.exports = {
   rules: {
     strict: 0,
     'comma-dangle': 0
-  },
-  ecmaFeatures: {
-    experimentalObjectRestSpread: true
-  },
+  }
 };
