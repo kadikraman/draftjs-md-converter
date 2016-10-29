@@ -1,8 +1,6 @@
 module.exports = {
+  parser: 'babel-eslint',
   extends: 'airbnb',
-  plugins: [
-    'react'
-  ],
   env: {
     mocha: true,
     node: true
@@ -10,5 +8,5 @@ module.exports = {
   rules: {
     strict: 0,
     'comma-dangle': 0
-  },
+  }
 };
