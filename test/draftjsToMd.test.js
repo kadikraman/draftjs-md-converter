@@ -477,6 +477,26 @@ describe('draftjsToMd', () => {
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
+  it('handles leading and trailing spaces around styled text', () => {
+    const raw = {
+      blocks: [{
+        text: 'No style  bold  no style.',
+        type: 'unstyled',
+        depth: 0,
+        inlineStyleRanges: [
+          {
+            offset: 9,
+            length: 6,
+            style: 'BOLD'
+          },
+        ],
+        entityRanges: []
+      }]
+    };
+    const expectedMarkdown = 'No style  __bold__  no style.';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
+
   describe('custom markdownDict', () => {
     const customMarkdownDict = {
       BOLD: '**',
