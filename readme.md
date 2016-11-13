@@ -30,13 +30,33 @@ The following media is supported:
 - images
 
 ## Usage
-Import `mdToDraftjs` and `draftjsToMd` into the React component. When instantiating the draft.js editor, use the `mdToDraftjs` function to convert the default value (in markdown) to draft.js raw js structure and use the `ContentState.createFromBlockArray()` function to create the immutable draft.js raw js structure.
+### `mdToDraftjs(markdown: String): RawDraftContentState`
+Use [convertToRaw](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) from the `draft-js library` to convert the resulting RawDraftContentState into a draft-js ContentState.
 
-Use the `this.state.editorState.getCurrentContent()` to get the current content and `draftjsToMd(convertToRaw(content))` to convert it back to markdown. That can be used with whatever onChange functionality used.
+### `draftjsToMd(rawData: RawDraftContentState): String`
+Use [convertFromRaw](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) from the `draft-js library` to get the raw RawDraftContentState to then pass into the converter.
 
-Below is a code example of the above in some context.
+### Custom dictionaries
+The default Markdown dictionary is
 
+```js
+{
+  BOLD: '__',
+  ITALIC: '*'
+};
 ```
+This can be extended or overridden by passing it in as a second optional argument to `draftjsToMd`, e.g.
+```js
+const myMdDict = {
+  BOLD: '**',
+  STRIKETHROUGH: '~~'
+};
+const markdown = draftjsToMd(blocks, myMdDict)
+```
+
+## Example
+
+```js
 [---]
 
 import { mdToDraftjs, draftjsToMd } from 'draftjs-md-converter';
@@ -47,7 +67,7 @@ import { EditorState, ContentState, convertToRaw, convertFromRaw } from 'draft-j
 constructor(props) {
   super(props);
 
-  // some default falue in markdown
+  // some default value in markdown
   const defaultValue = this.props.defaultValue;
   const rawData = mdToDraftjs(defaultValue);
   const contentState = convertFromRaw(rawData);
@@ -82,6 +102,7 @@ npm test
 npm run test-dev
 ```
 
-## To Do
-- block style: code block
-- media: video
+## Lint
+```
+npm run lint
+```
