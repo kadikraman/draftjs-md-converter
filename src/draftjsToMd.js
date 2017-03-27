@@ -76,21 +76,24 @@ function fixWhitespacesInsideStyle(text, style) {
   // Text between opening and closing markers
   const body = text.slice(style.range.start, style.range.end);
   // Trimmed text between markers
-  const bodyT = body.trim();
+  const bodyTrimmed = body.trim();
   // Text after closing marker
   const post = text.slice(style.range.end);
 
+  const bodyTrimmedStart = style.range.start + body.indexOf(bodyTrimmed);
+
   // Text between opening marker and trimmed content (leading spaces)
-  const prefix = text.slice(style.range.start, text.indexOf(bodyT));
+  const prefix = text.slice(style.range.start, bodyTrimmedStart);
   // Text between the end of trimmed content and closing marker (trailing spaces)
-  const postfix = text.slice(text.indexOf(bodyT) + bodyT.length, style.range.end);
+  const postfix = text.slice(bodyTrimmedStart + bodyTrimmed.length, style.range.end);
+
 
   // Temporary text that contains trimmed content wrapped into original pre- and post-texts
-  const newText = `${pre}${bodyT}${post}`;
+  const newText = `${pre}${bodyTrimmed}${post}`;
   // Insert leading and trailing spaces between pre-/post- contents and their respective markers
   return newText.replace(
-      `${symbol}${bodyT}${symbol}`,
-      `${prefix}${symbol}${bodyT}${symbol}${postfix}`);
+      `${symbol}${bodyTrimmed}${symbol}`,
+      `${prefix}${symbol}${bodyTrimmed}${symbol}${postfix}`);
 }
 
 function draftjsToMd(raw, extraMarkdownDict) {

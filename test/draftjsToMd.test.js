@@ -497,6 +497,26 @@ describe('draftjsToMd', () => {
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
+  it('handles leading and trailing spaces around styled text without duplicating string', () => {
+    const raw = {
+      blocks: [{
+        text: 'this is a test',
+        type: 'unstyled',
+        depth: 0,
+        inlineStyleRanges: [
+          {
+            offset: 5,
+            length: 2,
+            style: 'BOLD'
+          },
+        ],
+        entityRanges: []
+      }]
+    };
+    const expectedMarkdown = 'this __is__ a test';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
+
   describe('custom markdownDict', () => {
     const customMarkdownDict = {
       BOLD: '**',
