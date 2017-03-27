@@ -20,7 +20,7 @@ The following inline styles are supported:
 - italic
 - H1 - H6
 
-The following block syles are supported:
+The following block styles are supported:
 
 - ordered list
 - unordered list
