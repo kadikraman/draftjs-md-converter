@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "$(npm bin)/eslint src test",
     "test": "$(npm bin)/mocha --compilers js:babel-register && npm run lint",
-    "test-dev": "$(npm bin)/mocha --watch",
+    "test-dev": "$(npm bin)/mocha --compilers js:babel-register --watch",
     "test-brk": "$(npm bin)/mocha --debug-brk",
     "compile": "rm -rf dist && mkdir dist && babel src --out-file dist/index.js",
     "prepublish": "npm run compile"
