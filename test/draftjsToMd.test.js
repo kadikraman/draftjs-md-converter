@@ -353,6 +353,25 @@ describe('draftjsToMd', () => {
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
+  it('converts code blocks width language to markdown correctly', () => {
+    const raw = {
+      blocks: [
+        {
+          data: {
+            language: 'js'
+          },
+          text: 'const country = Estonia;',
+          type: 'code-block',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        }
+      ]
+    };
+    const expectedMarkdown = '```js\nconst country = Estonia;\n```';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
+
   it('converts link entities to markdown correctly', () => {
     const raw = {
       entityMap: {
