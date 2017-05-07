@@ -627,36 +627,39 @@ describe('mdToDraftjs', () => {
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
 
-  it('converts markdown to image media correctly', () => {
-    const markdown = '![My Image Name](//images.mine.com/myImage.jpg)';
-    const expectedDraftjs = {
-      entityMap: {
-        0: {
-          type: 'image',
-          mutability: 'IMMUTABLE',
-          data: {
-            url: '//images.mine.com/myImage.jpg',
-            fileName: 'My Image Name'
-          }
-        }
-      },
-      blocks: [
-        {
-          data: {},
-          text: ' ',
-          type: 'atomic',
-          depth: 0,
-          inlineStyleRanges: [],
-          entityRanges: [
-            {
-              offset: 0,
-              length: 1,
-              key: 0
+  describe('Images', () => {
+    it('converts markdown to image media correctly', () => {
+      const markdown = '![My Image Name](//images.mine.com/myImage.jpg)';
+      const expectedDraftjs = {
+        entityMap: {
+          0: {
+            type: 'IMAGE',
+            mutability: 'IMMUTABLE',
+            data: {
+              url: '//images.mine.com/myImage.jpg',
+              src: '//images.mine.com/myImage.jpg',
+              fileName: 'My Image Name'
             }
-          ]
-        }
-      ]
-    };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+          }
+        },
+        blocks: [
+          {
+            data: {},
+            text: ' ',
+            type: 'atomic',
+            depth: 0,
+            inlineStyleRanges: [],
+            entityRanges: [
+              {
+                offset: 0,
+                length: 1,
+                key: 0
+              }
+            ]
+          }
+        ]
+      };
+      mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    });
   });
 });

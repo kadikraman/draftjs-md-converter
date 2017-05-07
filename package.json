@@ -1,6 +1,6 @@
 {
   "name": "draftjs-md-converter",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Converter for converting Draft.js state into Markdown and vice versa",
   "main": "dist/index.js",
   "scripts": {

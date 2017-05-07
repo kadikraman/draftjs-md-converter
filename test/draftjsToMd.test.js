@@ -488,40 +488,6 @@ describe('draftjsToMd', () => {
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
-  it('converts image media to markdown correctly', () => {
-    const raw = {
-      entityMap: {
-        1: {
-          type: 'image',
-          mutability: 'IMMUTABLE',
-          data: {
-            url: '//images.mine.com/myImage.jpg',
-            fileName: 'My Image Name'
-          }
-        }
-      },
-      blocks: [
-        {
-          data: {},
-          key: 'fag2v',
-          text: ' ',
-          type: 'atomic',
-          depth: 0,
-          inlineStyleRanges: [],
-          entityRanges: [
-            {
-              offset: 0,
-              length: 1,
-              key: 1
-            }
-          ]
-        }
-      ]
-    };
-    const expectedMarkdown = '![My Image Name](//images.mine.com/myImage.jpg)';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
-  });
-
   it('handles leading and trailing spaces around styled text', () => {
     const raw = {
       blocks: [{
@@ -646,6 +612,75 @@ describe('draftjsToMd', () => {
       };
       const expectedMarkdown = 'No style ~~strike-through~~ no style.';
       draftjsToMd(raw, customMarkdownDict).should.equal(expectedMarkdown);
+    });
+
+    describe('Images', () => {
+      it('converts image media to markdown correctly with url/filename', () => {
+        const raw = {
+          entityMap: {
+            1: {
+              type: 'image',
+              mutability: 'IMMUTABLE',
+              data: {
+                url: '//images.mine.com/myImage.jpg',
+                fileName: 'My Image Name'
+              }
+            }
+          },
+          blocks: [
+            {
+              data: {},
+              key: 'fag2v',
+              text: ' ',
+              type: 'atomic',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [
+                {
+                  offset: 0,
+                  length: 1,
+                  key: 1
+                }
+              ]
+            }
+          ]
+        };
+        const expectedMarkdown = '![My Image Name](//images.mine.com/myImage.jpg)';
+        draftjsToMd(raw).should.equal(expectedMarkdown);
+      });
+
+      it('converts image media to markdown correctly with src format', () => {
+        const raw = {
+          entityMap: {
+            1: {
+              type: 'image',
+              mutability: 'IMMUTABLE',
+              data: {
+                src: '//images.mine.com/myImage.jpg'
+              }
+            }
+          },
+          blocks: [
+            {
+              data: {},
+              key: 'fag2v',
+              text: ' ',
+              type: 'atomic',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [
+                {
+                  offset: 0,
+                  length: 1,
+                  key: 1
+                }
+              ]
+            }
+          ]
+        };
+        const expectedMarkdown = '![](//images.mine.com/myImage.jpg)';
+        draftjsToMd(raw).should.equal(expectedMarkdown);
+      });
     });
   });
 });

@@ -111,11 +111,12 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
   const addImage = child => {
     const entityKey = Object.keys(entityMap).length;
     entityMap[entityKey] = {
-      type: 'image',
+      type: 'IMAGE',
       mutability: 'IMMUTABLE',
       data: {
         url: child.url,
-        fileName: child.alt
+        src: child.url,
+        fileName: child.alt || ''
       }
     };
     entityRanges.push({
