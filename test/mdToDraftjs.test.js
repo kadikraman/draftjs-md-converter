@@ -630,4 +630,23 @@ describe('mdToDraftjs', () => {
       mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
     });
   });
+
+  it('converts markdown to block quotes correctly', () => {
+    const markdown = '> Here is a block quote.';
+    const expectedDraftjs = {
+      entityMap: {
+        data: '',
+        mutability: '',
+        type: '',
+      },
+      blocks: [{
+        text: 'Here is a block quote.',
+        type: 'blockquote',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: [],
+      }]
+    };
+    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+  });
 });

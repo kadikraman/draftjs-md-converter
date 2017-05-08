@@ -630,5 +630,21 @@ describe('draftjsToMd', () => {
         draftjsToMd(raw).should.equal(expectedMarkdown);
       });
     });
+
+    it('converts block quotes to markdown correctly', () => {
+      const raw = {
+        entityMap: {},
+        blocks: [{
+          text: 'Here is a block quote.',
+          type: 'blockquote',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [],
+          data: {}
+        }]
+      };
+      const expectedMarkdown = '> Here is a block quote.';
+      draftjsToMd(raw).should.equal(expectedMarkdown);
+    });
   });
 });

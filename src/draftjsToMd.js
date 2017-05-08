@@ -13,6 +13,7 @@ const blockStyleDict = {
   'header-four': '#### ',
   'header-five': '##### ',
   'header-six': '###### ',
+  blockquote: '> ',
 };
 
 const wrappingBlockStyleDict = {

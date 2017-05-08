@@ -22,6 +22,7 @@ const defaultBlockStyles = {
   Header5: 'header-five',
   Header6: 'header-six',
   CodeBlock: 'code-block',
+  BlockQuote: 'blockquote',
 };
 
 const getBlockStyleForMd = (node, blockStyles) => {

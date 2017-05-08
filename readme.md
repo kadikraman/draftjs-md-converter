@@ -45,7 +45,7 @@ The default Markdown dictionary is
   ITALIC: '*'
 };
 ```
-This can be extended or overridden by passing it in as a second optional argument to `draftjsToMd`, e.g.
+The inline styles extended or overridden by passing it in as a second optional argument to `draftjsToMd`, e.g.
 ```js
 const myMdDict = {
   BOLD: '**',
@@ -53,6 +53,8 @@ const myMdDict = {
 };
 const markdown = draftjsToMd(blocks, myMdDict)
 ```
+
+NOTE: at this point you cannot override block styles!
 
 ## Example
 
