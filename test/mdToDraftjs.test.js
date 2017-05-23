@@ -167,6 +167,45 @@ describe('mdToDraftjs', () => {
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
 
+  it('converts two styles applied to the a link correctly', () => {
+    const markdown = '__*[label](http://example.com/here)*__';
+    const expectedDraftjs = {
+      blocks: [{
+        text: 'label',
+        type: 'unstyled',
+        depth: 0,
+        entityRanges: [{
+          key: 0,
+          length: 5,
+          offset: 0
+        }],
+        inlineStyleRanges: [
+          {
+            length: 0,
+            offset: 0,
+            style: 'BOLD'
+          },
+          {
+            length: 5,
+            offset: 0,
+            style: 'ITALIC'
+          }
+        ]
+      }],
+      entityMap: {
+        0: {
+          type: 'LINK',
+          mutability: 'MUTABLE',
+          data: { url: 'http://example.com/here' }
+        }
+      }
+    };
+
+    const resultDraftJs = mdToDraftjs(markdown);
+    resultDraftJs.should.deep.equal(expectedDraftjs);
+  });
+
+
   it('converts several paragraphs to markdown correctly', () => {
     const markdown =
       '*First __content__* block.\n*Second __content__* block.\n*Third __content__* block.';
