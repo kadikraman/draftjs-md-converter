@@ -39,23 +39,31 @@ const getBlockStyleForMd = (node, blockStyles) => {
   return blockStyles[style];
 };
 
-const joinCodeBlocks = (splitMd) => {
-  const opening = splitMd.indexOf('```');
-  const closing = splitMd.indexOf('```', opening + 1);
+const joinCodeBlocks = (mdArr) => {
+  const mdArrLength = mdArr.length;
+  const result = mdArr.reduce((pre, cur, index) => {
+    let { baffer, draft } = pre;
+    const isCodeBlock = cur.indexOf('```') === 0;
+    const isLastOne = index === (mdArrLength - 1);
 
-  if (opening >= 0 && closing >= 0) {
-    const codeBlock = splitMd.slice(opening, closing + 1);
-    const codeBlockJoined = codeBlock.join('\n');
-    const updatedSplitMarkdown = [
-      ...splitMd.slice(0, opening),
-      codeBlockJoined,
-      ...splitMd.slice(closing + 1)
-    ];
-
-    return joinCodeBlocks(updatedSplitMarkdown);
-  }
-
-  return splitMd;
+    if (draft.length === 0) {
+      if (isCodeBlock) {
+        draft.push(cur);
+      } else {
+        baffer.push(cur);
+      }
+    } else {
+      draft.push(cur);
+      if (isCodeBlock) {
+        baffer.push(draft.join('\n'));
+        draft = [];
+      } else if (isLastOne) {
+        baffer = baffer.concat(draft);
+      }
+    }
+    return { baffer, draft };
+  }, { baffer: [], draft: [] });
+  return result.baffer;
 };
 
 const splitMdBlocks = (md) => {
@@ -155,15 +163,21 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
 
   // add block style if it exists
   let blockStyle = 'unstyled';
+  const data = {};
   if (astString.children[0]) {
     const style = getBlockStyleForMd(astString.children[0], blockStyles);
+    const language = astString.children[0].lang;
     if (style) {
       blockStyle = style;
+    }
+    if (language) {
+      data.language = language;
     }
   }
 
   return {
     text,
+    data,
     inlineStyleRanges,
     entityRanges,
     blockStyle,
@@ -179,6 +193,7 @@ function mdToDraftjs(mdString, extraStyles) {
   paragraphs.forEach(paragraph => {
     const result = parseMdLine(paragraph, entityMap, extraStyles);
     blocks.push({
+      data: result.data,
       text: result.text,
       type: result.blockStyle,
       depth: 0,
