@@ -77,6 +77,31 @@ describe('draftjsToMd', () => {
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
+  it('converts several consecutive styled draftjs blocks to markdown', () => {
+    const raw = {
+      blocks: [{
+        text: 'Want more',
+        type: 'unstyled',
+        depth: 0,
+        inlineStyleRanges: [
+          {
+            offset: 0,
+            length: 4,
+            style: 'ITALIC'
+          },
+          {
+            offset: 5,
+            length: 4,
+            style: 'ITALIC'
+          },
+        ],
+        entityRanges: []
+      }]
+    };
+    const expectedMarkdown = '*Want* *more*';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
+
   it('converts nested styles correctly', () => {
     const raw = {
       blocks: [{
