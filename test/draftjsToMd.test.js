@@ -211,6 +211,54 @@ describe('draftjsToMd', () => {
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
+  it('converts several consecutive styled draftjs paragraphs to markdown', () => {
+    const raw = {
+      blocks: [
+        {
+          text: 'A [b]',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 0,
+              length: 1,
+              style: 'BOLD'
+            },
+          ],
+          entityRanges: []
+        },
+        {
+          text: 'C [d]',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 0,
+              length: 2,
+              style: 'BOLD'
+            },
+          ],
+          entityRanges: []
+        },
+        {
+          text: 'Want more',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 0,
+              length: 9,
+              style: 'BOLD'
+            },
+          ],
+          entityRanges: []
+        }
+      ]
+    };
+    const expectedMarkdown = '__A__ [b]\n__C__ [d]\n__Want more__';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
+
   it('converts unordered lists to markdown correctly', () => {
     const raw = {
       blocks: [

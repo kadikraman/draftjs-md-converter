@@ -106,7 +106,10 @@ function draftjsToMd(raw, extraMarkdownDict) {
   let totalOffset = 0;
 
   raw.blocks.forEach((block, blockIndex) => {
-    if (blockIndex !== 0) returnString += '\n';
+    if (blockIndex !== 0) {
+      returnString += '\n';
+      totalOffset = 0;
+    }
 
     // add block style
     returnString += getBlockStyle(block.type, appliedBlockStyles);
