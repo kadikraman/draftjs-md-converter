@@ -120,7 +120,9 @@ function draftjsToMd(raw, extraMarkdownDict) {
       let newText = text;
 
       // find all styled at this character
-      const stylesStartAtChar = block.inlineStyleRanges.filter(range => range.offset === index);
+      const stylesStartAtChar = block.inlineStyleRanges
+        .filter(range => range.offset === index)
+        .filter(range => markdownDict[range.style]); // disregard styles not defined in the md dict
 
       // add the symbol to the md string and push the style in the applied styles stack
       stylesStartAtChar.forEach(currentStyle => {

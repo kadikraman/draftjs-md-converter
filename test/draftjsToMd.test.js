@@ -52,6 +52,26 @@ describe('draftjsToMd', () => {
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
+  it('converts draftjs blocks to unstyled markdown if the style is not in dict', () => {
+    const raw = {
+      blocks: [{
+        text: 'I should have no style anywhere.',
+        type: 'unstyled',
+        depth: 0,
+        inlineStyleRanges: [
+          {
+            offset: 9,
+            length: 4,
+            style: 'FAKE_STYLE'
+          },
+        ],
+        entityRanges: []
+      }]
+    };
+    const expectedMarkdown = 'I should have no style anywhere.';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
+
   it('converts several italic draftjs blocks to markdown', () => {
     const raw = {
       blocks: [{
