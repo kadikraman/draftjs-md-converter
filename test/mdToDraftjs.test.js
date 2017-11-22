@@ -8,6 +8,7 @@ describe('mdToDraftjs', () => {
     const markdown = '';
     const expectedDraftjs = {
       blocks: [{
+        data: {},
         text: '',
         type: 'unstyled',
         depth: 0,
@@ -27,6 +28,7 @@ describe('mdToDraftjs', () => {
     const markdown = 'There is no styling anywhere in this text.';
     const expectedDraftjs = {
       blocks: [{
+        data: {},
         text: 'There is no styling anywhere in this text.',
         type: 'unstyled',
         depth: 0,
@@ -46,6 +48,7 @@ describe('mdToDraftjs', () => {
     const markdown = 'No style __bold__ no style.';
     const expectedDraftjs = {
       blocks: [{
+        data: {},
         text: 'No style bold no style.',
         type: 'unstyled',
         depth: 0,
@@ -71,6 +74,7 @@ describe('mdToDraftjs', () => {
     const markdown = 'No style *italic* no style *more italic*.';
     const expectedDraftjs = {
       blocks: [{
+        data: {},
         text: 'No style italic no style more italic.',
         type: 'unstyled',
         depth: 0,
@@ -101,6 +105,7 @@ describe('mdToDraftjs', () => {
     const markdown = 'I am a __text *with* nested__ styles.';
     const expectedDraftjs = {
       blocks: [{
+        data: {},
         text: 'I am a text with nested styles.',
         type: 'unstyled',
         depth: 0,
@@ -141,6 +146,7 @@ describe('mdToDraftjs', () => {
     const markdown = '__*Potato*__';
     const expectedDraftjs = {
       blocks: [{
+        data: {},
         text: 'Potato',
         type: 'unstyled',
         depth: 0,
@@ -212,6 +218,7 @@ describe('mdToDraftjs', () => {
     const expectedDraftjs = {
       blocks: [
         {
+          data: {},
           text: 'First content block.',
           type: 'unstyled',
           depth: 0,
@@ -235,6 +242,7 @@ describe('mdToDraftjs', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Second content block.',
           type: 'unstyled',
           depth: 0,
@@ -258,6 +266,7 @@ describe('mdToDraftjs', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Third content block.',
           type: 'unstyled',
           depth: 0,
@@ -295,6 +304,7 @@ describe('mdToDraftjs', () => {
     const expectedDraftjs = {
       blocks: [
         {
+          data: {},
           text: 'First',
           type: 'unordered-list-item',
           depth: 0,
@@ -302,6 +312,7 @@ describe('mdToDraftjs', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Second',
           type: 'unordered-list-item',
           depth: 0,
@@ -323,6 +334,7 @@ describe('mdToDraftjs', () => {
     const expectedDraftjs = {
       blocks: [
         {
+          data: {},
           text: 'First',
           type: 'ordered-list-item',
           depth: 0,
@@ -330,6 +342,7 @@ describe('mdToDraftjs', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Second',
           type: 'ordered-list-item',
           depth: 0,
@@ -337,6 +350,7 @@ describe('mdToDraftjs', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Third',
           type: 'ordered-list-item',
           depth: 0,
@@ -358,6 +372,7 @@ describe('mdToDraftjs', () => {
     const expectedDraftjs = {
       blocks: [
         {
+          data: {},
           text: 'One',
           type: 'header-one',
           depth: 0,
@@ -365,6 +380,7 @@ describe('mdToDraftjs', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Two',
           type: 'header-two',
           depth: 0,
@@ -372,6 +388,7 @@ describe('mdToDraftjs', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Three',
           type: 'header-three',
           depth: 0,
@@ -379,6 +396,7 @@ describe('mdToDraftjs', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Four',
           type: 'header-four',
           depth: 0,
@@ -386,6 +404,7 @@ describe('mdToDraftjs', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Five',
           type: 'header-five',
           depth: 0,
@@ -393,6 +412,7 @@ describe('mdToDraftjs', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Six',
           type: 'header-six',
           depth: 0,
@@ -414,6 +434,7 @@ describe('mdToDraftjs', () => {
     const expectedDraftjs = {
       blocks: [
         {
+          data: {},
           text: 'const country = Estonia;',
           type: 'code-block',
           depth: 0,
@@ -435,6 +456,7 @@ describe('mdToDraftjs', () => {
     const expectedDraftjs = {
       blocks: [
         {
+          data: {},
           text: 'const *country* = Estonia;',
           type: 'code-block',
           depth: 0,
@@ -456,6 +478,7 @@ describe('mdToDraftjs', () => {
     const expectedDraftjs = {
       blocks: [
         {
+          data: {},
           text: 'Cats are cool',
           type: 'unstyled',
           depth: 0,
@@ -463,6 +486,7 @@ describe('mdToDraftjs', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Purr Purr 🐱',
           type: 'code-block',
           depth: 0,
@@ -470,6 +494,7 @@ describe('mdToDraftjs', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'But birds are too!',
           type: 'unstyled',
           depth: 0,
@@ -477,6 +502,7 @@ describe('mdToDraftjs', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Caw-cawwww! 🐦',
           type: 'code-block',
           depth: 0,
@@ -498,6 +524,7 @@ describe('mdToDraftjs', () => {
     const expectedDraftjs = {
       blocks: [
         {
+          data: {},
           text: '',
           type: 'code-block',
           depth: 0,
@@ -505,6 +532,7 @@ describe('mdToDraftjs', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Oh no, I only opened a code block',
           type: 'unstyled',
           depth: 0,
@@ -536,6 +564,7 @@ describe('mdToDraftjs', () => {
       },
       blocks: [
         {
+          data: {},
           text: 'This is a link in text.',
           type: 'unstyled',
           depth: 0,
@@ -574,6 +603,7 @@ describe('mdToDraftjs', () => {
       },
       blocks: [
         {
+          data: {},
           text: 'One link. Two links.',
           type: 'unstyled',
           depth: 0,
@@ -612,6 +642,7 @@ describe('mdToDraftjs', () => {
       },
       blocks: [
         {
+          data: {},
           text: 'I am a bold link.',
           type: 'unstyled',
           depth: 0,
@@ -652,6 +683,7 @@ describe('mdToDraftjs', () => {
         },
         blocks: [
           {
+            data: {},
             text: ' ',
             type: 'atomic',
             depth: 0,

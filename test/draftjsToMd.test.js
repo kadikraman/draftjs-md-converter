@@ -7,6 +7,7 @@ describe('draftjsToMd', () => {
   it('returns an empty string correctly', () => {
     const raw = {
       blocks: [{
+        data: {},
         text: '',
         type: 'unstyled',
         depth: 0,
@@ -21,6 +22,7 @@ describe('draftjsToMd', () => {
   it('returns unstyled text correctly', () => {
     const raw = {
       blocks: [{
+        data: {},
         text: 'There is no styling anywhere in this text.',
         type: 'unstyled',
         depth: 0,
@@ -35,6 +37,7 @@ describe('draftjsToMd', () => {
   it('converts draftjs blocks to bold markdown', () => {
     const raw = {
       blocks: [{
+        data: {},
         text: 'No style bold no style.',
         type: 'unstyled',
         depth: 0,
@@ -75,6 +78,7 @@ describe('draftjsToMd', () => {
   it('converts several italic draftjs blocks to markdown', () => {
     const raw = {
       blocks: [{
+        data: {},
         text: 'No style italic no style more italic.',
         type: 'unstyled',
         depth: 0,
@@ -100,6 +104,7 @@ describe('draftjsToMd', () => {
   it('converts nested styles correctly', () => {
     const raw = {
       blocks: [{
+        data: {},
         text: 'I am a text with nested styles.',
         type: 'unstyled',
         depth: 0,
@@ -125,6 +130,7 @@ describe('draftjsToMd', () => {
   it('converts the last word correctly if it is styled', () => {
     const raw = {
       blocks: [{
+        data: {},
         text: 'I am styled all over.',
         type: 'unstyled',
         depth: 0,
@@ -145,6 +151,7 @@ describe('draftjsToMd', () => {
   it('converts two styles applied to the same word correctly', () => {
     const raw = {
       blocks: [{
+        data: {},
         text: 'Potato',
         type: 'unstyled',
         depth: 0,
@@ -171,6 +178,7 @@ describe('draftjsToMd', () => {
     const raw = {
       blocks: [
         {
+          data: {},
           text: 'First content block.',
           type: 'unstyled',
           depth: 0,
@@ -189,6 +197,7 @@ describe('draftjsToMd', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Second content block.',
           type: 'unstyled',
           depth: 0,
@@ -207,6 +216,7 @@ describe('draftjsToMd', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Third content block.',
           type: 'unstyled',
           depth: 0,
@@ -283,6 +293,7 @@ describe('draftjsToMd', () => {
     const raw = {
       blocks: [
         {
+          data: {},
           text: 'First',
           type: 'unordered-list-item',
           depth: 0,
@@ -290,6 +301,7 @@ describe('draftjsToMd', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Second',
           type: 'unordered-list-item',
           depth: 0,
@@ -306,6 +318,7 @@ describe('draftjsToMd', () => {
     const raw = {
       blocks: [
         {
+          data: {},
           text: 'First',
           type: 'ordered-list-item',
           inlineStyleRanges: [],
@@ -313,6 +326,7 @@ describe('draftjsToMd', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Second',
           type: 'ordered-list-item',
           depth: 0,
@@ -320,6 +334,7 @@ describe('draftjsToMd', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Third',
           type: 'ordered-list-item',
           depth: 0,
@@ -336,6 +351,7 @@ describe('draftjsToMd', () => {
     const raw = {
       blocks: [
         {
+          data: {},
           text: 'One',
           type: 'header-one',
           depth: 0,
@@ -343,6 +359,7 @@ describe('draftjsToMd', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Two',
           type: 'header-two',
           depth: 0,
@@ -350,6 +367,7 @@ describe('draftjsToMd', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Three',
           type: 'header-three',
           depth: 0,
@@ -357,6 +375,7 @@ describe('draftjsToMd', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Four',
           type: 'header-four',
           depth: 0,
@@ -364,6 +383,7 @@ describe('draftjsToMd', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Five',
           type: 'header-five',
           depth: 0,
@@ -371,6 +391,7 @@ describe('draftjsToMd', () => {
           entityRanges: []
         },
         {
+          data: {},
           text: 'Six',
           type: 'header-six',
           depth: 0,
@@ -387,6 +408,7 @@ describe('draftjsToMd', () => {
     const raw = {
       blocks: [
         {
+          data: {},
           text: 'const country = Estonia;',
           type: 'code-block',
           depth: 0,
@@ -396,6 +418,25 @@ describe('draftjsToMd', () => {
       ]
     };
     const expectedMarkdown = '```\nconst country = Estonia;\n```';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
+
+  it('converts code blocks width language to markdown correctly', () => {
+    const raw = {
+      blocks: [
+        {
+          data: {
+            language: 'js'
+          },
+          text: 'const country = Estonia;',
+          type: 'code-block',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        }
+      ]
+    };
+    const expectedMarkdown = '```js\nconst country = Estonia;\n```';
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
@@ -412,6 +453,7 @@ describe('draftjsToMd', () => {
       },
       blocks: [
         {
+          data: {},
           text: 'This is a link in text.',
           type: 'unstyled',
           depth: 0,
@@ -450,6 +492,7 @@ describe('draftjsToMd', () => {
       },
       blocks: [
         {
+          data: {},
           text: 'One link. Two links.',
           type: 'unstyled',
           depth: 0,
@@ -488,6 +531,7 @@ describe('draftjsToMd', () => {
       },
       blocks: [
         {
+          data: {},
           text: 'I am a bold link.',
           type: 'unstyled',
           depth: 0,
@@ -515,6 +559,7 @@ describe('draftjsToMd', () => {
   it('handles leading and trailing spaces around styled text', () => {
     const raw = {
       blocks: [{
+        data: {},
         text: 'No style  bold  no style.',
         type: 'unstyled',
         depth: 0,
@@ -535,6 +580,7 @@ describe('draftjsToMd', () => {
   it('handles leading and trailing spaces around styled text without duplicating string', () => {
     const raw = {
       blocks: [{
+        data: {},
         text: 'this is a test',
         type: 'unstyled',
         depth: 0,
@@ -561,6 +607,7 @@ describe('draftjsToMd', () => {
     it('returns unstyled text correctly', () => {
       const raw = {
         blocks: [{
+          data: {},
           text: 'There is no styling anywhere in this text.',
           type: 'unstyled',
           depth: 0,
@@ -575,6 +622,7 @@ describe('draftjsToMd', () => {
     it('converts draftjs blocks to bold markdown with overriden style', () => {
       const raw = {
         blocks: [{
+          data: {},
           text: 'No style bold no style.',
           type: 'unstyled',
           depth: 0,
@@ -595,6 +643,7 @@ describe('draftjsToMd', () => {
     it('converts draftjs blocks to italic markdown with default style', () => {
       const raw = {
         blocks: [{
+          data: {},
           text: 'No style italic no style.',
           type: 'unstyled',
           depth: 0,
@@ -615,6 +664,7 @@ describe('draftjsToMd', () => {
     it('converts draftjs blocks to strike-through markdown with overriden style', () => {
       const raw = {
         blocks: [{
+          data: {},
           text: 'No style strike-through no style.',
           type: 'unstyled',
           depth: 0,
@@ -647,6 +697,7 @@ describe('draftjsToMd', () => {
           },
           blocks: [
             {
+              data: {},
               key: 'fag2v',
               text: ' ',
               type: 'atomic',
@@ -679,6 +730,7 @@ describe('draftjsToMd', () => {
           },
           blocks: [
             {
+              data: {},
               key: 'fag2v',
               text: ' ',
               type: 'atomic',
