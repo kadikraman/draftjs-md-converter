@@ -97,6 +97,10 @@ function fixWhitespacesInsideStyle(text, style) {
       `${prefix}${symbol}${bodyTrimmed}${symbol}${postfix}`);
 }
 
+function getInlineStyleRangesByLength(inlineStyleRanges) {
+  return [...inlineStyleRanges].sort((a, b) => b.length - a.length);
+}
+
 function draftjsToMd(raw, extraMarkdownDict) {
   const markdownDict = { ...defaultMarkdownDict, ...extraMarkdownDict };
   let returnString = '';
@@ -119,8 +123,10 @@ function draftjsToMd(raw, extraMarkdownDict) {
     returnString += block.text.split('').reduce((text, currentChar, index) => {
       let newText = text;
 
+      const sortedInlineStyleRanges = getInlineStyleRangesByLength(block.inlineStyleRanges);
+
       // find all styled at this character
-      const stylesStartAtChar = block.inlineStyleRanges
+      const stylesStartAtChar = sortedInlineStyleRanges
         .filter(range => range.offset === index)
         .filter(range => markdownDict[range.style]); // disregard styles not defined in the md dict
 
