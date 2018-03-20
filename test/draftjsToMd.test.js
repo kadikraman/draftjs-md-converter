@@ -122,6 +122,31 @@ describe('draftjsToMd', () => {
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
+  it('converts overlapping styles correctly, regardless of whether the "longer" one is first', () => {
+    const raw = {
+      blocks: [{
+        text: 'I start with italic bold and end with only bold.',
+        type: 'unstyled',
+        depth: 0,
+        inlineStyleRanges: [
+          {
+            offset: 0,
+            length: 24,
+            style: 'ITALIC'
+          },
+          {
+            offset: 0,
+            length: 48,
+            style: 'BOLD'
+          },
+        ],
+        entityRanges: []
+      }]
+    };
+    const expectedMarkdown = '__*I start with italic bold* and end with only bold.__';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
+
   it('converts the last word correctly if it is styled', () => {
     const raw = {
       blocks: [{
