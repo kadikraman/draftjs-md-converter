@@ -122,7 +122,7 @@ describe('draftjsToMd', () => {
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
-  it('converts overlapping styles correctly, regardless of whether the "longer" one is first', () => {
+  it('converts overlapping styles correctly, whether or not the "longer" one is first', () => {
     const raw = {
       blocks: [{
         text: 'I start with italic bold and end with only bold.',
