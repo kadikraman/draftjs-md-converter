@@ -28,6 +28,7 @@ The following block styles are supported:
 
 The following media is supported:
 - images
+- videos (with draft-js-video-plugin, parsing can be done using remark-shortcodes)
 
 ## Usage
 ### `mdToDraftjs(markdown: String): RawDraftContentState`
