@@ -1,36 +1,36 @@
-'use strict';
+"use strict";
 
 const defaultMarkdownDict = {
-  BOLD: '__',
-  ITALIC: '*'
+  BOLD: "__",
+  ITALIC: "*"
 };
 
 const blockStyleDict = {
-  'unordered-list-item': '- ',
-  'header-one': '# ',
-  'header-two': '## ',
-  'header-three': '### ',
-  'header-four': '#### ',
-  'header-five': '##### ',
-  'header-six': '###### ',
-  blockquote: '> ',
+  "unordered-list-item": "- ",
+  "header-one": "# ",
+  "header-two": "## ",
+  "header-three": "### ",
+  "header-four": "#### ",
+  "header-five": "##### ",
+  "header-six": "###### ",
+  blockquote: "> "
 };
 
 const wrappingBlockStyleDict = {
-  'code-block': '```'
+  "code-block": "```"
 };
 
 const getBlockStyle = (currentStyle, appliedBlockStyles) => {
-  if (currentStyle === 'ordered-list-item') {
+  if (currentStyle === "ordered-list-item") {
     const counter = appliedBlockStyles.reduce((prev, style) => {
-      if (style === 'ordered-list-item') {
+      if (style === "ordered-list-item") {
         return prev + 1;
       }
       return prev;
     }, 1);
     return `${counter}. `;
   }
-  return blockStyleDict[currentStyle] || '';
+  return blockStyleDict[currentStyle] || "";
 };
 
 const applyWrappingBlockStyle = (currentStyle, content) => {
@@ -43,29 +43,38 @@ const applyWrappingBlockStyle = (currentStyle, content) => {
 };
 
 const applyAtomicStyle = (block, entityMap, content) => {
-  if (block.type !== 'atomic') return content;
+  if (block.type !== "atomic") return content;
   // strip the test that was added in the media block
-  const strippedContent = content.substring(0, content.length - block.text.length);
+  const strippedContent = content.substring(
+    0,
+    content.length - block.text.length
+  );
   const key = block.entityRanges[0].key;
+  const type = entityMap[key].type;
   const data = entityMap[key].data;
-  return `${strippedContent}![${data.fileName || ''}](${data.url || data.src})`;
+  if (type === "draft-js-video-plugin-video") {
+    return `${strippedContent}[[ embed url=${data.url || data.src} ]]`;
+  } else if (type === "image") {
+    return `${strippedContent}![${data.fileName || ""}](${data.url ||
+      data.src})`;
+  }
 };
 
 const getEntityStart = entity => {
   switch (entity.type) {
-    case 'LINK':
-      return '[';
+    case "LINK":
+      return "[";
     default:
-      return '';
+      return "";
   }
 };
 
 const getEntityEnd = entity => {
   switch (entity.type) {
-    case 'LINK':
+    case "LINK":
       return `](${entity.data.url})`;
     default:
-      return '';
+      return "";
   }
 };
 
@@ -86,15 +95,18 @@ function fixWhitespacesInsideStyle(text, style) {
   // Text between opening marker and trimmed content (leading spaces)
   const prefix = text.slice(style.range.start, bodyTrimmedStart);
   // Text between the end of trimmed content and closing marker (trailing spaces)
-  const postfix = text.slice(bodyTrimmedStart + bodyTrimmed.length, style.range.end);
-
+  const postfix = text.slice(
+    bodyTrimmedStart + bodyTrimmed.length,
+    style.range.end
+  );
 
   // Temporary text that contains trimmed content wrapped into original pre- and post-texts
   const newText = `${pre}${bodyTrimmed}${post}`;
   // Insert leading and trailing spaces between pre-/post- contents and their respective markers
   return newText.replace(
-      `${symbol}${bodyTrimmed}${symbol}`,
-      `${prefix}${symbol}${bodyTrimmed}${symbol}${postfix}`);
+    `${symbol}${bodyTrimmed}${symbol}`,
+    `${prefix}${symbol}${bodyTrimmed}${symbol}${postfix}`
+  );
 }
 
 function getInlineStyleRangesByLength(inlineStyleRanges) {
@@ -103,7 +115,7 @@ function getInlineStyleRangesByLength(inlineStyleRanges) {
 
 function draftjsToMd(raw, extraMarkdownDict) {
   const markdownDict = { ...defaultMarkdownDict, ...extraMarkdownDict };
-  let returnString = '';
+  let returnString = "";
   const appliedBlockStyles = [];
 
   // totalOffset is a difference of index position between raw string and enhanced ones
@@ -111,7 +123,7 @@ function draftjsToMd(raw, extraMarkdownDict) {
 
   raw.blocks.forEach((block, blockIndex) => {
     if (blockIndex !== 0) {
-      returnString += '\n';
+      returnString += "\n";
       totalOffset = 0;
     }
 
@@ -120,10 +132,12 @@ function draftjsToMd(raw, extraMarkdownDict) {
     appliedBlockStyles.push(block.type);
 
     const appliedStyles = [];
-    returnString += block.text.split('').reduce((text, currentChar, index) => {
+    returnString += block.text.split("").reduce((text, currentChar, index) => {
       let newText = text;
 
-      const sortedInlineStyleRanges = getInlineStyleRangesByLength(block.inlineStyleRanges);
+      const sortedInlineStyleRanges = getInlineStyleRangesByLength(
+        block.inlineStyleRanges
+      );
 
       // find all styled at this character
       const stylesStartAtChar = sortedInlineStyleRanges
@@ -146,24 +160,29 @@ function draftjsToMd(raw, extraMarkdownDict) {
       });
 
       // check for entityRanges starting and add if existing
-      const entitiesStartAtChar = block.entityRanges.filter(range => range.offset === index);
+      const entitiesStartAtChar = block.entityRanges.filter(
+        range => range.offset === index
+      );
       entitiesStartAtChar.forEach(entity => {
         newText += getEntityStart(raw.entityMap[entity.key]);
       });
-
 
       // add the current character to the md string
       newText += currentChar;
 
       // check for entityRanges ending and add if existing
-      const entitiesEndAtChar = block.entityRanges
-                                    .filter(range => range.offset + range.length - 1 === index);
+      const entitiesEndAtChar = block.entityRanges.filter(
+        range => range.offset + range.length - 1 === index
+      );
       entitiesEndAtChar.forEach(entity => {
         newText += getEntityEnd(raw.entityMap[entity.key]);
       });
 
       // apply the 'ending' tags for any styles that end in the current position in order (stack)
-      while (appliedStyles.length !== 0 && appliedStyles[appliedStyles.length - 1].end === index) {
+      while (
+        appliedStyles.length !== 0 &&
+        appliedStyles[appliedStyles.length - 1].end === index
+      ) {
         const endingStyle = appliedStyles.pop();
         newText += endingStyle.symbol;
 
@@ -171,7 +190,7 @@ function draftjsToMd(raw, extraMarkdownDict) {
       }
 
       return newText;
-    }, '');
+    }, "");
 
     returnString = applyWrappingBlockStyle(block.type, returnString);
     returnString = applyAtomicStyle(block, raw.entityMap, returnString);
