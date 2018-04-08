@@ -157,7 +157,8 @@ describe('draftjsToMd', () => {
         }
       ]
     };
-    const expectedMarkdown = '__*I start with italic bold* and end with only bold.__';
+    const expectedMarkdown =
+      '__*I start with italic bold* and end with only bold.__';
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
@@ -422,7 +423,8 @@ describe('draftjsToMd', () => {
         }
       ]
     };
-    const expectedMarkdown = '# One\n## Two\n### Three\n#### Four\n##### Five\n###### Six';
+    const expectedMarkdown =
+      '# One\n## Two\n### Three\n#### Four\n##### Five\n###### Six';
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
@@ -469,7 +471,8 @@ describe('draftjsToMd', () => {
         }
       ]
     };
-    const expectedMarkdown = 'This is a [link](http://red-badger.com/) in text.';
+    const expectedMarkdown =
+      'This is a [link](http://red-badger.com/) in text.';
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
@@ -716,7 +719,8 @@ describe('draftjsToMd', () => {
             }
           ]
         };
-        const expectedMarkdown = '![My Image Name](//images.mine.com/myImage.jpg)';
+        const expectedMarkdown =
+          '![My Image Name](//images.mine.com/myImage.jpg)';
         draftjsToMd(raw).should.equal(expectedMarkdown);
       });
 
@@ -749,6 +753,40 @@ describe('draftjsToMd', () => {
           ]
         };
         const expectedMarkdown = '![](//images.mine.com/myImage.jpg)';
+        draftjsToMd(raw).should.equal(expectedMarkdown);
+      });
+    });
+
+    describe('Videos', () => {
+      it('converts video media created by draft-js-video-plugin to markdown correctly with src format', () => { // eslint-disable-line max-len
+        const raw = {
+          entityMap: {
+            1: {
+              type: 'draft-js-video-plugin-video',
+              mutability: 'IMMUTABLE',
+              data: {
+                src: '//youtu.be/wfWIs2gFTAM'
+              }
+            }
+          },
+          blocks: [
+            {
+              key: 'ov7r',
+              text: ' ',
+              type: 'atomic',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [
+                {
+                  offset: 0,
+                  length: 1,
+                  key: 1
+                }
+              ]
+            }
+          ]
+        };
+        const expectedMarkdown = '[[ embed url=//youtu.be/wfWIs2gFTAM ]]';
         draftjsToMd(raw).should.equal(expectedMarkdown);
       });
     });

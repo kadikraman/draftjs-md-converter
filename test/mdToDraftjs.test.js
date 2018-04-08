@@ -369,7 +369,8 @@ describe('mdToDraftjs', () => {
   });
 
   it('converts markdown to H1 - H6 correctly', () => {
-    const markdown = '# One\n## Two\n### Three\n#### Four\n##### Five\n###### Six';
+    const markdown =
+      '# One\n## Two\n### Three\n#### Four\n##### Five\n###### Six';
     const expectedDraftjs = {
       blocks: [
         {
@@ -569,7 +570,8 @@ describe('mdToDraftjs', () => {
   });
 
   it('converts markdown to several links correctly', () => {
-    const markdown = 'One [link](http://red-badger.com/). Two [links](http://red-badger.com/).';
+    const markdown =
+      'One [link](http://red-badger.com/). Two [links](http://red-badger.com/).';
     const expectedDraftjs = {
       entityMap: {
         0: {
@@ -660,6 +662,39 @@ describe('mdToDraftjs', () => {
               url: '//images.mine.com/myImage.jpg',
               src: '//images.mine.com/myImage.jpg',
               fileName: 'My Image Name'
+            }
+          }
+        },
+        blocks: [
+          {
+            text: ' ',
+            type: 'atomic',
+            depth: 0,
+            inlineStyleRanges: [],
+            entityRanges: [
+              {
+                offset: 0,
+                length: 1,
+                key: 0
+              }
+            ]
+          }
+        ]
+      };
+      mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    });
+  });
+
+  describe('Videos', () => {
+    it('converts markdown to video media correctly', () => {
+      const markdown = '[[ embed url=//youtu.be/wfWIs2gFTAM ]]';
+      const expectedDraftjs = {
+        entityMap: {
+          0: {
+            type: 'draft-js-video-plugin-video',
+            mutability: 'IMMUTABLE',
+            data: {
+              src: '//youtu.be/wfWIs2gFTAM'
             }
           }
         },

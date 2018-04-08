@@ -30,8 +30,8 @@ The following block styles are supported:
 * block quote
 
 The following media is supported:
-
 * images
+* videos (with draft-js-video-plugin, parsing can be done using remark-shortcodes)
 
 ## Usage
 

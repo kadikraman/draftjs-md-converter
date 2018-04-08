@@ -39,7 +39,12 @@ const getBlockStyleForMd = (node, blockStyles) => {
     node.children[0] &&
     node.children[0].type === 'Image'
   ) {
-    // eslint-disable-line max-len
+    return 'atomic';
+  } else if (
+    node.type === 'Paragraph' &&
+    node.raw &&
+    node.raw.match(/^\[\[\s\S+\s.*\S+\s\]\]/)
+  ) {
     return 'atomic';
   }
   return blockStyles[style];
@@ -89,7 +94,10 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
   };
 
   const getRawLength = children =>
-    children.reduce((prev, current) => prev + (current.value ? current.value.length : 0), 0);
+    children.reduce(
+      (prev, current) => prev + (current.value ? current.value.length : 0),
+      0
+    );
 
   const addLink = child => {
     const entityKey = Object.keys(entityMap).length;
@@ -125,7 +133,30 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
     });
   };
 
+  const addVideo = child => {
+    const string = child.raw;
+
+    // RegEx: [[ embed url=<anything> ]]
+    const url = string.match(/^\[\[\s(?:embed)\s(?:url=(\S+))\s\]\]/)[1];
+
+    const entityKey = Object.keys(entityMap).length;
+    entityMap[entityKey] = {
+      type: 'draft-js-video-plugin-video',
+      mutability: 'IMMUTABLE',
+      data: {
+        src: url
+      }
+    };
+    entityRanges.push({
+      key: entityKey,
+      length: 1,
+      offset: text.length
+    });
+  };
+
   const parseChildren = (child, style) => {
+    // RegEx: [[ embed url=<anything> ]]
+    const videoShortcodeRegEx = /^\[\[\s(?:embed)\s(?:url=(\S+))\s\]\]/;
     switch (child.type) {
       case 'Link':
         addLink(child);
@@ -133,24 +164,35 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
       case 'Image':
         addImage(child);
         break;
+      case 'Paragraph':
+        if (videoShortcodeRegEx.test(child.raw)) {
+          addVideo(child);
+        }
+        break;
       default:
     }
 
-    if (child.children && style) {
+    if (!videoShortcodeRegEx.test(child.raw) && child.children && style) {
       const rawLength = getRawLength(child.children);
       addInlineStyleRange(text.length, rawLength, style.type);
       const newStyle = inlineStyles[child.type];
       child.children.forEach(grandChild => {
         parseChildren(grandChild, newStyle);
       });
-    } else if (child.children) {
+    } else if (!videoShortcodeRegEx.test(child.raw) && child.children) {
       const newStyle = inlineStyles[child.type];
       child.children.forEach(grandChild => {
         parseChildren(grandChild, newStyle);
       });
     } else {
-      if (style) addInlineStyleRange(text.length, child.value.length, style.type);
-      text = `${text}${child.type === 'Image' ? ' ' : child.value}`;
+      if (style) {
+        addInlineStyleRange(text.length, child.value.length, style.type);
+      }
+      text = `${text}${
+        child.type === 'Image' || videoShortcodeRegEx.test(child.raw)
+          ? ' '
+          : child.value
+      }`;
     }
   };
 
