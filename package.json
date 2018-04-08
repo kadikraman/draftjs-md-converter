@@ -4,6 +4,9 @@
   "description": "Converter for converting Draft.js state into Markdown and vice versa",
   "main": "dist/index.js",
   "license": "MIT",
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "scripts": {
     "lint": "$(npm bin)/eslint src test",
     "test": "$(npm bin)/mocha --compilers js:babel-register && npm run lint",
@@ -14,24 +17,13 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ]
+    "*.js": ["eslint --fix", "git add"]
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kadikraman/draftjs-md-converter.git"
   },
-  "keywords": [
-    "Draft.js",
-    "Markdown",
-    "converter",
-    "react",
-    "rich",
-    "text",
-    "editor"
-  ],
+  "keywords": ["Draft.js", "Markdown", "converter", "react", "rich", "text", "editor"],
   "author": "Kadi Kraman",
   "bugs": {
     "url": "https://github.com/kadikraman/draftjs-md-converter/issues"
