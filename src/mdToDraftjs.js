@@ -40,11 +40,7 @@ const getBlockStyleForMd = (node, blockStyles) => {
     node.children[0].type === 'Image'
   ) {
     return 'atomic';
-  } else if (
-    node.type === 'Paragraph' &&
-    node.raw &&
-    node.raw.match(/^\[\[\s\S+\s.*\S+\s\]\]/)
-  ) {
+  } else if (node.type === 'Paragraph' && node.raw && node.raw.match(/^\[\[\s\S+\s.*\S+\s\]\]/)) {
     return 'atomic';
   }
   return blockStyles[style];
@@ -94,10 +90,7 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
   };
 
   const getRawLength = children =>
-    children.reduce(
-      (prev, current) => prev + (current.value ? current.value.length : 0),
-      0
-    );
+    children.reduce((prev, current) => prev + (current.value ? current.value.length : 0), 0);
 
   const addLink = child => {
     const entityKey = Object.keys(entityMap).length;
@@ -189,9 +182,7 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
         addInlineStyleRange(text.length, child.value.length, style.type);
       }
       text = `${text}${
-        child.type === 'Image' || videoShortcodeRegEx.test(child.raw)
-          ? ' '
-          : child.value
+        child.type === 'Image' || videoShortcodeRegEx.test(child.raw) ? ' ' : child.value
       }`;
     }
   };

@@ -45,10 +45,7 @@ const applyWrappingBlockStyle = (currentStyle, content) => {
 const applyAtomicStyle = (block, entityMap, content) => {
   if (block.type !== 'atomic') return content;
   // strip the test that was added in the media block
-  const strippedContent = content.substring(
-    0,
-    content.length - block.text.length
-  );
+  const strippedContent = content.substring(0, content.length - block.text.length);
   const key = block.entityRanges[0].key;
   const type = entityMap[key].type;
   const data = entityMap[key].data;
@@ -130,9 +127,7 @@ function draftjsToMd(raw, extraMarkdownDict) {
     returnString += block.text.split('').reduce((text, currentChar, index) => {
       let newText = text;
 
-      const sortedInlineStyleRanges = getInlineStyleRangesByLength(
-        block.inlineStyleRanges
-      );
+      const sortedInlineStyleRanges = getInlineStyleRangesByLength(block.inlineStyleRanges);
 
       // find all styled at this character
       const stylesStartAtChar = sortedInlineStyleRanges
@@ -155,9 +150,7 @@ function draftjsToMd(raw, extraMarkdownDict) {
       });
 
       // check for entityRanges starting and add if existing
-      const entitiesStartAtChar = block.entityRanges.filter(
-        range => range.offset === index
-      );
+      const entitiesStartAtChar = block.entityRanges.filter(range => range.offset === index);
       entitiesStartAtChar.forEach(entity => {
         newText += getEntityStart(raw.entityMap[entity.key]);
       });
@@ -174,10 +167,7 @@ function draftjsToMd(raw, extraMarkdownDict) {
       });
 
       // apply the 'ending' tags for any styles that end in the current position in order (stack)
-      while (
-        appliedStyles.length !== 0 &&
-        appliedStyles[appliedStyles.length - 1].end === index
-      ) {
+      while (appliedStyles.length !== 0 && appliedStyles[appliedStyles.length - 1].end === index) {
         const endingStyle = appliedStyles.pop();
         newText += endingStyle.symbol;
 
