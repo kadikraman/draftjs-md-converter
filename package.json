@@ -3,29 +3,25 @@
   "version": "0.1.7",
   "description": "Converter for converting Draft.js state into Markdown and vice versa",
   "main": "dist/index.js",
+  "license": "MIT",
   "scripts": {
     "lint": "$(npm bin)/eslint src test",
     "test": "$(npm bin)/mocha --compilers js:babel-register && npm run lint",
     "test-dev": "$(npm bin)/mocha --compilers js:babel-register --watch",
     "test-brk": "$(npm bin)/mocha --debug-brk",
     "compile": "rm -rf dist && mkdir dist && babel src --out-file dist/index.js",
-    "prepublish": "npm run compile"
+    "prepublish": "npm run compile",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": ["eslint --fix", "git add"]
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kadikraman/draftjs-md-converter.git"
   },
-  "keywords": [
-    "Draft.js",
-    "Markdown",
-    "converter",
-    "react",
-    "rich",
-    "text",
-    "editor"
-  ],
+  "keywords": ["Draft.js", "Markdown", "converter", "react", "rich", "text", "editor"],
   "author": "Kadi Kraman",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/kadikraman/draftjs-md-converter/issues"
   },
@@ -43,10 +39,14 @@
     "dirty-chai": "^1.2.2",
     "eslint": "^3.9.0",
     "eslint-config-airbnb": "^6.2.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^4.3.0",
-    "mocha": "^2.4.5"
+    "mocha": "^2.4.5",
+    "prettier": "^1.11.1"
   },
   "dependencies": {
+    "lint-staged": "^7.0.4",
     "markdown-to-ast": "^3.2.3"
   }
 }

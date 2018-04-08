@@ -22,7 +22,7 @@ const defaultBlockStyles = {
   Header5: 'header-five',
   Header6: 'header-six',
   CodeBlock: 'code-block',
-  BlockQuote: 'blockquote',
+  BlockQuote: 'blockquote'
 };
 
 const getBlockStyleForMd = (node, blockStyles) => {
@@ -33,13 +33,19 @@ const getBlockStyleForMd = (node, blockStyles) => {
     return 'ordered-list-item';
   } else if (style === 'Header') {
     return blockStyles[`${style}${depth}`];
-  } else if (node.type === 'Paragraph' && node.children && node.children[0] && node.children[0].type === 'Image') { // eslint-disable-line max-len
+  } else if (
+    node.type === 'Paragraph' &&
+    node.children &&
+    node.children[0] &&
+    node.children[0].type === 'Image'
+  ) {
+    // eslint-disable-line max-len
     return 'atomic';
   }
   return blockStyles[style];
 };
 
-const joinCodeBlocks = (splitMd) => {
+const joinCodeBlocks = splitMd => {
   const opening = splitMd.indexOf('```');
   const closing = splitMd.indexOf('```', opening + 1);
 
@@ -58,7 +64,7 @@ const joinCodeBlocks = (splitMd) => {
   return splitMd;
 };
 
-const splitMdBlocks = (md) => {
+const splitMdBlocks = md => {
   const splitMd = md.split('\n');
 
   // Process the split markdown include the
