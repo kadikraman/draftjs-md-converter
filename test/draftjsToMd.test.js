@@ -157,8 +157,7 @@ describe('draftjsToMd', () => {
         }
       ]
     };
-    const expectedMarkdown =
-      '__*I start with italic bold* and end with only bold.__';
+    const expectedMarkdown = '__*I start with italic bold* and end with only bold.__';
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
@@ -423,8 +422,7 @@ describe('draftjsToMd', () => {
         }
       ]
     };
-    const expectedMarkdown =
-      '# One\n## Two\n### Three\n#### Four\n##### Five\n###### Six';
+    const expectedMarkdown = '# One\n## Two\n### Three\n#### Four\n##### Five\n###### Six';
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
@@ -471,8 +469,7 @@ describe('draftjsToMd', () => {
         }
       ]
     };
-    const expectedMarkdown =
-      'This is a [link](http://red-badger.com/) in text.';
+    const expectedMarkdown = 'This is a [link](http://red-badger.com/) in text.';
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
@@ -719,8 +716,7 @@ describe('draftjsToMd', () => {
             }
           ]
         };
-        const expectedMarkdown =
-          '![My Image Name](//images.mine.com/myImage.jpg)';
+        const expectedMarkdown = '![My Image Name](//images.mine.com/myImage.jpg)';
         draftjsToMd(raw).should.equal(expectedMarkdown);
       });
 
@@ -758,7 +754,8 @@ describe('draftjsToMd', () => {
     });
 
     describe('Videos', () => {
-      it('converts video media created by draft-js-video-plugin to markdown correctly with src format', () => { // eslint-disable-line max-len
+      it('converts video media created by draft-js-video-plugin to markdown correctly with src format', () => {
+        // eslint-disable-line max-len
         const raw = {
           entityMap: {
             1: {

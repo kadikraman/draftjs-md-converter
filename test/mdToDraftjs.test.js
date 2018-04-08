@@ -369,8 +369,7 @@ describe('mdToDraftjs', () => {
   });
 
   it('converts markdown to H1 - H6 correctly', () => {
-    const markdown =
-      '# One\n## Two\n### Three\n#### Four\n##### Five\n###### Six';
+    const markdown = '# One\n## Two\n### Three\n#### Four\n##### Five\n###### Six';
     const expectedDraftjs = {
       blocks: [
         {
@@ -570,8 +569,7 @@ describe('mdToDraftjs', () => {
   });
 
   it('converts markdown to several links correctly', () => {
-    const markdown =
-      'One [link](http://red-badger.com/). Two [links](http://red-badger.com/).';
+    const markdown = 'One [link](http://red-badger.com/). Two [links](http://red-badger.com/).';
     const expectedDraftjs = {
       entityMap: {
         0: {
