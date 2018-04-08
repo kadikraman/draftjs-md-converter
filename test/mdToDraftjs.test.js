@@ -7,13 +7,15 @@ describe('mdToDraftjs', () => {
   it('returns empty text correctly', () => {
     const markdown = '';
     const expectedDraftjs = {
-      blocks: [{
-        text: '',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [],
-        entityRanges: []
-      }],
+      blocks: [
+        {
+          text: '',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        }
+      ],
       entityMap: {
         type: '',
         mutability: '',
@@ -26,13 +28,15 @@ describe('mdToDraftjs', () => {
   it('returns unstyled text correctly', () => {
     const markdown = 'There is no styling anywhere in this text.';
     const expectedDraftjs = {
-      blocks: [{
-        text: 'There is no styling anywhere in this text.',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [],
-        entityRanges: []
-      }],
+      blocks: [
+        {
+          text: 'There is no styling anywhere in this text.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        }
+      ],
       entityMap: {
         type: '',
         mutability: '',
@@ -45,19 +49,21 @@ describe('mdToDraftjs', () => {
   it('converts bold markdown to draftjs blocks', () => {
     const markdown = 'No style __bold__ no style.';
     const expectedDraftjs = {
-      blocks: [{
-        text: 'No style bold no style.',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 9,
-            length: 4,
-            style: 'BOLD'
-          },
-        ],
-        entityRanges: []
-      }],
+      blocks: [
+        {
+          text: 'No style bold no style.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 9,
+              length: 4,
+              style: 'BOLD'
+            }
+          ],
+          entityRanges: []
+        }
+      ],
       entityMap: {
         type: '',
         mutability: '',
@@ -70,24 +76,26 @@ describe('mdToDraftjs', () => {
   it('converts several italic markdown to draftjs blocks', () => {
     const markdown = 'No style *italic* no style *more italic*.';
     const expectedDraftjs = {
-      blocks: [{
-        text: 'No style italic no style more italic.',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 9,
-            length: 6,
-            style: 'ITALIC',
-          },
-          {
-            offset: 25,
-            length: 11,
-            style: 'ITALIC'
-          },
-        ],
-        entityRanges: []
-      }],
+      blocks: [
+        {
+          text: 'No style italic no style more italic.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 9,
+              length: 6,
+              style: 'ITALIC'
+            },
+            {
+              offset: 25,
+              length: 11,
+              style: 'ITALIC'
+            }
+          ],
+          entityRanges: []
+        }
+      ],
       entityMap: {
         type: '',
         mutability: '',
@@ -100,34 +108,36 @@ describe('mdToDraftjs', () => {
   it('converts nested styles correctly', () => {
     const markdown = 'I am a __text *with* nested__ styles.';
     const expectedDraftjs = {
-      blocks: [{
-        text: 'I am a text with nested styles.',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 7,
-            length: 5,
-            style: 'BOLD',
-          },
-          {
-            offset: 12,
-            length: 4,
-            style: 'BOLD',
-          },
-          {
-            offset: 12,
-            length: 4,
-            style: 'ITALIC',
-          },
-          {
-            offset: 16,
-            length: 7,
-            style: 'BOLD',
-          }
-        ],
-        entityRanges: []
-      }],
+      blocks: [
+        {
+          text: 'I am a text with nested styles.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 7,
+              length: 5,
+              style: 'BOLD'
+            },
+            {
+              offset: 12,
+              length: 4,
+              style: 'BOLD'
+            },
+            {
+              offset: 12,
+              length: 4,
+              style: 'ITALIC'
+            },
+            {
+              offset: 16,
+              length: 7,
+              style: 'BOLD'
+            }
+          ],
+          entityRanges: []
+        }
+      ],
       entityMap: {
         type: '',
         mutability: '',
@@ -140,24 +150,26 @@ describe('mdToDraftjs', () => {
   it('converts two styles applied to the same word correctly', () => {
     const markdown = '__*Potato*__';
     const expectedDraftjs = {
-      blocks: [{
-        text: 'Potato',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 0,
-            length: 6,
-            style: 'BOLD',
-          },
-          {
-            offset: 0,
-            length: 6,
-            style: 'ITALIC',
-          }
-        ],
-        entityRanges: [],
-      }],
+      blocks: [
+        {
+          text: 'Potato',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 0,
+              length: 6,
+              style: 'BOLD'
+            },
+            {
+              offset: 0,
+              length: 6,
+              style: 'ITALIC'
+            }
+          ],
+          entityRanges: []
+        }
+      ],
       entityMap: {
         type: '',
         mutability: '',
@@ -170,28 +182,32 @@ describe('mdToDraftjs', () => {
   it('converts two styles applied to the a link correctly', () => {
     const markdown = '__*[label](http://example.com/here)*__';
     const expectedDraftjs = {
-      blocks: [{
-        text: 'label',
-        type: 'unstyled',
-        depth: 0,
-        entityRanges: [{
-          key: 0,
-          length: 5,
-          offset: 0
-        }],
-        inlineStyleRanges: [
-          {
-            length: 0,
-            offset: 0,
-            style: 'BOLD'
-          },
-          {
-            length: 5,
-            offset: 0,
-            style: 'ITALIC'
-          }
-        ]
-      }],
+      blocks: [
+        {
+          text: 'label',
+          type: 'unstyled',
+          depth: 0,
+          entityRanges: [
+            {
+              key: 0,
+              length: 5,
+              offset: 0
+            }
+          ],
+          inlineStyleRanges: [
+            {
+              length: 0,
+              offset: 0,
+              style: 'BOLD'
+            },
+            {
+              length: 5,
+              offset: 0,
+              style: 'ITALIC'
+            }
+          ]
+        }
+      ],
       entityMap: {
         0: {
           type: 'LINK',
@@ -204,7 +220,6 @@ describe('mdToDraftjs', () => {
     const resultDraftJs = mdToDraftjs(markdown);
     resultDraftJs.should.deep.equal(expectedDraftjs);
   });
-
 
   it('converts several paragraphs to markdown correctly', () => {
     const markdown =
@@ -452,7 +467,8 @@ describe('mdToDraftjs', () => {
   });
 
   it('converts multiple markdown to code blocks correctly', () => {
-    const markdown = 'Cats are cool\n```\nPurr Purr 🐱\n```\nBut birds are too!\n```\nCaw-cawwww! 🐦\n```'; // eslint-disable-line max-len
+    const markdown =
+      'Cats are cool\n```\nPurr Purr 🐱\n```\nBut birds are too!\n```\nCaw-cawwww! 🐦\n```'; // eslint-disable-line max-len
     const expectedDraftjs = {
       blocks: [
         {
@@ -521,7 +537,6 @@ describe('mdToDraftjs', () => {
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
 
-
   it('converts link entities to markdown correctly', () => {
     const markdown = 'This is a [link](http://red-badger.com/) in text.';
     const expectedDraftjs = {
@@ -577,9 +592,7 @@ describe('mdToDraftjs', () => {
           text: 'One link. Two links.',
           type: 'unstyled',
           depth: 0,
-          inlineStyleRanges: [
-
-          ],
+          inlineStyleRanges: [],
           entityRanges: [
             {
               offset: 4,
@@ -676,15 +689,17 @@ describe('mdToDraftjs', () => {
       entityMap: {
         data: '',
         mutability: '',
-        type: '',
+        type: ''
       },
-      blocks: [{
-        text: 'Here is a block quote.',
-        type: 'blockquote',
-        depth: 0,
-        inlineStyleRanges: [],
-        entityRanges: [],
-      }]
+      blocks: [
+        {
+          text: 'Here is a block quote.',
+          type: 'blockquote',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        }
+      ]
     };
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });

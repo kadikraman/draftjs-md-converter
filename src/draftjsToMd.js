@@ -13,7 +13,7 @@ const blockStyleDict = {
   'header-four': '#### ',
   'header-five': '##### ',
   'header-six': '###### ',
-  blockquote: '> ',
+  blockquote: '> '
 };
 
 const wrappingBlockStyleDict = {
@@ -88,13 +88,13 @@ function fixWhitespacesInsideStyle(text, style) {
   // Text between the end of trimmed content and closing marker (trailing spaces)
   const postfix = text.slice(bodyTrimmedStart + bodyTrimmed.length, style.range.end);
 
-
   // Temporary text that contains trimmed content wrapped into original pre- and post-texts
   const newText = `${pre}${bodyTrimmed}${post}`;
   // Insert leading and trailing spaces between pre-/post- contents and their respective markers
   return newText.replace(
-      `${symbol}${bodyTrimmed}${symbol}`,
-      `${prefix}${symbol}${bodyTrimmed}${symbol}${postfix}`);
+    `${symbol}${bodyTrimmed}${symbol}`,
+    `${prefix}${symbol}${bodyTrimmed}${symbol}${postfix}`
+  );
 }
 
 function getInlineStyleRangesByLength(inlineStyleRanges) {
@@ -151,13 +151,13 @@ function draftjsToMd(raw, extraMarkdownDict) {
         newText += getEntityStart(raw.entityMap[entity.key]);
       });
 
-
       // add the current character to the md string
       newText += currentChar;
 
       // check for entityRanges ending and add if existing
-      const entitiesEndAtChar = block.entityRanges
-                                    .filter(range => range.offset + range.length - 1 === index);
+      const entitiesEndAtChar = block.entityRanges.filter(
+        range => range.offset + range.length - 1 === index
+      );
       entitiesEndAtChar.forEach(entity => {
         newText += getEntityEnd(raw.entityMap[entity.key]);
       });

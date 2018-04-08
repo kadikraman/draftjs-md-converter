@@ -6,13 +6,15 @@ const should = chai.should(); // eslint-disable-line no-unused-vars
 describe('draftjsToMd', () => {
   it('returns an empty string correctly', () => {
     const raw = {
-      blocks: [{
-        text: '',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [],
-        entityRanges: []
-      }]
+      blocks: [
+        {
+          text: '',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        }
+      ]
     };
     const expectedMarkdown = '';
     draftjsToMd(raw).should.equal(expectedMarkdown);
@@ -20,13 +22,15 @@ describe('draftjsToMd', () => {
 
   it('returns unstyled text correctly', () => {
     const raw = {
-      blocks: [{
-        text: 'There is no styling anywhere in this text.',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [],
-        entityRanges: []
-      }]
+      blocks: [
+        {
+          text: 'There is no styling anywhere in this text.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: []
+        }
+      ]
     };
     const expectedMarkdown = 'There is no styling anywhere in this text.';
     draftjsToMd(raw).should.equal(expectedMarkdown);
@@ -34,19 +38,21 @@ describe('draftjsToMd', () => {
 
   it('converts draftjs blocks to bold markdown', () => {
     const raw = {
-      blocks: [{
-        text: 'No style bold no style.',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 9,
-            length: 4,
-            style: 'BOLD'
-          },
-        ],
-        entityRanges: []
-      }]
+      blocks: [
+        {
+          text: 'No style bold no style.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 9,
+              length: 4,
+              style: 'BOLD'
+            }
+          ],
+          entityRanges: []
+        }
+      ]
     };
     const expectedMarkdown = 'No style __bold__ no style.';
     draftjsToMd(raw).should.equal(expectedMarkdown);
@@ -54,19 +60,21 @@ describe('draftjsToMd', () => {
 
   it('converts draftjs blocks to unstyled markdown if the style is not in dict', () => {
     const raw = {
-      blocks: [{
-        text: 'I should have no style anywhere.',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 9,
-            length: 4,
-            style: 'FAKE_STYLE'
-          },
-        ],
-        entityRanges: []
-      }]
+      blocks: [
+        {
+          text: 'I should have no style anywhere.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 9,
+              length: 4,
+              style: 'FAKE_STYLE'
+            }
+          ],
+          entityRanges: []
+        }
+      ]
     };
     const expectedMarkdown = 'I should have no style anywhere.';
     draftjsToMd(raw).should.equal(expectedMarkdown);
@@ -74,24 +82,26 @@ describe('draftjsToMd', () => {
 
   it('converts several italic draftjs blocks to markdown', () => {
     const raw = {
-      blocks: [{
-        text: 'No style italic no style more italic.',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 9,
-            length: 6,
-            style: 'ITALIC'
-          },
-          {
-            offset: 25,
-            length: 11,
-            style: 'ITALIC'
-          },
-        ],
-        entityRanges: []
-      }]
+      blocks: [
+        {
+          text: 'No style italic no style more italic.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 9,
+              length: 6,
+              style: 'ITALIC'
+            },
+            {
+              offset: 25,
+              length: 11,
+              style: 'ITALIC'
+            }
+          ],
+          entityRanges: []
+        }
+      ]
     };
     const expectedMarkdown = 'No style *italic* no style *more italic*.';
     draftjsToMd(raw).should.equal(expectedMarkdown);
@@ -99,24 +109,26 @@ describe('draftjsToMd', () => {
 
   it('converts nested styles correctly', () => {
     const raw = {
-      blocks: [{
-        text: 'I am a text with nested styles.',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 7,
-            length: 16,
-            style: 'BOLD'
-          },
-          {
-            offset: 12,
-            length: 4,
-            style: 'ITALIC'
-          },
-        ],
-        entityRanges: []
-      }]
+      blocks: [
+        {
+          text: 'I am a text with nested styles.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 7,
+              length: 16,
+              style: 'BOLD'
+            },
+            {
+              offset: 12,
+              length: 4,
+              style: 'ITALIC'
+            }
+          ],
+          entityRanges: []
+        }
+      ]
     };
     const expectedMarkdown = 'I am a __text *with* nested__ styles.';
     draftjsToMd(raw).should.equal(expectedMarkdown);
@@ -124,24 +136,26 @@ describe('draftjsToMd', () => {
 
   it('converts overlapping styles correctly, whether or not the "longer" one is first', () => {
     const raw = {
-      blocks: [{
-        text: 'I start with italic bold and end with only bold.',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 0,
-            length: 24,
-            style: 'ITALIC'
-          },
-          {
-            offset: 0,
-            length: 48,
-            style: 'BOLD'
-          },
-        ],
-        entityRanges: []
-      }]
+      blocks: [
+        {
+          text: 'I start with italic bold and end with only bold.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 0,
+              length: 24,
+              style: 'ITALIC'
+            },
+            {
+              offset: 0,
+              length: 48,
+              style: 'BOLD'
+            }
+          ],
+          entityRanges: []
+        }
+      ]
     };
     const expectedMarkdown = '__*I start with italic bold* and end with only bold.__';
     draftjsToMd(raw).should.equal(expectedMarkdown);
@@ -149,19 +163,21 @@ describe('draftjsToMd', () => {
 
   it('converts the last word correctly if it is styled', () => {
     const raw = {
-      blocks: [{
-        text: 'I am styled all over.',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 0,
-            length: 21,
-            style: 'BOLD',
-          },
-        ],
-        entityRanges: []
-      }]
+      blocks: [
+        {
+          text: 'I am styled all over.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 0,
+              length: 21,
+              style: 'BOLD'
+            }
+          ],
+          entityRanges: []
+        }
+      ]
     };
     const expectedMarkdown = '__I am styled all over.__';
     draftjsToMd(raw).should.equal(expectedMarkdown);
@@ -169,24 +185,26 @@ describe('draftjsToMd', () => {
 
   it('converts two styles applied to the same word correctly', () => {
     const raw = {
-      blocks: [{
-        text: 'Potato',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 0,
-            length: 6,
-            style: 'BOLD'
-          },
-          {
-            offset: 0,
-            length: 6,
-            style: 'ITALIC'
-          }
-        ],
-        entityRanges: []
-      }]
+      blocks: [
+        {
+          text: 'Potato',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 0,
+              length: 6,
+              style: 'BOLD'
+            },
+            {
+              offset: 0,
+              length: 6,
+              style: 'ITALIC'
+            }
+          ],
+          entityRanges: []
+        }
+      ]
     };
     const expectedMarkdown = '__*Potato*__';
     draftjsToMd(raw).should.equal(expectedMarkdown);
@@ -268,7 +286,7 @@ describe('draftjsToMd', () => {
               offset: 0,
               length: 1,
               style: 'BOLD'
-            },
+            }
           ],
           entityRanges: []
         },
@@ -281,7 +299,7 @@ describe('draftjsToMd', () => {
               offset: 0,
               length: 2,
               style: 'BOLD'
-            },
+            }
           ],
           entityRanges: []
         },
@@ -294,7 +312,7 @@ describe('draftjsToMd', () => {
               offset: 0,
               length: 9,
               style: 'BOLD'
-            },
+            }
           ],
           entityRanges: []
         }
@@ -478,9 +496,7 @@ describe('draftjsToMd', () => {
           text: 'One link. Two links.',
           type: 'unstyled',
           depth: 0,
-          inlineStyleRanges: [
-
-          ],
+          inlineStyleRanges: [],
           entityRanges: [
             {
               offset: 4,
@@ -496,7 +512,8 @@ describe('draftjsToMd', () => {
         }
       ]
     };
-    const expectedMarkdown = 'One [link](http://red-badger.com/). Two [links](http://red-badger.com/).';
+    const expectedMarkdown =
+      'One [link](http://red-badger.com/). Two [links](http://red-badger.com/).';
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
@@ -539,19 +556,21 @@ describe('draftjsToMd', () => {
 
   it('handles leading and trailing spaces around styled text', () => {
     const raw = {
-      blocks: [{
-        text: 'No style  bold  no style.',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 9,
-            length: 6,
-            style: 'BOLD'
-          },
-        ],
-        entityRanges: []
-      }]
+      blocks: [
+        {
+          text: 'No style  bold  no style.',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 9,
+              length: 6,
+              style: 'BOLD'
+            }
+          ],
+          entityRanges: []
+        }
+      ]
     };
     const expectedMarkdown = 'No style  __bold__  no style.';
     draftjsToMd(raw).should.equal(expectedMarkdown);
@@ -559,19 +578,21 @@ describe('draftjsToMd', () => {
 
   it('handles leading and trailing spaces around styled text without duplicating string', () => {
     const raw = {
-      blocks: [{
-        text: 'this is a test',
-        type: 'unstyled',
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 5,
-            length: 2,
-            style: 'BOLD'
-          },
-        ],
-        entityRanges: []
-      }]
+      blocks: [
+        {
+          text: 'this is a test',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 5,
+              length: 2,
+              style: 'BOLD'
+            }
+          ],
+          entityRanges: []
+        }
+      ]
     };
     const expectedMarkdown = 'this __is__ a test';
     draftjsToMd(raw).should.equal(expectedMarkdown);
@@ -585,13 +606,15 @@ describe('draftjsToMd', () => {
 
     it('returns unstyled text correctly', () => {
       const raw = {
-        blocks: [{
-          text: 'There is no styling anywhere in this text.',
-          type: 'unstyled',
-          depth: 0,
-          inlineStyleRanges: [],
-          entityRanges: []
-        }]
+        blocks: [
+          {
+            text: 'There is no styling anywhere in this text.',
+            type: 'unstyled',
+            depth: 0,
+            inlineStyleRanges: [],
+            entityRanges: []
+          }
+        ]
       };
       const expectedMarkdown = 'There is no styling anywhere in this text.';
       draftjsToMd(raw, customMarkdownDict).should.equal(expectedMarkdown);
@@ -599,19 +622,21 @@ describe('draftjsToMd', () => {
 
     it('converts draftjs blocks to bold markdown with overriden style', () => {
       const raw = {
-        blocks: [{
-          text: 'No style bold no style.',
-          type: 'unstyled',
-          depth: 0,
-          inlineStyleRanges: [
-            {
-              offset: 9,
-              length: 4,
-              style: 'BOLD'
-            },
-          ],
-          entityRanges: []
-        }]
+        blocks: [
+          {
+            text: 'No style bold no style.',
+            type: 'unstyled',
+            depth: 0,
+            inlineStyleRanges: [
+              {
+                offset: 9,
+                length: 4,
+                style: 'BOLD'
+              }
+            ],
+            entityRanges: []
+          }
+        ]
       };
       const expectedMarkdown = 'No style **bold** no style.';
       draftjsToMd(raw, customMarkdownDict).should.equal(expectedMarkdown);
@@ -619,19 +644,21 @@ describe('draftjsToMd', () => {
 
     it('converts draftjs blocks to italic markdown with default style', () => {
       const raw = {
-        blocks: [{
-          text: 'No style italic no style.',
-          type: 'unstyled',
-          depth: 0,
-          inlineStyleRanges: [
-            {
-              offset: 9,
-              length: 6,
-              style: 'ITALIC'
-            },
-          ],
-          entityRanges: []
-        }]
+        blocks: [
+          {
+            text: 'No style italic no style.',
+            type: 'unstyled',
+            depth: 0,
+            inlineStyleRanges: [
+              {
+                offset: 9,
+                length: 6,
+                style: 'ITALIC'
+              }
+            ],
+            entityRanges: []
+          }
+        ]
       };
       const expectedMarkdown = 'No style *italic* no style.';
       draftjsToMd(raw, customMarkdownDict).should.equal(expectedMarkdown);
@@ -639,19 +666,21 @@ describe('draftjsToMd', () => {
 
     it('converts draftjs blocks to strike-through markdown with overriden style', () => {
       const raw = {
-        blocks: [{
-          text: 'No style strike-through no style.',
-          type: 'unstyled',
-          depth: 0,
-          inlineStyleRanges: [
-            {
-              offset: 9,
-              length: 14,
-              style: 'STRIKETHROUGH'
-            },
-          ],
-          entityRanges: []
-        }]
+        blocks: [
+          {
+            text: 'No style strike-through no style.',
+            type: 'unstyled',
+            depth: 0,
+            inlineStyleRanges: [
+              {
+                offset: 9,
+                length: 14,
+                style: 'STRIKETHROUGH'
+              }
+            ],
+            entityRanges: []
+          }
+        ]
       };
       const expectedMarkdown = 'No style ~~strike-through~~ no style.';
       draftjsToMd(raw, customMarkdownDict).should.equal(expectedMarkdown);
@@ -727,14 +756,16 @@ describe('draftjsToMd', () => {
     it('converts block quotes to markdown correctly', () => {
       const raw = {
         entityMap: {},
-        blocks: [{
-          text: 'Here is a block quote.',
-          type: 'blockquote',
-          depth: 0,
-          inlineStyleRanges: [],
-          entityRanges: [],
-          data: {}
-        }]
+        blocks: [
+          {
+            text: 'Here is a block quote.',
+            type: 'blockquote',
+            depth: 0,
+            inlineStyleRanges: [],
+            entityRanges: [],
+            data: {}
+          }
+        ]
       };
       const expectedMarkdown = '> Here is a block quote.';
       draftjsToMd(raw).should.equal(expectedMarkdown);
