@@ -93,10 +93,7 @@ function fixWhitespacesInsideStyle(text, style) {
   // Text between opening marker and trimmed content (leading spaces)
   const prefix = text.slice(style.range.start, bodyTrimmedStart);
   // Text between the end of trimmed content and closing marker (trailing spaces)
-  const postfix = text.slice(
-    bodyTrimmedStart + bodyTrimmed.length,
-    style.range.end
-  );
+  const postfix = text.slice(bodyTrimmedStart + bodyTrimmed.length, style.range.end);
 
   // Temporary text that contains trimmed content wrapped into original pre- and post-texts
   const newText = `${pre}${bodyTrimmed}${post}`;

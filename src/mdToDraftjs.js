@@ -39,7 +39,6 @@ const getBlockStyleForMd = (node, blockStyles) => {
     node.children[0] &&
     node.children[0].type === 'Image'
   ) {
-    // eslint-disable-line max-len
     return 'atomic';
   } else if (
     node.type === 'Paragraph' &&
