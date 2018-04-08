@@ -14,13 +14,24 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": ["eslint --fix", "git add"]
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kadikraman/draftjs-md-converter.git"
   },
-  "keywords": ["Draft.js", "Markdown", "converter", "react", "rich", "text", "editor"],
+  "keywords": [
+    "Draft.js",
+    "Markdown",
+    "converter",
+    "react",
+    "rich",
+    "text",
+    "editor"
+  ],
   "author": "Kadi Kraman",
   "bugs": {
     "url": "https://github.com/kadikraman/draftjs-md-converter/issues"
@@ -42,11 +53,12 @@
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^4.3.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.0.4",
     "mocha": "^2.4.5",
     "prettier": "^1.11.1"
   },
   "dependencies": {
-    "lint-staged": "^7.0.4",
     "markdown-to-ast": "^3.2.3"
   }
 }
