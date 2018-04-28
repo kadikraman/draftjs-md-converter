@@ -62,6 +62,6 @@
     "prettier": "^1.11.1"
   },
   "dependencies": {
-    "markdown-to-ast": "^3.2.3"
+    "@textlint/markdown-to-ast": "^6.0.8"
   }
 }
