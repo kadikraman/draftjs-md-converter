@@ -736,4 +736,31 @@ describe('mdToDraftjs', () => {
     };
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
+
+  it('parses inline code correctly', () => {
+    const markdown = '`code`';
+    const expectedDraftjs = {
+      blocks: [
+        {
+          text: 'code',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [{ offset: 0, length: 4, style: 'CODE' }],
+          entityRanges: []
+        }
+      ],
+      entityMap: { data: '', mutability: '', type: '' }
+    };
+
+    const customDict = {
+      inlineStyles: {
+        Code: {
+          type: 'CODE',
+          symbol: '`'
+        }
+      }
+    };
+
+    mdToDraftjs(markdown, customDict).should.deep.equal(expectedDraftjs);
+  });
 });
