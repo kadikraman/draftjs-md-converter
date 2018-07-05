@@ -598,6 +598,45 @@ describe('draftjsToMd', () => {
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
+  it('converts block quotes to markdown correctly', () => {
+    const raw = {
+      entityMap: {},
+      blocks: [
+        {
+          text: 'Here is a block quote.',
+          type: 'blockquote',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [],
+          data: {}
+        }
+      ]
+    };
+    const expectedMarkdown = '> Here is a block quote.';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
+
+  it('inline styles do not remove spaces', () => {
+    const raw = {
+      entityMap: {},
+      blocks: [
+        {
+          data: {},
+          depth: 0,
+          entityRanges: [],
+          inlineStyleRanges: [
+            { offset: 0, length: 4, style: 'BOLD' },
+            { offset: 12, length: 4, style: 'ITALIC' }
+          ],
+          text: 'This is not fine',
+          type: 'unstyled'
+        }
+      ]
+    };
+    const expectedMarkdown = '__This__ is not *fine*';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
+
   describe('custom markdownDict', () => {
     const customMarkdownDict = {
       BOLD: '**',
@@ -685,124 +724,106 @@ describe('draftjsToMd', () => {
       const expectedMarkdown = 'No style ~~strike-through~~ no style.';
       draftjsToMd(raw, customMarkdownDict).should.equal(expectedMarkdown);
     });
+  });
 
-    describe('Images', () => {
-      it('converts image media to markdown correctly with url/filename', () => {
-        const raw = {
-          entityMap: {
-            1: {
-              type: 'image',
-              mutability: 'IMMUTABLE',
-              data: {
-                url: '//images.mine.com/myImage.jpg',
-                fileName: 'My Image Name'
-              }
-            }
-          },
-          blocks: [
-            {
-              key: 'fag2v',
-              text: ' ',
-              type: 'atomic',
-              depth: 0,
-              inlineStyleRanges: [],
-              entityRanges: [
-                {
-                  offset: 0,
-                  length: 1,
-                  key: 1
-                }
-              ]
-            }
-          ]
-        };
-        const expectedMarkdown = '![My Image Name](//images.mine.com/myImage.jpg)';
-        draftjsToMd(raw).should.equal(expectedMarkdown);
-      });
-
-      it('converts image media to markdown correctly with src format', () => {
-        const raw = {
-          entityMap: {
-            1: {
-              type: 'image',
-              mutability: 'IMMUTABLE',
-              data: {
-                src: '//images.mine.com/myImage.jpg'
-              }
-            }
-          },
-          blocks: [
-            {
-              key: 'fag2v',
-              text: ' ',
-              type: 'atomic',
-              depth: 0,
-              inlineStyleRanges: [],
-              entityRanges: [
-                {
-                  offset: 0,
-                  length: 1,
-                  key: 1
-                }
-              ]
-            }
-          ]
-        };
-        const expectedMarkdown = '![](//images.mine.com/myImage.jpg)';
-        draftjsToMd(raw).should.equal(expectedMarkdown);
-      });
-    });
-
-    describe('Videos', () => {
-      it('converts video media created by draft-js-video-plugin to markdown correctly with src format', () => {
-        // eslint-disable-line max-len
-        const raw = {
-          entityMap: {
-            1: {
-              type: 'draft-js-video-plugin-video',
-              mutability: 'IMMUTABLE',
-              data: {
-                src: '//youtu.be/wfWIs2gFTAM'
-              }
-            }
-          },
-          blocks: [
-            {
-              key: 'ov7r',
-              text: ' ',
-              type: 'atomic',
-              depth: 0,
-              inlineStyleRanges: [],
-              entityRanges: [
-                {
-                  offset: 0,
-                  length: 1,
-                  key: 1
-                }
-              ]
-            }
-          ]
-        };
-        const expectedMarkdown = '[[ embed url=//youtu.be/wfWIs2gFTAM ]]';
-        draftjsToMd(raw).should.equal(expectedMarkdown);
-      });
-    });
-
-    it('converts block quotes to markdown correctly', () => {
+  describe('Images', () => {
+    it('converts image media to markdown correctly with url/filename', () => {
       const raw = {
-        entityMap: {},
+        entityMap: {
+          1: {
+            type: 'image',
+            mutability: 'IMMUTABLE',
+            data: {
+              url: '//images.mine.com/myImage.jpg',
+              fileName: 'My Image Name'
+            }
+          }
+        },
         blocks: [
           {
-            text: 'Here is a block quote.',
-            type: 'blockquote',
+            key: 'fag2v',
+            text: ' ',
+            type: 'atomic',
             depth: 0,
             inlineStyleRanges: [],
-            entityRanges: [],
-            data: {}
+            entityRanges: [
+              {
+                offset: 0,
+                length: 1,
+                key: 1
+              }
+            ]
           }
         ]
       };
-      const expectedMarkdown = '> Here is a block quote.';
+      const expectedMarkdown = '![My Image Name](//images.mine.com/myImage.jpg)';
+      draftjsToMd(raw).should.equal(expectedMarkdown);
+    });
+
+    it('converts image media to markdown correctly with src format', () => {
+      const raw = {
+        entityMap: {
+          1: {
+            type: 'image',
+            mutability: 'IMMUTABLE',
+            data: {
+              src: '//images.mine.com/myImage.jpg'
+            }
+          }
+        },
+        blocks: [
+          {
+            key: 'fag2v',
+            text: ' ',
+            type: 'atomic',
+            depth: 0,
+            inlineStyleRanges: [],
+            entityRanges: [
+              {
+                offset: 0,
+                length: 1,
+                key: 1
+              }
+            ]
+          }
+        ]
+      };
+      const expectedMarkdown = '![](//images.mine.com/myImage.jpg)';
+      draftjsToMd(raw).should.equal(expectedMarkdown);
+    });
+  });
+
+  describe('Videos', () => {
+    it('converts video media created by draft-js-video-plugin to markdown correctly with src format', () => {
+      // eslint-disable-line max-len
+      const raw = {
+        entityMap: {
+          1: {
+            type: 'draft-js-video-plugin-video',
+            mutability: 'IMMUTABLE',
+            data: {
+              src: '//youtu.be/wfWIs2gFTAM'
+            }
+          }
+        },
+        blocks: [
+          {
+            key: 'ov7r',
+            text: ' ',
+            type: 'atomic',
+            depth: 0,
+            inlineStyleRanges: [],
+            entityRanges: [
+              {
+                offset: 0,
+                length: 1,
+                key: 1
+              }
+            ]
+          }
+        ]
+      };
+      const expectedMarkdown = '[[ embed url=//youtu.be/wfWIs2gFTAM ]]';
       draftjsToMd(raw).should.equal(expectedMarkdown);
     });
   });
