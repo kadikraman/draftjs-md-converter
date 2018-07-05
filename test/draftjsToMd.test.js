@@ -616,6 +616,27 @@ describe('draftjsToMd', () => {
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
+  it('inline styles do not remove spaces', () => {
+    const raw = {
+      entityMap: {},
+      blocks: [
+        {
+          data: {},
+          depth: 0,
+          entityRanges: [],
+          inlineStyleRanges: [
+            { offset: 0, length: 4, style: 'BOLD' },
+            { offset: 12, length: 4, style: 'ITALIC' }
+          ],
+          text: 'This is not fine',
+          type: 'unstyled'
+        }
+      ]
+    };
+    const expectedMarkdown = '__This__ is not *fine*';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
+
   describe('custom markdownDict', () => {
     const customMarkdownDict = {
       BOLD: '**',

@@ -172,6 +172,7 @@ function draftjsToMd(raw, extraMarkdownDict) {
         newText += endingStyle.symbol;
 
         newText = fixWhitespacesInsideStyle(newText, endingStyle);
+        totalOffset += endingStyle.symbol.length;
       }
 
       return newText;
