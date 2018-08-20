@@ -1,10 +1,19 @@
 tasks:
   build:
     image: 'node:carbon'
-    command: ['yarn install']
+    command:
+      - yarn
+    args:
+      - install
   lint:
     image: 'node:carbon'
-    command: ['yarn lint']
+    command:
+      - yarn
+    args:
+      - lint
   test:
     image: 'node:carbon'
-    command: ['yarn test']
+    command:
+      - yarn
+    args:
+      - test
