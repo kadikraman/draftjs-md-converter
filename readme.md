@@ -6,7 +6,7 @@ Converts rich text content between Draft.js blocks and Markdown.
 
 ## Reasoning and background
 
-This exists because I needed a highly customisable rich text editor which posts to an external API in Markdown. [Draft.js](https://facebook.github.io/draft-js/) to the rescue! Alas, it doesn't ship with any sort of import or export to or from markdown so I've written my own.
+This library exists because I needed a highly customisable rich text editor which posts to an external API in Markdown. [Draft.js](https://facebook.github.io/draft-js/) to the rescue! It provides the editor state but, alas, doesn't ship with any sort of conversion to or from markdown. So, I've written my own.
 
 ## Installation
 
