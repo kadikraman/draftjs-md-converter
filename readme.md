@@ -28,7 +28,7 @@ The following block styles are supported:
 * unordered list
 * block quote
 
-The following media is supported:
+The following media types are supported:
 
 * images
 * videos (with draft-js-video-plugin, parsing can be done using remark-shortcodes)
