@@ -2,11 +2,11 @@
 
 # Draft.js to Markdown to Draft.js converter
 
-Converts content from Draft.js blocks to Markdown and vice versa.
+Converts rich text content between Draft.js blocks and Markdown.
 
 ## Reasoning and background
 
-This exists because I needed a highly customisable rich text editor which posts to an external API in Markdown. [Draft.js](https://facebook.github.io/draft-js/) to the rescue! Alas, it doesn't ship with any sort of import or export to or from markdown so I've written my own.
+This library exists because I needed a highly customisable rich text editor which posts to an external API in Markdown. [Draft.js](https://facebook.github.io/draft-js/) to the rescue! It provides the editor state but, alas, doesn't ship with any sort of conversion to or from markdown. So, I've written my own.
 
 ## Installation
 
@@ -28,17 +28,19 @@ The following block styles are supported:
 * unordered list
 * block quote
 
-The following media is supported:
+The following media types are supported:
 
 * images
 * videos (with draft-js-video-plugin, parsing can be done using remark-shortcodes)
 
 ## Usage
 
+### Converting from Markdown to Draft.js
 ### `mdToDraftjs(markdown: String): RawDraftContentState`
 
 Use [convertToRaw](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) from the `draft-js library` to convert the resulting RawDraftContentState into a draft-js ContentState.
 
+### Converting from Draft.js to Markdown
 ### `draftjsToMd(rawData: RawDraftContentState): String`
 
 Use [convertFromRaw](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) from the `draft-js library` to get the raw RawDraftContentState to then pass into the converter.
@@ -54,7 +56,7 @@ The default Markdown dictionary is
 };
 ```
 
-The inline styles extended or overridden by passing it in as a second optional argument to `draftjsToMd`, e.g.
+The inline styles can be extended or overridden by passing a custom dictionary object as a second optional argument to `draftjsToMd`, e.g.
 
 ```js
 const myMdDict = {
@@ -64,7 +66,7 @@ const myMdDict = {
 const markdown = draftjsToMd(blocks, myMdDict);
 ```
 
-NOTE: at this point you cannot override block styles!
+__NOTE: at this point you cannot override block styles!__
 
 ## Example
 
