@@ -56,7 +56,7 @@ The default Markdown dictionary is
 };
 ```
 
-The inline styles extended or overridden by passing it in as a second optional argument to `draftjsToMd`, e.g.
+The inline styles can be extended or overridden by passing a custom dictionary object as a second optional argument to `draftjsToMd`, e.g.
 
 ```js
 const myMdDict = {
