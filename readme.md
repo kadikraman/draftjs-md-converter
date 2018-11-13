@@ -66,7 +66,7 @@ const myMdDict = {
 const markdown = draftjsToMd(blocks, myMdDict);
 ```
 
-NOTE: at this point you cannot override block styles!
+__NOTE: at this point you cannot override block styles!__
 
 ## Example
 
