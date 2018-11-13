@@ -2,7 +2,7 @@
 
 # Draft.js to Markdown to Draft.js converter
 
-Converts content from Draft.js blocks to Markdown and vice versa.
+Converts rich text content between Draft.js blocks and Markdown.
 
 ## Reasoning and background
 
