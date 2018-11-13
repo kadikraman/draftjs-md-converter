@@ -35,12 +35,12 @@ The following media types are supported:
 
 ## Usage
 
-### Converting from Markdown to DraftJS
+### Converting from Markdown to Draft.js
 ### `mdToDraftjs(markdown: String): RawDraftContentState`
 
 Use [convertToRaw](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) from the `draft-js library` to convert the resulting RawDraftContentState into a draft-js ContentState.
 
-### Converting from DraftJS to Markdown
+### Converting from Draft.js to Markdown
 ### `draftjsToMd(rawData: RawDraftContentState): String`
 
 Use [convertFromRaw](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) from the `draft-js library` to get the raw RawDraftContentState to then pass into the converter.
