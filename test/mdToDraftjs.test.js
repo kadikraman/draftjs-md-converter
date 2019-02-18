@@ -763,4 +763,33 @@ describe('mdToDraftjs', () => {
 
     mdToDraftjs(markdown, customDict).should.deep.equal(expectedDraftjs);
   });
+  it('parses inline code mixed with other styles correctly', () => {
+    const markdown = '__`code`__';
+    const expectedDraftjs = {
+      blocks: [
+        {
+          text: 'code',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            { offset: 0, length: 4, style: 'BOLD' },
+            { offset: 0, length: 4, style: 'CODE' }
+          ],
+          entityRanges: []
+        }
+      ],
+      entityMap: { data: '', mutability: '', type: '' }
+    };
+
+    const customDict = {
+      inlineStyles: {
+        Code: {
+          type: 'CODE',
+          symbol: '`'
+        }
+      }
+    };
+
+    mdToDraftjs(markdown, customDict).should.deep.equal(expectedDraftjs);
+  });
 });

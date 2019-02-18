@@ -180,8 +180,7 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
     } else {
       if (style) {
         addInlineStyleRange(text.length, child.value.length, style.type);
-      }
-      if (inlineStyles[child.type]) {
+      } else if (inlineStyles[child.type]) {
         addInlineStyleRange(text.length, child.value.length, inlineStyles[child.type].type);
       }
       text = `${text}${
