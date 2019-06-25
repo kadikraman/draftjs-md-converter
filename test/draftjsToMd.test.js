@@ -430,7 +430,7 @@ describe('draftjsToMd', () => {
     const raw = {
       blocks: [
         {
-          text: 'There is no styling anywhere in this text.',
+          text: 'Country Code:',
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [],
@@ -445,7 +445,7 @@ describe('draftjsToMd', () => {
         }
       ]
     };
-    const expectedMarkdown = 'There is no styling anywhere in this text.\n```\nconst country = Estonia;\n```';
+    const expectedMarkdown = 'Country Code:\n```\nconst country = Estonia;\n```';
     draftjsToMd(raw).should.equal(expectedMarkdown);
   });
 
