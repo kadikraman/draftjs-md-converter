@@ -107,17 +107,12 @@ function getInlineStyleRangesByLength(inlineStyleRanges) {
 
 function draftjsToMd(raw, extraMarkdownDict) {
   const markdownDict = { ...defaultMarkdownDict, ...extraMarkdownDict };
-  let returnString = '';
   const appliedBlockStyles = [];
 
-  // totalOffset is a difference of index position between raw string and enhanced ones
-  let totalOffset = 0;
-
-  raw.blocks.forEach((block, blockIndex) => {
-    if (blockIndex !== 0) {
-      returnString += '\n';
-      totalOffset = 0;
-    }
+  return raw.blocks.map(block => {
+    // totalOffset is a difference of index position between raw string and enhanced ones
+    let totalOffset = 0;
+    let returnString = '';
 
     // add block style
     returnString += getBlockStyle(block.type, appliedBlockStyles);
@@ -180,8 +175,9 @@ function draftjsToMd(raw, extraMarkdownDict) {
 
     returnString = applyWrappingBlockStyle(block.type, returnString);
     returnString = applyAtomicStyle(block, raw.entityMap, returnString);
-  });
-  return returnString;
+
+    return returnString;
+  }).join('\n');
 }
 
 module.exports.draftjsToMd = draftjsToMd;
