@@ -107,81 +107,82 @@ function getInlineStyleRangesByLength(inlineStyleRanges) {
 
 function draftjsToMd(raw, extraMarkdownDict) {
   const markdownDict = { ...defaultMarkdownDict, ...extraMarkdownDict };
-  let returnString = '';
   const appliedBlockStyles = [];
 
-  // totalOffset is a difference of index position between raw string and enhanced ones
-  let totalOffset = 0;
+  return raw.blocks
+    .map(block => {
+      // totalOffset is a difference of index position between raw string and enhanced ones
+      let totalOffset = 0;
+      let returnString = '';
 
-  raw.blocks.forEach((block, blockIndex) => {
-    if (blockIndex !== 0) {
-      returnString += '\n';
-      totalOffset = 0;
-    }
+      // add block style
+      returnString += getBlockStyle(block.type, appliedBlockStyles);
+      appliedBlockStyles.push(block.type);
 
-    // add block style
-    returnString += getBlockStyle(block.type, appliedBlockStyles);
-    appliedBlockStyles.push(block.type);
+      const appliedStyles = [];
+      returnString += block.text.split('').reduce((text, currentChar, index) => {
+        let newText = text;
 
-    const appliedStyles = [];
-    returnString += block.text.split('').reduce((text, currentChar, index) => {
-      let newText = text;
+        const sortedInlineStyleRanges = getInlineStyleRangesByLength(block.inlineStyleRanges);
 
-      const sortedInlineStyleRanges = getInlineStyleRangesByLength(block.inlineStyleRanges);
+        // find all styled at this character
+        const stylesStartAtChar = sortedInlineStyleRanges
+          .filter(range => range.offset === index)
+          .filter(range => markdownDict[range.style]); // disregard styles not defined in the md dict
 
-      // find all styled at this character
-      const stylesStartAtChar = sortedInlineStyleRanges
-        .filter(range => range.offset === index)
-        .filter(range => markdownDict[range.style]); // disregard styles not defined in the md dict
-
-      // add the symbol to the md string and push the style in the applied styles stack
-      stylesStartAtChar.forEach(currentStyle => {
-        const symbolLength = markdownDict[currentStyle.style].length;
-        newText += markdownDict[currentStyle.style];
-        totalOffset += symbolLength;
-        appliedStyles.push({
-          symbol: markdownDict[currentStyle.style],
-          range: {
-            start: currentStyle.offset + totalOffset,
-            end: currentStyle.offset + currentStyle.length + totalOffset
-          },
-          end: currentStyle.offset + (currentStyle.length - 1)
+        // add the symbol to the md string and push the style in the applied styles stack
+        stylesStartAtChar.forEach(currentStyle => {
+          const symbolLength = markdownDict[currentStyle.style].length;
+          newText += markdownDict[currentStyle.style];
+          totalOffset += symbolLength;
+          appliedStyles.push({
+            symbol: markdownDict[currentStyle.style],
+            range: {
+              start: currentStyle.offset + totalOffset,
+              end: currentStyle.offset + currentStyle.length + totalOffset
+            },
+            end: currentStyle.offset + (currentStyle.length - 1)
+          });
         });
-      });
 
-      // check for entityRanges starting and add if existing
-      const entitiesStartAtChar = block.entityRanges.filter(range => range.offset === index);
-      entitiesStartAtChar.forEach(entity => {
-        newText += getEntityStart(raw.entityMap[entity.key]);
-      });
+        // check for entityRanges starting and add if existing
+        const entitiesStartAtChar = block.entityRanges.filter(range => range.offset === index);
+        entitiesStartAtChar.forEach(entity => {
+          newText += getEntityStart(raw.entityMap[entity.key]);
+        });
 
-      // add the current character to the md string
-      newText += currentChar;
+        // add the current character to the md string
+        newText += currentChar;
 
-      // check for entityRanges ending and add if existing
-      const entitiesEndAtChar = block.entityRanges.filter(
-        range => range.offset + range.length - 1 === index
-      );
-      entitiesEndAtChar.forEach(entity => {
-        newText += getEntityEnd(raw.entityMap[entity.key]);
-      });
+        // check for entityRanges ending and add if existing
+        const entitiesEndAtChar = block.entityRanges.filter(
+          range => range.offset + range.length - 1 === index
+        );
+        entitiesEndAtChar.forEach(entity => {
+          newText += getEntityEnd(raw.entityMap[entity.key]);
+        });
 
-      // apply the 'ending' tags for any styles that end in the current position in order (stack)
-      while (appliedStyles.length !== 0 && appliedStyles[appliedStyles.length - 1].end === index) {
-        const endingStyle = appliedStyles.pop();
-        newText += endingStyle.symbol;
+        // apply the 'ending' tags for any styles that end in the current position in order (stack)
+        while (
+          appliedStyles.length !== 0 &&
+          appliedStyles[appliedStyles.length - 1].end === index
+        ) {
+          const endingStyle = appliedStyles.pop();
+          newText += endingStyle.symbol;
 
-        newText = fixWhitespacesInsideStyle(newText, endingStyle);
-        totalOffset += endingStyle.symbol.length;
-      }
+          newText = fixWhitespacesInsideStyle(newText, endingStyle);
+          totalOffset += endingStyle.symbol.length;
+        }
 
-      return newText;
-    }, '');
+        return newText;
+      }, '');
 
-    returnString = applyWrappingBlockStyle(block.type, returnString);
-    returnString = applyAtomicStyle(block, raw.entityMap, returnString);
-  });
-  return returnString;
+      returnString = applyWrappingBlockStyle(block.type, returnString);
+      returnString = applyAtomicStyle(block, raw.entityMap, returnString);
+
+      return returnString;
+    })
+    .join('\n');
 }
 
 module.exports.draftjsToMd = draftjsToMd;
