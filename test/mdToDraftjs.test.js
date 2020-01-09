@@ -179,7 +179,7 @@ describe('mdToDraftjs', () => {
     mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
   });
 
-  it('converts two styles applied to the a link correctly', () => {
+  it('converts two styles applied outside a link correctly', () => {
     const markdown = '__*[label](http://example.com/here)*__';
     const expectedDraftjs = {
       blocks: [
@@ -196,7 +196,7 @@ describe('mdToDraftjs', () => {
           ],
           inlineStyleRanges: [
             {
-              length: 0,
+              length: 5,
               offset: 0,
               style: 'BOLD'
             },
@@ -204,6 +204,43 @@ describe('mdToDraftjs', () => {
               length: 5,
               offset: 0,
               style: 'ITALIC'
+            }
+          ]
+        }
+      ],
+      entityMap: {
+        0: {
+          type: 'LINK',
+          mutability: 'MUTABLE',
+          data: { url: 'http://example.com/here' }
+        }
+      }
+    };
+
+    const resultDraftJs = mdToDraftjs(markdown);
+    resultDraftJs.should.deep.equal(expectedDraftjs);
+  });
+
+  it('converts a style applied inside a link correctly', () => {
+    const markdown = '[la**b**el](http://example.com/here)';
+    const expectedDraftjs = {
+      blocks: [
+        {
+          text: 'label',
+          type: 'unstyled',
+          depth: 0,
+          entityRanges: [
+            {
+              key: 0,
+              length: 5,
+              offset: 0
+            }
+          ],
+          inlineStyleRanges: [
+            {
+              length: 1,
+              offset: 2,
+              style: 'BOLD'
             }
           ]
         }

@@ -90,7 +90,14 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
   };
 
   const getRawLength = children =>
-    children.reduce((prev, current) => prev + (current.value ? current.value.length : 0), 0);
+    children.reduce((prev, current) => {
+      if (current.value) {
+        return prev + current.value.length;
+      } else if (current.children && current.children.length) {
+        return prev + getRawLength(current.children);
+      }
+      return prev;
+    }, 0);
 
   const addLink = child => {
     const entityKey = Object.keys(entityMap).length;
