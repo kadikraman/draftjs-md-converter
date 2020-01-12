@@ -9,12 +9,11 @@
   },
   "scripts": {
     "lint": "$(npm bin)/eslint src test",
-    "test": "$(npm bin)/mocha --compilers js:babel-register && npm run lint",
+    "test": "$(npm bin)/mocha && npm run lint",
     "test-dev": "$(npm bin)/mocha --compilers js:babel-register --watch",
     "test-brk": "$(npm bin)/mocha --debug-brk",
     "compile": "rm -rf dist && mkdir dist && babel src --out-file dist/index.js",
-    "prepublish": "npm run compile",
-    "precommit": "lint-staged"
+    "prepublish": "npm run compile"
   },
   "lint-staged": {
     "*.js": [
@@ -56,12 +55,17 @@
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^4.3.0",
-    "husky": "^0.14.3",
-    "lint-staged": "^7.0.4",
-    "mocha": "^2.4.5",
-    "prettier": "^1.11.1"
+    "husky": "4.0.7",
+    "lint-staged": "9.5.0",
+    "mocha": "7.0.0",
+    "prettier": "1.19.1"
   },
   "dependencies": {
-    "@textlint/markdown-to-ast": "^6.0.8"
+    "@textlint/markdown-to-ast": "6.1.6"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }

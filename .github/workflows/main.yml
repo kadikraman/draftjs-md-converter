@@ -12,17 +12,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Install dependencies
-        uses: docker://node:8
+        uses: docker://node:10
         with:
           entrypoint: yarn
           args: install --pure-lockfile --audit
       - name: Lint
-        uses: docker://node:8
+        uses: docker://node:10
         with:
           entrypoint: yarn
           args: lint
       - name: Test
-        uses: docker://node:8
+        uses: docker://node:10
         with:
           entrypoint: yarn
           args: test
