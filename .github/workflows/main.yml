@@ -6,18 +6,23 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
+    name: Lint and Test
 
     steps:
-      - uses: actions/checkout@v1
-      - uses: docker://node:8
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Install dependencies
+        uses: docker://node:8
         with:
           entrypoint: yarn
           args: install --pure-lockfile --audit
-      - uses: docker://node:8
+      - name: Lint
+        uses: docker://node:8
         with:
           entrypoint: yarn
           args: lint
-      - uses: docker://node:8
+      - name: Test
+        uses: docker://node:8
         with:
           entrypoint: yarn
           args: test
