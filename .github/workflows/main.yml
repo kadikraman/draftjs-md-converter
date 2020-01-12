@@ -1,0 +1,28 @@
+
+name: CI
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Lint and Test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Install dependencies
+        uses: docker://node:8
+        with:
+          entrypoint: yarn
+          args: install --pure-lockfile --audit
+      - name: Lint
+        uses: docker://node:8
+        with:
+          entrypoint: yarn
+          args: lint
+      - name: Test
+        uses: docker://node:8
+        with:
+          entrypoint: yarn
+          args: test
