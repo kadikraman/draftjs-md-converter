@@ -1,6 +1,6 @@
 'use strict';
 
-import { parse } from '@textlint/markdown-to-ast';
+const parse = require('@textlint/markdown-to-ast').parse;
 
 const defaultInlineStyles = {
   Strong: {
