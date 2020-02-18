@@ -1,4 +1,4 @@
-const draftjsToMd = require('../src/draftjsToMd.js').draftjsToMd;
+const draftjsToMd = require('../src/draftjsToMd.js');
 const chai = require('chai');
 const expect = chai.expect; // eslint-disable-line no-unused-vars
 const should = chai.should(); // eslint-disable-line no-unused-vars

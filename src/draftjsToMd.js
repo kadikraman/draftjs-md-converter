@@ -185,4 +185,4 @@ function draftjsToMd(raw, extraMarkdownDict) {
     .join('\n');
 }
 
-module.exports.draftjsToMd = draftjsToMd;
+module.exports = draftjsToMd;

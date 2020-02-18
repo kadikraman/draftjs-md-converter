@@ -252,4 +252,4 @@ function mdToDraftjs(mdString, extraStyles) {
   };
 }
 
-module.exports.mdToDraftjs = mdToDraftjs;
+module.exports = mdToDraftjs;
