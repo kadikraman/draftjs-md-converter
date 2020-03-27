@@ -3,6 +3,6 @@ declare module 'draftjs-md-converter' {
   export function draftjsToMd(
     raw: RawDraftContentState,
     extraMarkdownDict?: { [key: string]: string }
-  ): string[];
+  ): string;
   export function mdToDraftjs(mdString: string, extraStyles?: { [key: string]: string });
 }
