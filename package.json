@@ -3,6 +3,7 @@
   "version": "1.4.0",
   "description": "Converter for converting Draft.js state into Markdown and vice versa",
   "main": "dist/index.js",
+  "types": "index.d.ts",
   "license": "MIT",
   "engines": {
     "node": ">=6.0.0"
