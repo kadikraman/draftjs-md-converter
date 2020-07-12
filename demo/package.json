@@ -1,5 +1,6 @@
 {
-  "name": "demo",
+  "name": "draftjs-md-converter-demo",
+  "homepage": "https://kadikraman.github.io/draftjs-md-converter",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

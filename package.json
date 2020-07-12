@@ -16,7 +16,7 @@
     "compile": "rm -rf dist && mkdir dist && parcel build src/index.js",
     "prepublish": "npm run compile",
     "precommit": "lint-staged",
-    "deploy-demo": "cd demo && yarn build && cd .. && gh-pages -d demo/build"
+    "deploy-demo": "cd demo && yarn build && gh-pages -d build"
   },
   "lint-staged": {
     "*.js": [
@@ -41,7 +41,7 @@
   "bugs": {
     "url": "https://github.com/kadikraman/draftjs-md-converter/issues"
   },
-  "homepage": "http://kadikraman.github.io/draftjs-md-converter",
+  "homepage": "https://kadikraman.github.io/draftjs-md-converter",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-eslint": "10.0.3",
