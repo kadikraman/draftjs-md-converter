@@ -4,7 +4,7 @@ import { mdToDraftjs, draftjsToMd } from 'draftjs-md-converter';
 
 import 'draft-js/dist/Draft.css';
 
-const initial = "Here is some *bold* test and here's some _italics_!";
+const initial = "This text is **bold** and this is _italic_!";
 
 function App() {
   const [editorState, setEditorState] = useState(() =>
