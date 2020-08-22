@@ -1,25 +1,26 @@
 {
   "files": {
-    "main.css": "/draftjs-md-converter/static/css/main.a4c99fb1.chunk.css",
-    "main.js": "/draftjs-md-converter/static/js/main.0107a20f.chunk.js",
-    "main.js.map": "/draftjs-md-converter/static/js/main.0107a20f.chunk.js.map",
+    "main.css": "/draftjs-md-converter/static/css/main.34e3e86a.chunk.css",
+    "main.js": "/draftjs-md-converter/static/js/main.be9252f1.chunk.js",
+    "main.js.map": "/draftjs-md-converter/static/js/main.be9252f1.chunk.js.map",
     "runtime-main.js": "/draftjs-md-converter/static/js/runtime-main.1231ae98.js",
     "runtime-main.js.map": "/draftjs-md-converter/static/js/runtime-main.1231ae98.js.map",
     "static/css/2.0949ee41.chunk.css": "/draftjs-md-converter/static/css/2.0949ee41.chunk.css",
-    "static/js/2.68a6203b.chunk.js": "/draftjs-md-converter/static/js/2.68a6203b.chunk.js",
-    "static/js/2.68a6203b.chunk.js.map": "/draftjs-md-converter/static/js/2.68a6203b.chunk.js.map",
+    "static/js/2.2a2dc09c.chunk.js": "/draftjs-md-converter/static/js/2.2a2dc09c.chunk.js",
+    "static/js/2.2a2dc09c.chunk.js.map": "/draftjs-md-converter/static/js/2.2a2dc09c.chunk.js.map",
     "index.html": "/draftjs-md-converter/index.html",
-    "precache-manifest.2f1a40d68fcdcce7ef87b48c342f145f.js": "/draftjs-md-converter/precache-manifest.2f1a40d68fcdcce7ef87b48c342f145f.js",
+    "precache-manifest.db1b4107bc99a6f2b08e3ad51c51dfbd.js": "/draftjs-md-converter/precache-manifest.db1b4107bc99a6f2b08e3ad51c51dfbd.js",
     "service-worker.js": "/draftjs-md-converter/service-worker.js",
     "static/css/2.0949ee41.chunk.css.map": "/draftjs-md-converter/static/css/2.0949ee41.chunk.css.map",
-    "static/css/main.a4c99fb1.chunk.css.map": "/draftjs-md-converter/static/css/main.a4c99fb1.chunk.css.map",
-    "static/js/2.68a6203b.chunk.js.LICENSE.txt": "/draftjs-md-converter/static/js/2.68a6203b.chunk.js.LICENSE.txt"
+    "static/css/main.34e3e86a.chunk.css.map": "/draftjs-md-converter/static/css/main.34e3e86a.chunk.css.map",
+    "static/js/2.2a2dc09c.chunk.js.LICENSE.txt": "/draftjs-md-converter/static/js/2.2a2dc09c.chunk.js.LICENSE.txt",
+    "static/media/copy.svg": "/draftjs-md-converter/static/media/copy.faf52236.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.1231ae98.js",
     "static/css/2.0949ee41.chunk.css",
-    "static/js/2.68a6203b.chunk.js",
-    "static/css/main.a4c99fb1.chunk.css",
-    "static/js/main.0107a20f.chunk.js"
+    "static/js/2.2a2dc09c.chunk.js",
+    "static/css/main.34e3e86a.chunk.css",
+    "static/js/main.be9252f1.chunk.js"
   ]
 }
