@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { Editor, EditorState, convertToRaw, convertFromRaw } from 'draft-js';
 import { mdToDraftjs, draftjsToMd } from 'draftjs-md-converter';
+import ghLogoSrc from './github-logo.png';
 
 import 'draft-js/dist/Draft.css';
 
@@ -33,8 +34,14 @@ function App() {
   }, []);
 
   return (
-    <div style={styles.background}>
-      <h1 style={styles.heading}>Draft.js Markdown Converter Demo</h1>
+    <div className="page">
+      <header className="header">
+        <h1 className="headerText">draftjs-md-converter</h1>
+        <a className="githubLink" href="https://github.com/kadikraman/draftjs-md-converter" target="_blank">
+          <img src={ghLogoSrc} />
+          <span className="githubText">GitHub</span>
+        </a>
+      </header>
       <div style={styles.root}>
         <div style={styles.third}>
           <h2 style={styles.draftHeading}>Draft.js</h2>
@@ -60,6 +67,9 @@ function App() {
           </div>
         </div>
       </div>
+      <footer className="footer">
+        an OSS project by <a href="https://github.com/kadikraman" target="_blank" className="kadiLink">Kadi Kraman</a>
+      </footer>
     </div>
   );
 }
@@ -68,7 +78,7 @@ const styles = {
   background: {
     minHeight: '100vh',
     color: '#fdf6e3',
-    paddingTop: 40
+    // paddingTop: 40
   },
   heading: {
     textAlign: 'center'
