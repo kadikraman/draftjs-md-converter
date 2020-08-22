@@ -1,11 +1,28 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useMemo } from 'react';
 import { Editor, EditorState, convertToRaw, convertFromRaw } from 'draft-js';
 import { mdToDraftjs, draftjsToMd } from 'draftjs-md-converter';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import ghLogoSrc from './github-logo.png';
+import copySrc from './copy.svg';
 
 import 'draft-js/dist/Draft.css';
 
-const initial = "This text is **bold** and this is _italic_!";
+const initial = `# Title time
+This text is __bold__ and this is *italic*!
+
+\`\`\`
+This bit of text is inside a code block!
+\`\`\`
+
+I can also do ordered lists:
+1. One
+2. Two
+3. Three
+
+And unordered lists:
+- one
+- two
+- three`;
 
 function App() {
   const [editorState, setEditorState] = useState(() =>
@@ -13,6 +30,7 @@ function App() {
   );
   const [markdown, setMarkdown] = useState(initial);
   const editorRef = useRef(null);
+  const [showCopied, setShowCopied] = useState(false);
 
   const focus = useCallback(() => {
     editorRef.current.focus();
@@ -33,6 +51,18 @@ function App() {
     setMarkdown(plainText);
   }, []);
 
+  const currentBlocks = useMemo(() => {
+    return JSON.stringify(editorState.getCurrentContent(), null, 2)
+  }, [editorState]);
+
+  const handleCopied = useCallback(() => {
+    setShowCopied(true);
+
+    setTimeout(() => {
+      setShowCopied(false)
+    }, 1000);
+  }, []);
+
   return (
     <div className="page">
       <header className="header">
@@ -42,28 +72,38 @@ function App() {
           <span className="githubText">GitHub</span>
         </a>
       </header>
-      <div style={styles.root}>
-        <div style={styles.third}>
-          <h2 style={styles.draftHeading}>Draft.js</h2>
-          <div style={styles.editor} onClick={focus}>
+      <div className="instructions">
+        <div className="instructionLine">
+          Type in either box to and the result is automaticaly coverted using draftjs-md-converter
+        </div>
+        <div className="instructionLine">
+          Press
+          <img src={copySrc} className="inlineCopy" />
+          to copy the current draft.js blocks to your clipboard
+        </div>
+      </div>
+      <div className="copyContainer">
+        {showCopied ? <span>Copied!</span> :
+        <CopyToClipboard text={currentBlocks} onCopy={handleCopied}>
+          <div className="copyWrapper">
+            <img src={copySrc} />
+          </div>
+        </CopyToClipboard>}
+      </div>
+      <div className="editors">
+        <div className="half">
+          <h2 className={`editorHeading markdownEditorHeading`}>Markdown</h2>
+          <textarea className={`editor markdownEditor`} value={markdown} onChange={handleChangeMarkdown} />
+        </div>
+        <div className="half">
+          <h2 className={`editorHeading draftEditorHeading`}>Draft.js</h2>
+          <div className={`editor draftjsEditor`} onClick={focus}>
             <Editor
               ref={editorRef}
               editorState={editorState}
               onChange={handleChangeDraftJS}
               placeholder="Enter some text..."
             />
-          </div>
-        </div>
-        <div style={styles.third}>
-          <div>
-            <h2 style={styles.markdownHeading}>Markdown</h2>
-            <textarea style={styles.textarea} value={markdown} onChange={handleChangeMarkdown} />
-          </div>
-        </div>
-        <div style={styles.third}>
-          <div style={styles.blocks}>
-            <h2 style={styles.blocksHeading}>Draft.js blocks</h2>
-            <pre>{JSON.stringify(editorState.getCurrentContent(), null, 2)}</pre>
           </div>
         </div>
       </div>
@@ -73,64 +113,5 @@ function App() {
     </div>
   );
 }
-
-const styles = {
-  background: {
-    minHeight: '100vh',
-    color: '#fdf6e3',
-    // paddingTop: 40
-  },
-  heading: {
-    textAlign: 'center'
-  },
-  root: {
-    fontFamily: "'Helvetica', sans-serif",
-    display: 'flex',
-    justifyContent: 'space-evenly'
-  },
-  editor: {
-    border: '1px solid #fdf6e3',
-    cursor: 'text',
-    minHeight: 80,
-    color: '#fdf6e3',
-    padding: 20,
-    height: 'fit-content'
-  },
-  button: {
-    marginTop: 10,
-    textAlign: 'center'
-  },
-  output: {
-    padding: 20,
-    width: '33%',
-    overflow: 'auto'
-  },
-  third: {
-    padding: 20,
-    width: '33%',
-    overflow: 'auto'
-  },
-  textarea: {
-    resize: 'none',
-    padding: 20,
-    backgroundColor: 'transparent',
-    border: '1px solid rgb(204, 204, 204)',
-    color: '#fdf6e3',
-    width: 'calc(100% - 40px)',
-    minHeight: 80
-  },
-  blocks: {
-    width: 'calc(100% - 40px)'
-  },
-  draftHeading: {
-    color: '#d33682'
-  },
-  markdownHeading: {
-    color: '#2aa198'
-  },
-  blocksHeading: {
-    color: '#b58900'
-  }
-};
 
 export default App;
