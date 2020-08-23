@@ -1,6 +1,6 @@
 [![npm version](https://badge.fury.io/js/draftjs-md-converter.svg)](https://badge.fury.io/js/draftjs-md-converter)
 
-<p align="center"><img src="https://raw.githubusercontent.com/kadikraman/draftjs-md-converter/master/src/logo.svg" width=224></p>
+<p align="center"><img src="https://raw.githubusercontent.com/kadikraman/draftjs-md-converter/master/demo/src/logo.svg" width=224></p>
 <h2 align="center">Draft.js to Markdown to Draft.js converter</h2>
 <p align="center">
 <strong>Converts rich text content between Draft.js blocks and Markdown.</strong>
