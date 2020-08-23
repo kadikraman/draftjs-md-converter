@@ -77,7 +77,6 @@ function App() {
           Type in either box to and the result is automaticaly coverted using draftjs-md-converter
         </div>
         <div className="instructionLine">
-          Press
           <img src={copySrc} className="inlineCopy" />
           to copy the current draft.js blocks to your clipboard
         </div>
