@@ -5,6 +5,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import ghLogoSrc from './github-logo.png';
 import copySrc from './copy.svg';
 import clearSrc from './clear.svg';
+import logoSrc from './logo.svg';
 
 import 'draft-js/dist/Draft.css';
 
@@ -73,7 +74,10 @@ function App() {
   return (
     <div className="page">
       <header className="header">
-        <h1 className="headerText">draftjs-md-converter</h1>
+        <div className="logoAndName">
+          <img src={logoSrc} />
+          <h1 className="headerText">draftjs-md-converter</h1>
+        </div>
         <a className="githubLink" href="https://github.com/kadikraman/draftjs-md-converter" target="_blank">
           <img src={ghLogoSrc} />
           <span className="githubText">GitHub</span>

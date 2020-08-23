@@ -55,8 +55,13 @@ a:visited:active {
   margin-bottom: 30px;
 }
 
+.logoAndName {
+  display: flex;
+}
+
 .headerText {
   font-size: 24px;
+  padding-left: 10px;
 }
 
 .githubText {
