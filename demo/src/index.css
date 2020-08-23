@@ -55,8 +55,13 @@ a:visited:active {
   margin-bottom: 30px;
 }
 
+.logoAndName {
+  display: flex;
+}
+
 .headerText {
   font-size: 24px;
+  padding-left: 10px;
 }
 
 .githubText {
@@ -111,16 +116,15 @@ a:visited:active {
 }
 
 .copyContainer {
-  height: 150px;
+  height: 100px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-end;
-  max-width: 1024px;
-  margin: 0 auto;
+  margin-right: 20px;
 }
 
-.copyWrapper {
+.copyButton {
   height: 50px;
   width: 50px;
   border-radius: 12px;
@@ -129,21 +133,29 @@ a:visited:active {
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  border: none;
+}
+
+.copyButton:focus {
+  outline: none;
+  border: 3px solid #4A5899;
 }
 
 .editor {
   background-color: #FFF;
-  padding: 30px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 20px;
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
   border: 4px solid #4A5899;
   cursor: text;
   height: 500px;
+  overflow: scroll;
 }
 
 .markdownEditor {
   border-color: #4A5899;
-  width: calc(100% - 68px);
 }
 
 .draftjsEditor {
@@ -152,7 +164,13 @@ a:visited:active {
 
 .half {
   width: 50%;
-  margin: 20px;
+  margin-right: 10px;
+  margin-left: 10px;
+  position: relative;
+}
+
+.half:last-child{
+  margin-left: 0;
 }
 
 .editors {
@@ -161,6 +179,32 @@ a:visited:active {
   display: flex;
   flex-direction: row;
   margin-bottom: 100px;
+}
+
+@media only screen and (max-width: 600px) {
+  .editors {
+    flex-direction: column;
+  }
+
+  .half {
+    width: auto;
+    margin: 10px;
+  }
+
+  .copyContainer {
+    height: 80px;
+    margin-right: 10px;
+  }
+
+  .editor {
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+  }
+
+  .half:last-child{
+    margin-left: 10px;
+  }
 }
 
 .editorHeading {
@@ -172,12 +216,46 @@ a:visited:active {
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .markdownEditorHeading {
   background-color: #4A5899;
 }
 
-.draftEditorHeading {
+.draftjsEditorHeading {
   background-color: #559CAD;
+}
+
+.clearButton {
+  position: absolute;
+  right: 20px;
+  top: 75px;
+  border: none;
+  cursor: pointer;
+  height: 50px;
+  width: 50px;
+  border-radius: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.markdownButton {
+  background-color: #4A5899;
+}
+
+.draftjsButton {
+  background-color: #559CAD;
+}
+
+.markdownButton:focus {
+  outline: none;
+  border: 3px solid #559CAD;
+}
+
+.draftjsButton:focus {
+  outline: none;
+  border: 3px solid #4A5899;
 }

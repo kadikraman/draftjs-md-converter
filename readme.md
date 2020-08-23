@@ -1,8 +1,10 @@
 [![npm version](https://badge.fury.io/js/draftjs-md-converter.svg)](https://badge.fury.io/js/draftjs-md-converter)
 
-# Draft.js to Markdown to Draft.js converter
-
-Converts rich text content between Draft.js blocks and Markdown.
+<p align="center"><img src="https://raw.githubusercontent.com/kadikraman/draftjs-md-converter/master/src/logo.svg" width=224></p>
+<h2 align="center">Draft.js to Markdown to Draft.js converter</h2>
+<p align="center">
+<strong>Converts rich text content between Draft.js blocks and Markdown.</strong>
+<br><br>
 
 ## Reasoning and background
 
@@ -10,7 +12,7 @@ This library exists because I needed a highly customisable rich text editor whic
 
 ## Installation
 
-```
+```sh
 npm install draftjs-md-converter
 ```
 
@@ -36,11 +38,13 @@ The following media types are supported:
 ## Usage
 
 ### Converting from Markdown to Draft.js
+
 ### `mdToDraftjs(markdown: String): RawDraftContentState`
 
 Use [convertToRaw](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) from the `draft-js library` to convert the resulting RawDraftContentState into a draft-js ContentState.
 
 ### Converting from Draft.js to Markdown
+
 ### `draftjsToMd(rawData: RawDraftContentState): String`
 
 Use [convertFromRaw](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) from the `draft-js library` to get the raw RawDraftContentState to then pass into the converter.
