@@ -15,7 +15,8 @@
     "test-brk": "$(npm bin)/mocha --debug-brk",
     "compile": "rm -rf dist && mkdir dist && parcel build src/index.js",
     "prepublish": "npm run compile",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "deploy-demo": "cd demo && yarn build && gh-pages -d build"
   },
   "lint-staged": {
     "*.js": [
@@ -40,7 +41,7 @@
   "bugs": {
     "url": "https://github.com/kadikraman/draftjs-md-converter/issues"
   },
-  "homepage": "https://github.com/kadikraman/draftjs-md-converter#readme",
+  "homepage": "https://kadikraman.github.io/draftjs-md-converter",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-eslint": "10.0.3",
@@ -55,6 +56,7 @@
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^4.3.0",
     "eslint-scope": "5.0.0",
+    "gh-pages": "^3.1.0",
     "husky": "4.2.1",
     "lint-staged": "^7.0.4",
     "mocha": "^2.4.5",
