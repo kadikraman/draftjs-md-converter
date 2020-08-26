@@ -120,7 +120,7 @@ function draftjsToMd(raw, extraMarkdownDict) {
       appliedBlockStyles.push(block.type);
 
       const appliedStyles = [];
-      returnString += block.text.split('').reduce((text, currentChar, index) => {
+      returnString += Array.from(block.text).reduce((text, currentChar, index) => {
         let newText = text;
 
         const sortedInlineStyleRanges = getInlineStyleRangesByLength(block.inlineStyleRanges);

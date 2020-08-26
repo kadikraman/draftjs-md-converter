@@ -834,4 +834,29 @@ describe('draftjsToMd', () => {
       draftjsToMd(raw).should.equal(expectedMarkdown);
     });
   });
+
+  it('Handles emoji', () => {
+    const raw = {
+      blocks: [
+        {
+          key: '24hvu',
+          text: 'Trying again.🕺',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            {
+              offset: 0,
+              length: 14,
+              style: 'BOLD'
+            }
+          ],
+          entityRanges: [],
+          data: {}
+        }
+      ],
+      entityMap: {}
+    };
+    const expectedMarkdown = '__Trying again.🕺__';
+    draftjsToMd(raw).should.equal(expectedMarkdown);
+  });
 });
