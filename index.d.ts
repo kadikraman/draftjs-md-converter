@@ -4,5 +4,8 @@ declare module 'draftjs-md-converter' {
     raw: RawDraftContentState,
     extraMarkdownDict?: { [key: string]: string }
   ): string;
-  export function mdToDraftjs(mdString: string, extraStyles?: { [key: string]: string });
+  export function mdToDraftjs(
+    mdString: string,
+    extraStyles?: { [key: string]: string }
+  ): RawDraftContentState;
 }
