@@ -3862,10 +3862,10 @@ draft-js@^0.11.6:
     immutable "~3.7.4"
     object-assign "^4.1.1"
 
-draftjs-md-converter@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/draftjs-md-converter/-/draftjs-md-converter-1.4.0.tgz#52155d956126333356f08376ee4d9ef379d03221"
-  integrity sha512-RQ0mhyZMg2+W3RgZbnTLu+AAl4Kghy3ANXYSA/F7ZBbB7fpD2cwCDhR8/vDoPYJfi78Xj0JzwRKLdI62vpJDtw==
+draftjs-md-converter@1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/draftjs-md-converter/-/draftjs-md-converter-1.5.0.tgz#a2277f077964e59677aca331ee90fea79faffdad"
+  integrity sha512-p2vn/cHAIX1Bi+GN77kHcKjooL15+s7f2DGoO4eVZvZajjp1Zrekqp6zq5hm83vUVRHpcAtUZncxLMrnQ/c9Kg==
   dependencies:
     "@textlint/markdown-to-ast" "6.1.6"
 
