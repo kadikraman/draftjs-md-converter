@@ -6,7 +6,8 @@ const options = {
   bundle: true,
   minify: true,
   sourcemap: true,
-  external: ['path']
+  external: ['path'],
+  target: 'es2015'
 };
 (async () => {
   await esbuild
