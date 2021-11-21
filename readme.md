@@ -20,20 +20,20 @@ npm install draftjs-md-converter
 
 The following inline styles are supported:
 
-* bold
-* italic
-* H1 - H6
+- bold
+- italic
+- H1 - H6
 
 The following block styles are supported:
 
-* ordered list
-* unordered list
-* block quote
+- ordered list
+- unordered list
+- block quote
 
 The following media types are supported:
 
-* images
-* videos (with draft-js-video-plugin, parsing can be done using remark-shortcodes)
+- images
+- videos (with draft-js-video-plugin, parsing can be done using remark-shortcodes)
 
 ## Usage
 
@@ -42,6 +42,65 @@ The following media types are supported:
 ### `mdToDraftjs(markdown: String): RawDraftContentState`
 
 Use [convertToRaw](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) from the `draft-js library` to convert the resulting RawDraftContentState into a draft-js ContentState.
+
+### Custom inline styles and block styles
+
+The default supported inline styles:
+
+```js
+{
+  Strong: {
+    type: 'BOLD',
+    symbol: '__'
+  },
+  Emphasis: {
+    type: 'ITALIC',
+    symbol: '*'
+  }
+}
+```
+
+The default supported block styles:
+
+```js
+{
+  List: 'unordered-list-item',
+  Header1: 'header-one',
+  Header2: 'header-two',
+  Header3: 'header-three',
+  Header4: 'header-four',
+  Header5: 'header-five',
+  Header6: 'header-six',
+  CodeBlock: 'code-block',
+  BlockQuote: 'blockquote'
+}
+```
+
+Inline styles and block styles can be extended or overridden by passing a custom styles object as a second optional argument to `mdToDraftjs`, e.g.
+
+```js
+const markdown = "Some `markdown` with ~~deleted~~ text";
+
+const myCustomStyles = {
+  inlineStyles: {
+    Delete: {
+      type: "STRIKETHROUGH",
+      symbol: "~~",
+    },
+    Code: {
+      type: "CODE",
+      symbol: "`",
+    },
+  },
+  blockStyles: {
+    CustomBlock: "custom-block",
+  },
+};
+
+const content = mdToDraftjs(markdown, myCustomStyles);
+```
+
+The keys to the `inlineStyles` object should be valid [AST node types](https://github.com/textlint/textlint/blob/master/docs/txtnode.md).
 
 ### Converting from Draft.js to Markdown
 
@@ -64,13 +123,13 @@ The inline styles can be extended or overridden by passing a custom dictionary o
 
 ```js
 const myMdDict = {
-  BOLD: '**',
-  STRIKETHROUGH: '~~'
+  BOLD: "**",
+  STRIKETHROUGH: "~~",
 };
 const markdown = draftjsToMd(blocks, myMdDict);
 ```
 
-__NOTE: at this point you cannot override block styles!__
+**NOTE: at this point you cannot override block styles!**
 
 ## Example
 
