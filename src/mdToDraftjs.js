@@ -91,7 +91,7 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
     children.reduce((prev, current) => {
       if (current.value) {
         return prev + current.value.length;
-      } else if (current.children && current.children.length) {
+      } else if (current.children?.length) {
         return prev + getRawLength(current.children);
       }
       return prev;
