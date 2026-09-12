@@ -825,4 +825,55 @@ describe('mdToDraftjs', () => {
 
     expect(mdToDraftjs(markdown, customDict)).toStrictEqual(expectedDraftjs);
   });
+
+  describe('nodes without text', () => {
+    it('converts a thematic break to an empty block instead of the word "undefined"', () => {
+      const result = mdToDraftjs('text\n---\nmore');
+      expect(result.blocks.map((block) => [block.type, block.text])).toStrictEqual([
+        ['unstyled', 'text'],
+        ['unstyled', ''],
+        ['unstyled', 'more'],
+      ]);
+    });
+
+    it('lets blockStyles map a thematic break to a custom block type', () => {
+      const result = mdToDraftjs('---', { blockStyles: { HorizontalRule: 'horizontal-rule' } });
+      expect(result.blocks).toStrictEqual([
+        {
+          text: '',
+          type: 'horizontal-rule',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [],
+        },
+      ]);
+    });
+
+    it('converts a link reference definition to an empty block', () => {
+      const result = mdToDraftjs('[id]: http://example.com');
+      expect(result.blocks).toStrictEqual([
+        {
+          text: '',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [],
+        },
+      ]);
+    });
+
+    it('styles the placeholder of an image inside an inline style instead of throwing', () => {
+      const result = mdToDraftjs('__![My Image](//images.mine.com/myImage.jpg)__');
+      expect(result.blocks).toStrictEqual([
+        {
+          text: ' ',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [{ offset: 0, length: 1, style: 'BOLD' }],
+          entityRanges: [{ key: 0, length: 1, offset: 0 }],
+        },
+      ]);
+      expect(result.entityMap[0].type).toBe('IMAGE');
+    });
+  });
 });

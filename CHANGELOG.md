@@ -20,4 +20,5 @@
 
 ### Fixed
 
+- Markdown nodes without text, such as a thematic break `---` or a link reference definition, produced the word "undefined" as block text. They now produce an empty block. An image inside an inline style no longer throws (#79).
 - Source maps no longer point at files that are not in the package (#78).

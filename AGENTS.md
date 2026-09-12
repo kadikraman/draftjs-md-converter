@@ -42,6 +42,7 @@ Run `pnpm lint`, `pnpm typecheck` and `pnpm test` before handing over changes.
 - Every bug fix needs a test in `test/` that fails before the fix. When a bug affects both directions, add a round-trip case as well.
 - Dependencies are not bundled into `dist/`. `@textlint/markdown-to-ast` stays a runtime dependency.
 - Formatting is Biome's job. Do not hand-format or argue with it.
+- Code comments: very brief, and only when definitely needed. Prefer a clear name over a comment. Public types may carry a one-line JSDoc.
 
 ## Working with the maintainer
 
