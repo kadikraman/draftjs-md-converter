@@ -11,14 +11,14 @@ describe('mdToDraftjs', () => {
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -32,14 +32,14 @@ describe('mdToDraftjs', () => {
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -56,17 +56,17 @@ describe('mdToDraftjs', () => {
             {
               offset: 9,
               length: 4,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -83,22 +83,22 @@ describe('mdToDraftjs', () => {
             {
               offset: 9,
               length: 6,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 25,
               length: 11,
-              style: 'ITALIC'
-            }
+              style: 'ITALIC',
+            },
           ],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -115,32 +115,32 @@ describe('mdToDraftjs', () => {
             {
               offset: 7,
               length: 5,
-              style: 'BOLD'
+              style: 'BOLD',
             },
             {
               offset: 12,
               length: 4,
-              style: 'BOLD'
+              style: 'BOLD',
             },
             {
               offset: 12,
               length: 4,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 16,
               length: 7,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -157,22 +157,22 @@ describe('mdToDraftjs', () => {
             {
               offset: 0,
               length: 6,
-              style: 'BOLD'
+              style: 'BOLD',
             },
             {
               offset: 0,
               length: 6,
-              style: 'ITALIC'
-            }
+              style: 'ITALIC',
+            },
           ],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -189,30 +189,30 @@ describe('mdToDraftjs', () => {
             {
               key: 0,
               length: 5,
-              offset: 0
-            }
+              offset: 0,
+            },
           ],
           inlineStyleRanges: [
             {
               length: 5,
               offset: 0,
-              style: 'BOLD'
+              style: 'BOLD',
             },
             {
               length: 5,
               offset: 0,
-              style: 'ITALIC'
-            }
-          ]
-        }
+              style: 'ITALIC',
+            },
+          ],
+        },
       ],
       entityMap: {
         0: {
           type: 'LINK',
           mutability: 'MUTABLE',
-          data: { url: 'http://example.com/here' }
-        }
-      }
+          data: { url: 'http://example.com/here' },
+        },
+      },
     };
 
     const resultDraftJs = mdToDraftjs(markdown);
@@ -231,25 +231,25 @@ describe('mdToDraftjs', () => {
             {
               key: 0,
               length: 5,
-              offset: 0
-            }
+              offset: 0,
+            },
           ],
           inlineStyleRanges: [
             {
               length: 1,
               offset: 2,
-              style: 'BOLD'
-            }
-          ]
-        }
+              style: 'BOLD',
+            },
+          ],
+        },
       ],
       entityMap: {
         0: {
           type: 'LINK',
           mutability: 'MUTABLE',
-          data: { url: 'http://example.com/here' }
-        }
-      }
+          data: { url: 'http://example.com/here' },
+        },
+      },
     };
 
     const resultDraftJs = mdToDraftjs(markdown);
@@ -269,20 +269,20 @@ describe('mdToDraftjs', () => {
             {
               offset: 0,
               length: 6,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 6,
               length: 7,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 6,
               length: 7,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Second content block.',
@@ -292,20 +292,20 @@ describe('mdToDraftjs', () => {
             {
               offset: 0,
               length: 7,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 7,
               length: 7,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 7,
               length: 7,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Third content block.',
@@ -315,27 +315,27 @@ describe('mdToDraftjs', () => {
             {
               offset: 0,
               length: 6,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 6,
               length: 7,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 6,
               length: 7,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -349,21 +349,21 @@ describe('mdToDraftjs', () => {
           type: 'unordered-list-item',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Second',
           type: 'unordered-list-item',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -377,28 +377,28 @@ describe('mdToDraftjs', () => {
           type: 'ordered-list-item',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Second',
           type: 'ordered-list-item',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Third',
           type: 'ordered-list-item',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -412,49 +412,49 @@ describe('mdToDraftjs', () => {
           type: 'header-one',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Two',
           type: 'header-two',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Three',
           type: 'header-three',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Four',
           type: 'header-four',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Five',
           type: 'header-five',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Six',
           type: 'header-six',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -468,14 +468,14 @@ describe('mdToDraftjs', () => {
           type: 'code-block',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -489,14 +489,14 @@ describe('mdToDraftjs', () => {
           type: 'code-block',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -511,35 +511,35 @@ describe('mdToDraftjs', () => {
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Purr Purr 🐱',
           type: 'code-block',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'But birds are too!',
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Caw-cawwww! 🐦',
           type: 'code-block',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -553,21 +553,21 @@ describe('mdToDraftjs', () => {
           type: 'code-block',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Oh no, I only opened a code block',
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -580,9 +580,9 @@ describe('mdToDraftjs', () => {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/'
-          }
-        }
+            url: 'http://red-badger.com/',
+          },
+        },
       },
       blocks: [
         {
@@ -594,11 +594,11 @@ describe('mdToDraftjs', () => {
             {
               offset: 10,
               length: 4,
-              key: 0
-            }
-          ]
-        }
-      ]
+              key: 0,
+            },
+          ],
+        },
+      ],
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -611,16 +611,16 @@ describe('mdToDraftjs', () => {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/'
-          }
+            url: 'http://red-badger.com/',
+          },
         },
         1: {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/'
-          }
-        }
+            url: 'http://red-badger.com/',
+          },
+        },
       },
       blocks: [
         {
@@ -632,16 +632,16 @@ describe('mdToDraftjs', () => {
             {
               offset: 4,
               length: 4,
-              key: 0
+              key: 0,
             },
             {
               offset: 14,
               length: 5,
-              key: 1
-            }
-          ]
-        }
-      ]
+              key: 1,
+            },
+          ],
+        },
+      ],
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -654,9 +654,9 @@ describe('mdToDraftjs', () => {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/'
-          }
-        }
+            url: 'http://red-badger.com/',
+          },
+        },
       },
       blocks: [
         {
@@ -667,18 +667,18 @@ describe('mdToDraftjs', () => {
             {
               offset: 7,
               length: 4,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
           entityRanges: [
             {
               offset: 7,
               length: 4,
-              key: 0
-            }
-          ]
-        }
-      ]
+              key: 0,
+            },
+          ],
+        },
+      ],
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -694,9 +694,9 @@ describe('mdToDraftjs', () => {
             data: {
               url: '//images.mine.com/myImage.jpg',
               src: '//images.mine.com/myImage.jpg',
-              fileName: 'My Image Name'
-            }
-          }
+              fileName: 'My Image Name',
+            },
+          },
         },
         blocks: [
           {
@@ -708,11 +708,11 @@ describe('mdToDraftjs', () => {
               {
                 offset: 0,
                 length: 1,
-                key: 0
-              }
-            ]
-          }
-        ]
+                key: 0,
+              },
+            ],
+          },
+        ],
       };
       expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
     });
@@ -727,9 +727,9 @@ describe('mdToDraftjs', () => {
             type: 'draft-js-video-plugin-video',
             mutability: 'IMMUTABLE',
             data: {
-              src: '//youtu.be/wfWIs2gFTAM'
-            }
-          }
+              src: '//youtu.be/wfWIs2gFTAM',
+            },
+          },
         },
         blocks: [
           {
@@ -741,11 +741,11 @@ describe('mdToDraftjs', () => {
               {
                 offset: 0,
                 length: 1,
-                key: 0
-              }
-            ]
-          }
-        ]
+                key: 0,
+              },
+            ],
+          },
+        ],
       };
       expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
     });
@@ -757,7 +757,7 @@ describe('mdToDraftjs', () => {
       entityMap: {
         data: '',
         mutability: '',
-        type: ''
+        type: '',
       },
       blocks: [
         {
@@ -765,9 +765,9 @@ describe('mdToDraftjs', () => {
           type: 'blockquote',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -781,19 +781,19 @@ describe('mdToDraftjs', () => {
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [{ offset: 0, length: 4, style: 'CODE' }],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
-      entityMap: { data: '', mutability: '', type: '' }
+      entityMap: { data: '', mutability: '', type: '' },
     };
 
     const customDict = {
       inlineStyles: {
         Code: {
           type: 'CODE',
-          symbol: '`'
-        }
-      }
+          symbol: '`',
+        },
+      },
     };
 
     expect(mdToDraftjs(markdown, customDict)).toStrictEqual(expectedDraftjs);
@@ -808,21 +808,21 @@ describe('mdToDraftjs', () => {
           depth: 0,
           inlineStyleRanges: [
             { offset: 0, length: 4, style: 'BOLD' },
-            { offset: 0, length: 4, style: 'CODE' }
+            { offset: 0, length: 4, style: 'CODE' },
           ],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
-      entityMap: { data: '', mutability: '', type: '' }
+      entityMap: { data: '', mutability: '', type: '' },
     };
 
     const customDict = {
       inlineStyles: {
         Code: {
           type: 'CODE',
-          symbol: '`'
-        }
-      }
+          symbol: '`',
+        },
+      },
     };
 
     expect(mdToDraftjs(markdown, customDict)).toStrictEqual(expectedDraftjs);

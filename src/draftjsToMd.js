@@ -1,6 +1,6 @@
 const defaultMarkdownDict = {
   BOLD: '__',
-  ITALIC: '*'
+  ITALIC: '*',
 };
 
 const blockStyleDict = {
@@ -11,11 +11,11 @@ const blockStyleDict = {
   'header-four': '#### ',
   'header-five': '##### ',
   'header-six': '###### ',
-  blockquote: '> '
+  blockquote: '> ',
 };
 
 const wrappingBlockStyleDict = {
-  'code-block': '```'
+  'code-block': '```',
 };
 
 const getBlockStyle = (currentStyle, appliedBlockStyles) => {
@@ -53,7 +53,7 @@ const applyAtomicStyle = (block, entityMap, content) => {
   return `${strippedContent}![${data.fileName || ''}](${data.url || data.src})`;
 };
 
-const getEntityStart = entity => {
+const getEntityStart = (entity) => {
   switch (entity.type) {
     case 'LINK':
       return '[';
@@ -62,7 +62,7 @@ const getEntityStart = entity => {
   }
 };
 
-const getEntityEnd = entity => {
+const getEntityEnd = (entity) => {
   switch (entity.type) {
     case 'LINK':
       return `](${entity.data.url})`;
@@ -95,7 +95,7 @@ function fixWhitespacesInsideStyle(text, style) {
   // Insert leading and trailing spaces between pre-/post- contents and their respective markers
   return newText.replace(
     `${symbol}${bodyTrimmed}${symbol}`,
-    `${prefix}${symbol}${bodyTrimmed}${symbol}${postfix}`
+    `${prefix}${symbol}${bodyTrimmed}${symbol}${postfix}`,
   );
 }
 
@@ -108,7 +108,7 @@ function draftjsToMd(raw, extraMarkdownDict) {
   const appliedBlockStyles = [];
 
   return raw.blocks
-    .map(block => {
+    .map((block) => {
       // totalOffset is a difference of index position between raw string and enhanced ones
       let totalOffset = 0;
       let returnString = '';
@@ -125,11 +125,11 @@ function draftjsToMd(raw, extraMarkdownDict) {
 
         // find all styled at this character
         const stylesStartAtChar = sortedInlineStyleRanges
-          .filter(range => range.offset === index)
-          .filter(range => markdownDict[range.style]); // disregard styles not defined in the md dict
+          .filter((range) => range.offset === index)
+          .filter((range) => markdownDict[range.style]); // disregard styles not defined in the md dict
 
         // add the symbol to the md string and push the style in the applied styles stack
-        stylesStartAtChar.forEach(currentStyle => {
+        stylesStartAtChar.forEach((currentStyle) => {
           const symbolLength = markdownDict[currentStyle.style].length;
           newText += markdownDict[currentStyle.style];
           totalOffset += symbolLength;
@@ -137,15 +137,15 @@ function draftjsToMd(raw, extraMarkdownDict) {
             symbol: markdownDict[currentStyle.style],
             range: {
               start: currentStyle.offset + totalOffset,
-              end: currentStyle.offset + currentStyle.length + totalOffset
+              end: currentStyle.offset + currentStyle.length + totalOffset,
             },
-            end: currentStyle.offset + (currentStyle.length - 1)
+            end: currentStyle.offset + (currentStyle.length - 1),
           });
         });
 
         // check for entityRanges starting and add if existing
-        const entitiesStartAtChar = block.entityRanges.filter(range => range.offset === index);
-        entitiesStartAtChar.forEach(entity => {
+        const entitiesStartAtChar = block.entityRanges.filter((range) => range.offset === index);
+        entitiesStartAtChar.forEach((entity) => {
           newText += getEntityStart(raw.entityMap[entity.key]);
         });
 
@@ -154,9 +154,9 @@ function draftjsToMd(raw, extraMarkdownDict) {
 
         // check for entityRanges ending and add if existing
         const entitiesEndAtChar = block.entityRanges.filter(
-          range => range.offset + range.length - 1 === index
+          (range) => range.offset + range.length - 1 === index,
         );
-        entitiesEndAtChar.forEach(entity => {
+        entitiesEndAtChar.forEach((entity) => {
           newText += getEntityEnd(raw.entityMap[entity.key]);
         });
 
