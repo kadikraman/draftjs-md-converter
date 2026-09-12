@@ -85,9 +85,7 @@ const joinCodeBlocks = (splitMd: string[]): string[] => {
 const splitMdBlocks = (md: string): string[] => {
   const splitMd = md.split('\n');
 
-  // Process the split markdown include the
-  // one syntax where there's an block level opening
-  // and closing symbol with content in the middle.
+  // keep fenced code blocks together as one block
   const splitMdWithCodeBlocks = joinCodeBlocks(splitMd);
   return splitMdWithCodeBlocks;
 };
@@ -121,16 +119,22 @@ const parseMdLine = (
     inlineStyleRanges.push({ offset, length, style });
   };
 
+  // text length a node adds to the block; images and videos add a one-space placeholder
+  const getNodeLength = (node: AstNode): number => {
+    if (node.type === 'Image' || videoShortcodeRegEx.test(node.raw)) {
+      return 1;
+    }
+    if (node.value) {
+      return node.value.length;
+    }
+    if (node.children?.length) {
+      return getRawLength(node.children);
+    }
+    return 0;
+  };
+
   const getRawLength = (children: readonly AstNode[]): number =>
-    children.reduce((prev, current) => {
-      if (current.value) {
-        return prev + current.value.length;
-      }
-      if (current.children?.length) {
-        return prev + getRawLength(current.children);
-      }
-      return prev;
-    }, 0);
+    children.reduce((prev, current) => prev + getNodeLength(current), 0);
 
   const addLink = (child: AstNode): void => {
     const entityKey = Object.keys(entityMap).length;
@@ -213,17 +217,17 @@ const parseMdLine = (
         parseChildren(grandChild, newStyle);
       }
     } else {
-      // `value` is undefined for nodes without text, such as thematic breaks.
-      // The text then becomes the string "undefined"; that is a known bug (#79).
-      const value = child.value as string;
-      if (style) {
-        addInlineStyleRange(text.length, value.length, style.type);
+      const value = child.type === 'Image' || isVideo ? ' ' : (child.value ?? '');
+      if (value.length > 0) {
+        if (style) {
+          addInlineStyleRange(text.length, value.length, style.type);
+        }
+        const ownStyle = inlineStyles[child.type];
+        if (ownStyle) {
+          addInlineStyleRange(text.length, value.length, ownStyle.type);
+        }
       }
-      const ownStyle = inlineStyles[child.type];
-      if (ownStyle) {
-        addInlineStyleRange(text.length, value.length, ownStyle.type);
-      }
-      text = `${text}${child.type === 'Image' || isVideo ? ' ' : value}`;
+      text = `${text}${value}`;
     }
   };
 
@@ -232,7 +236,6 @@ const parseMdLine = (
     parseChildren(child, style);
   }
 
-  // add block style if it exists
   let blockStyle = 'unstyled';
   const firstChild = astString.children?.[0];
   if (firstChild) {
@@ -268,8 +271,7 @@ function mdToDraftjs(mdString: string, extraStyles?: MdToDraftjsOptions): RawDra
     entityMap = result.entityMap;
   }
 
-  // Draft.js accepts an empty entityMap. This placeholder has been part of the
-  // output since 1.0 and is kept for compatibility until the 2.0 release.
+  // placeholder kept for compatibility; Draft.js accepts {} and 2.0 will return that
   if (Object.keys(entityMap).length === 0) {
     entityMap = { data: '', mutability: '', type: '' } as unknown as Record<string, RawDraftEntity>;
   }

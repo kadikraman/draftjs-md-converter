@@ -26,7 +26,7 @@ const wrappingBlockStyleDict: Record<string, string> = {
   'code-block': '```',
 };
 
-/** An inline style that has been opened in the output and is waiting for its closing symbol. */
+/** An opened inline style waiting for its closing symbol. */
 interface AppliedStyle {
   symbol: string;
   range: { start: number; end: number };
@@ -61,7 +61,7 @@ const applyAtomicStyle = (
   content: string,
 ): string => {
   if (block.type !== 'atomic') return content;
-  // strip the text that was added in the media block
+  // drop the placeholder text of the media block
   const strippedContent = content.substring(0, content.length - block.text.length);
   const key = block.entityRanges[0].key;
   const { type, data } = entityMap[key];
@@ -90,27 +90,20 @@ const getEntityEnd = (entity: RawDraftEntity): string => {
 };
 
 function fixWhitespacesInsideStyle(text: string, style: AppliedStyle): string {
+  // Move spaces at the edges of a styled range outside its markers: "__ a __" -> " __a__ "
   const { symbol } = style;
 
-  // Text before style-opening marker (including the marker)
   const pre = text.slice(0, style.range.start);
-  // Text between opening and closing markers
   const body = text.slice(style.range.start, style.range.end);
-  // Trimmed text between markers
   const bodyTrimmed = body.trim();
-  // Text after closing marker
   const post = text.slice(style.range.end);
 
   const bodyTrimmedStart = style.range.start + body.indexOf(bodyTrimmed);
 
-  // Text between opening marker and trimmed content (leading spaces)
   const prefix = text.slice(style.range.start, bodyTrimmedStart);
-  // Text between the end of trimmed content and closing marker (trailing spaces)
   const postfix = text.slice(bodyTrimmedStart + bodyTrimmed.length, style.range.end);
 
-  // Temporary text that contains trimmed content wrapped into original pre- and post-texts
   const newText = `${pre}${bodyTrimmed}${post}`;
-  // Insert leading and trailing spaces between pre-/post- contents and their respective markers
   return newText.replace(
     `${symbol}${bodyTrimmed}${symbol}`,
     `${prefix}${symbol}${bodyTrimmed}${symbol}${postfix}`,
@@ -129,11 +122,10 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
 
   return raw.blocks
     .map((block) => {
-      // totalOffset is a difference of index position between raw string and enhanced ones
+      // symbol characters inserted so far
       let totalOffset = 0;
       let returnString = '';
 
-      // add block style
       returnString += getBlockStyle(block.type, appliedBlockStyles);
       appliedBlockStyles.push(block.type);
 
@@ -146,12 +138,11 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
 
         const sortedInlineStyleRanges = getInlineStyleRangesByLength(block.inlineStyleRanges);
 
-        // find all styled at this character
         const stylesStartAtChar = sortedInlineStyleRanges
           .filter((range) => range.offset === index)
-          .filter((range) => markdownDict[range.style]); // disregard styles not defined in the md dict
+          .filter((range) => markdownDict[range.style]); // skip styles the dict does not know
 
-        // add the symbol to the md string and push the style in the applied styles stack
+        // open styles starting here
         for (const currentStyle of stylesStartAtChar) {
           const symbol = markdownDict[currentStyle.style];
           newText += symbol;
@@ -166,16 +157,13 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
           });
         }
 
-        // check for entityRanges starting and add if existing
         const entitiesStartAtChar = block.entityRanges.filter((range) => range.offset === index);
         for (const entity of entitiesStartAtChar) {
           newText += getEntityStart(raw.entityMap[entity.key]);
         }
 
-        // add the current character to the md string
         newText += currentChar;
 
-        // check for entityRanges ending and add if existing
         const entitiesEndAtChar = block.entityRanges.filter(
           (range) => range.offset + range.length - 1 === index,
         );
@@ -183,7 +171,7 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
           newText += getEntityEnd(raw.entityMap[entity.key]);
         }
 
-        // apply the 'ending' tags for any styles that end in the current position in order (stack)
+        // close styles ending here, innermost first
         let endingStyle = lastAppliedStyle();
         while (endingStyle?.end === index) {
           appliedStyles.pop();
