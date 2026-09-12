@@ -1,6 +1,4 @@
-'use strict';
-
-const parse = require('@textlint/markdown-to-ast').parse;
+import { parse } from '@textlint/markdown-to-ast';
 
 const defaultInlineStyles = {
   Strong: {
@@ -252,4 +250,4 @@ function mdToDraftjs(mdString, extraStyles) {
   };
 }
 
-module.exports = mdToDraftjs;
+export default mdToDraftjs;

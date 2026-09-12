@@ -1,5 +1,3 @@
-'use strict';
-
 const defaultMarkdownDict = {
   BOLD: '__',
   ITALIC: '*'
@@ -185,4 +183,4 @@ function draftjsToMd(raw, extraMarkdownDict) {
     .join('\n');
 }
 
-module.exports = draftjsToMd;
+export default draftjsToMd;

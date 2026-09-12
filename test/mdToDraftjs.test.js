@@ -1,7 +1,5 @@
-const mdToDraftjs = require('../src/mdToDraftjs.js');
-const chai = require('chai');
-const expect = chai.expect; // eslint-disable-line no-unused-vars
-const should = chai.should(); // eslint-disable-line no-unused-vars
+import { describe, expect, it } from 'vitest';
+import mdToDraftjs from '../src/mdToDraftjs.js';
 
 describe('mdToDraftjs', () => {
   it('returns empty text correctly', () => {
@@ -22,7 +20,7 @@ describe('mdToDraftjs', () => {
         data: ''
       }
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('returns unstyled text correctly', () => {
@@ -43,7 +41,7 @@ describe('mdToDraftjs', () => {
         data: ''
       }
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts bold markdown to draftjs blocks', () => {
@@ -70,7 +68,7 @@ describe('mdToDraftjs', () => {
         data: ''
       }
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts several italic markdown to draftjs blocks', () => {
@@ -102,7 +100,7 @@ describe('mdToDraftjs', () => {
         data: ''
       }
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts nested styles correctly', () => {
@@ -144,7 +142,7 @@ describe('mdToDraftjs', () => {
         data: ''
       }
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts two styles applied to the same word correctly', () => {
@@ -176,7 +174,7 @@ describe('mdToDraftjs', () => {
         data: ''
       }
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts two styles applied outside a link correctly', () => {
@@ -218,7 +216,7 @@ describe('mdToDraftjs', () => {
     };
 
     const resultDraftJs = mdToDraftjs(markdown);
-    resultDraftJs.should.deep.equal(expectedDraftjs);
+    expect(resultDraftJs).toStrictEqual(expectedDraftjs);
   });
 
   it('converts a style applied inside a link correctly', () => {
@@ -255,7 +253,7 @@ describe('mdToDraftjs', () => {
     };
 
     const resultDraftJs = mdToDraftjs(markdown);
-    resultDraftJs.should.deep.equal(expectedDraftjs);
+    expect(resultDraftJs).toStrictEqual(expectedDraftjs);
   });
 
   it('converts several paragraphs to markdown correctly', () => {
@@ -339,7 +337,7 @@ describe('mdToDraftjs', () => {
         data: ''
       }
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to unordered lists correctly', () => {
@@ -367,7 +365,7 @@ describe('mdToDraftjs', () => {
         data: ''
       }
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to ordered lists correctly', () => {
@@ -402,7 +400,7 @@ describe('mdToDraftjs', () => {
         data: ''
       }
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to H1 - H6 correctly', () => {
@@ -458,7 +456,7 @@ describe('mdToDraftjs', () => {
         data: ''
       }
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to code blocks correctly', () => {
@@ -479,7 +477,7 @@ describe('mdToDraftjs', () => {
         data: ''
       }
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to code blocks with inline styles correctly', () => {
@@ -500,12 +498,12 @@ describe('mdToDraftjs', () => {
         data: ''
       }
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts multiple markdown to code blocks correctly', () => {
     const markdown =
-      'Cats are cool\n```\nPurr Purr 🐱\n```\nBut birds are too!\n```\nCaw-cawwww! 🐦\n```'; // eslint-disable-line max-len
+      'Cats are cool\n```\nPurr Purr 🐱\n```\nBut birds are too!\n```\nCaw-cawwww! 🐦\n```';
     const expectedDraftjs = {
       blocks: [
         {
@@ -543,7 +541,7 @@ describe('mdToDraftjs', () => {
         data: ''
       }
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to unclosed code blocks correctly', () => {
@@ -571,7 +569,7 @@ describe('mdToDraftjs', () => {
         data: ''
       }
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts link entities to markdown correctly', () => {
@@ -602,7 +600,7 @@ describe('mdToDraftjs', () => {
         }
       ]
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to several links correctly', () => {
@@ -645,7 +643,7 @@ describe('mdToDraftjs', () => {
         }
       ]
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to bold links correctly', () => {
@@ -682,7 +680,7 @@ describe('mdToDraftjs', () => {
         }
       ]
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   describe('Images', () => {
@@ -716,7 +714,7 @@ describe('mdToDraftjs', () => {
           }
         ]
       };
-      mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+      expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
     });
   });
 
@@ -749,7 +747,7 @@ describe('mdToDraftjs', () => {
           }
         ]
       };
-      mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+      expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
     });
   });
 
@@ -771,7 +769,7 @@ describe('mdToDraftjs', () => {
         }
       ]
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('parses inline code correctly', () => {
@@ -798,7 +796,7 @@ describe('mdToDraftjs', () => {
       }
     };
 
-    mdToDraftjs(markdown, customDict).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown, customDict)).toStrictEqual(expectedDraftjs);
   });
   it('parses inline code mixed with other styles correctly', () => {
     const markdown = '__`code`__';
@@ -827,6 +825,6 @@ describe('mdToDraftjs', () => {
       }
     };
 
-    mdToDraftjs(markdown, customDict).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown, customDict)).toStrictEqual(expectedDraftjs);
   });
 });
