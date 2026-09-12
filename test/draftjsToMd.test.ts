@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import draftjsToMd from '../src/draftjsToMd';
+import type { RawDraftContentState } from '../src/types';
 
 describe('draftjsToMd', () => {
   it('returns an empty string correctly', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: '',
@@ -19,7 +21,8 @@ describe('draftjsToMd', () => {
   });
 
   it('returns unstyled text correctly', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'There is no styling anywhere in this text.',
@@ -35,7 +38,8 @@ describe('draftjsToMd', () => {
   });
 
   it('converts draftjs blocks to bold markdown', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'No style bold no style.',
@@ -57,7 +61,8 @@ describe('draftjsToMd', () => {
   });
 
   it('converts draftjs blocks to unstyled markdown if the style is not in dict', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'I should have no style anywhere.',
@@ -79,7 +84,8 @@ describe('draftjsToMd', () => {
   });
 
   it('converts several italic draftjs blocks to markdown', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'No style italic no style more italic.',
@@ -106,7 +112,8 @@ describe('draftjsToMd', () => {
   });
 
   it('converts nested styles correctly', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'I am a text with nested styles.',
@@ -133,7 +140,8 @@ describe('draftjsToMd', () => {
   });
 
   it('converts overlapping styles correctly, whether or not the "longer" one is first', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'I start with italic bold and end with only bold.',
@@ -160,7 +168,8 @@ describe('draftjsToMd', () => {
   });
 
   it('converts the last word correctly if it is styled', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'I am styled all over.',
@@ -182,7 +191,8 @@ describe('draftjsToMd', () => {
   });
 
   it('converts two styles applied to the same word correctly', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'Potato',
@@ -209,7 +219,8 @@ describe('draftjsToMd', () => {
   });
 
   it('converts several paragraphs to markdown correctly', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'First content block.',
@@ -273,7 +284,8 @@ describe('draftjsToMd', () => {
   });
 
   it('converts several consecutive styled draftjs paragraphs to markdown', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'A [b]',
@@ -321,7 +333,8 @@ describe('draftjsToMd', () => {
   });
 
   it('converts unordered lists to markdown correctly', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'First',
@@ -344,7 +357,8 @@ describe('draftjsToMd', () => {
   });
 
   it('converts ordered lists to markdown correctly', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'First',
@@ -374,7 +388,8 @@ describe('draftjsToMd', () => {
   });
 
   it('converts H1 - H6 to markdown correctly', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'One',
@@ -425,7 +440,8 @@ describe('draftjsToMd', () => {
   });
 
   it('converts code blocks to markdown correctly', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'Country Code:',
@@ -448,7 +464,7 @@ describe('draftjsToMd', () => {
   });
 
   it('converts link entities to markdown correctly', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
       entityMap: {
         0: {
           type: 'LINK',
@@ -479,7 +495,7 @@ describe('draftjsToMd', () => {
   });
 
   it('converts several links to markdown correctly', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
       entityMap: {
         0: {
           type: 'LINK',
@@ -523,7 +539,7 @@ describe('draftjsToMd', () => {
   });
 
   it('converts bold links to markdown correctly', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
       entityMap: {
         0: {
           type: 'LINK',
@@ -560,7 +576,8 @@ describe('draftjsToMd', () => {
   });
 
   it('handles leading and trailing spaces around styled text', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'No style  bold  no style.',
@@ -582,7 +599,8 @@ describe('draftjsToMd', () => {
   });
 
   it('handles leading and trailing spaces around styled text without duplicating string', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
+      entityMap: {},
       blocks: [
         {
           text: 'this is a test',
@@ -604,7 +622,7 @@ describe('draftjsToMd', () => {
   });
 
   it('converts block quotes to markdown correctly', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
       entityMap: {},
       blocks: [
         {
@@ -622,7 +640,7 @@ describe('draftjsToMd', () => {
   });
 
   it('inline styles do not remove spaces', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
       entityMap: {},
       blocks: [
         {
@@ -649,7 +667,8 @@ describe('draftjsToMd', () => {
     };
 
     it('returns unstyled text correctly', () => {
-      const raw = {
+      const raw: RawDraftContentState = {
+        entityMap: {},
         blocks: [
           {
             text: 'There is no styling anywhere in this text.',
@@ -665,7 +684,8 @@ describe('draftjsToMd', () => {
     });
 
     it('converts draftjs blocks to bold markdown with overriden style', () => {
-      const raw = {
+      const raw: RawDraftContentState = {
+        entityMap: {},
         blocks: [
           {
             text: 'No style bold no style.',
@@ -687,7 +707,8 @@ describe('draftjsToMd', () => {
     });
 
     it('converts draftjs blocks to italic markdown with default style', () => {
-      const raw = {
+      const raw: RawDraftContentState = {
+        entityMap: {},
         blocks: [
           {
             text: 'No style italic no style.',
@@ -709,7 +730,8 @@ describe('draftjsToMd', () => {
     });
 
     it('converts draftjs blocks to strike-through markdown with overriden style', () => {
-      const raw = {
+      const raw: RawDraftContentState = {
+        entityMap: {},
         blocks: [
           {
             text: 'No style strike-through no style.',
@@ -733,7 +755,7 @@ describe('draftjsToMd', () => {
 
   describe('Images', () => {
     it('converts image media to markdown correctly with url/filename', () => {
-      const raw = {
+      const raw: RawDraftContentState = {
         entityMap: {
           1: {
             type: 'image',
@@ -766,7 +788,7 @@ describe('draftjsToMd', () => {
     });
 
     it('converts image media to markdown correctly with src format', () => {
-      const raw = {
+      const raw: RawDraftContentState = {
         entityMap: {
           1: {
             type: 'image',
@@ -800,7 +822,7 @@ describe('draftjsToMd', () => {
 
   describe('Videos', () => {
     it('converts video media created by draft-js-video-plugin to markdown correctly with src format', () => {
-      const raw = {
+      const raw: RawDraftContentState = {
         entityMap: {
           1: {
             type: 'draft-js-video-plugin-video',
@@ -833,7 +855,7 @@ describe('draftjsToMd', () => {
   });
 
   it('Handles emoji', () => {
-    const raw = {
+    const raw: RawDraftContentState = {
       blocks: [
         {
           key: '24hvu',

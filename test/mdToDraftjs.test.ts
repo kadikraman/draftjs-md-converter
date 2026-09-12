@@ -791,7 +791,6 @@ describe('mdToDraftjs', () => {
       inlineStyles: {
         Code: {
           type: 'CODE',
-          symbol: '`',
         },
       },
     };
@@ -820,7 +819,6 @@ describe('mdToDraftjs', () => {
       inlineStyles: {
         Code: {
           type: 'CODE',
-          symbol: '`',
         },
       },
     };
