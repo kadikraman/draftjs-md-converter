@@ -60,5 +60,9 @@
   },
   "dependencies": {
     "@textlint/markdown-to-ast": "^15.8.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }
