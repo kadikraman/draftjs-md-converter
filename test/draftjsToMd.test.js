@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import draftjsToMd from '../src/draftjsToMd.js';
+import draftjsToMd from '../src/draftjsToMd';
 
 describe('draftjsToMd', () => {
   it('returns an empty string correctly', () => {

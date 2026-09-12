@@ -1,17 +1,32 @@
 import { parse } from '@textlint/markdown-to-ast';
+import type {
+  InlineStyleMapping,
+  MdToDraftjsOptions,
+  RawDraftContentBlock,
+  RawDraftContentState,
+  RawDraftEntity,
+  RawDraftEntityRange,
+  RawDraftInlineStyleRange,
+} from './types';
 
-const defaultInlineStyles = {
-  Strong: {
-    type: 'BOLD',
-    symbol: '__',
-  },
-  Emphasis: {
-    type: 'ITALIC',
-    symbol: '*',
-  },
+/** The subset of the textlint AST that this converter reads. */
+interface AstNode {
+  type: string;
+  raw: string;
+  value?: string;
+  children?: readonly AstNode[];
+  url?: string;
+  alt?: string | null;
+  ordered?: boolean | null;
+  depth?: number;
+}
+
+const defaultInlineStyles: Record<string, InlineStyleMapping> = {
+  Strong: { type: 'BOLD' },
+  Emphasis: { type: 'ITALIC' },
 };
 
-const defaultBlockStyles = {
+const defaultBlockStyles: Record<string, string> = {
   List: 'unordered-list-item',
   Header1: 'header-one',
   Header2: 'header-two',
@@ -23,28 +38,32 @@ const defaultBlockStyles = {
   BlockQuote: 'blockquote',
 };
 
-const getBlockStyleForMd = (node, blockStyles) => {
+// RegEx: [[ embed url=<anything> ]]
+const videoShortcodeRegEx = /^\[\[\s(?:embed)\s(?:url=(\S+))\s\]\]/;
+
+const getBlockStyleForMd = (
+  node: AstNode,
+  blockStyles: Record<string, string>,
+): string | undefined => {
   const style = node.type;
   const ordered = node.ordered;
   const depth = node.depth;
   if (style === 'List' && ordered) {
     return 'ordered-list-item';
-  } else if (style === 'Header') {
+  }
+  if (style === 'Header') {
     return blockStyles[`${style}${depth}`];
-  } else if (
-    node.type === 'Paragraph' &&
-    node.children &&
-    node.children[0] &&
-    node.children[0].type === 'Image'
-  ) {
+  }
+  if (node.type === 'Paragraph' && node.children?.[0]?.type === 'Image') {
     return 'atomic';
-  } else if (node.type === 'Paragraph' && node.raw && node.raw.match(/^\[\[\s\S+\s.*\S+\s\]\]/)) {
+  }
+  if (node.type === 'Paragraph' && /^\[\[\s\S+\s.*\S+\s\]\]/.test(node.raw)) {
     return 'atomic';
   }
   return blockStyles[style];
 };
 
-const joinCodeBlocks = (splitMd) => {
+const joinCodeBlocks = (splitMd: string[]): string[] => {
   const opening = splitMd.indexOf('```');
   const closing = splitMd.indexOf('```', opening + 1);
 
@@ -63,7 +82,7 @@ const joinCodeBlocks = (splitMd) => {
   return splitMd;
 };
 
-const splitMdBlocks = (md) => {
+const splitMdBlocks = (md: string): string[] => {
   const splitMd = md.split('\n');
 
   // Process the split markdown include the
@@ -73,31 +92,47 @@ const splitMdBlocks = (md) => {
   return splitMdWithCodeBlocks;
 };
 
-const parseMdLine = (line, existingEntities, extraStyles = {}) => {
-  const inlineStyles = { ...defaultInlineStyles, ...extraStyles.inlineStyles };
-  const blockStyles = { ...defaultBlockStyles, ...extraStyles.blockStyles };
+interface ParsedLine {
+  text: string;
+  inlineStyleRanges: RawDraftInlineStyleRange[];
+  entityRanges: RawDraftEntityRange[];
+  blockStyle: string;
+  entityMap: Record<string, RawDraftEntity>;
+}
 
-  const astString = parse(line);
+const parseMdLine = (
+  line: string,
+  existingEntities: Record<string, RawDraftEntity>,
+  extraStyles: MdToDraftjsOptions = {},
+): ParsedLine => {
+  const inlineStyles: Partial<Record<string, InlineStyleMapping>> = {
+    ...defaultInlineStyles,
+    ...extraStyles.inlineStyles,
+  };
+  const blockStyles: Record<string, string> = { ...defaultBlockStyles, ...extraStyles.blockStyles };
+
+  const astString = parse(line) as AstNode;
   let text = '';
-  const inlineStyleRanges = [];
-  const entityRanges = [];
+  const inlineStyleRanges: RawDraftInlineStyleRange[] = [];
+  const entityRanges: RawDraftEntityRange[] = [];
   const entityMap = existingEntities;
 
-  const addInlineStyleRange = (offset, length, style) => {
+  const addInlineStyleRange = (offset: number, length: number, style: string): void => {
     inlineStyleRanges.push({ offset, length, style });
   };
 
-  const getRawLength = (children) =>
+  const getRawLength = (children: readonly AstNode[]): number =>
     children.reduce((prev, current) => {
       if (current.value) {
         return prev + current.value.length;
-      } else if (current.children?.length) {
+      }
+      if (current.children?.length) {
         return prev + getRawLength(current.children);
       }
       return prev;
     }, 0);
 
-  const addLink = (child) => {
+  const addLink = (child: AstNode): void => {
     const entityKey = Object.keys(entityMap).length;
     entityMap[entityKey] = {
       type: 'LINK',
@@ -108,12 +143,12 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
     };
     entityRanges.push({
       key: entityKey,
-      length: getRawLength(child.children),
+      length: getRawLength(child.children ?? []),
       offset: text.length,
     });
   };
 
-  const addImage = (child) => {
+  const addImage = (child: AstNode): void => {
     const entityKey = Object.keys(entityMap).length;
     entityMap[entityKey] = {
       type: 'IMAGE',
@@ -131,11 +166,8 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
     });
   };
 
-  const addVideo = (child) => {
-    const string = child.raw;
-
-    // RegEx: [[ embed url=<anything> ]]
-    const url = string.match(/^\[\[\s(?:embed)\s(?:url=(\S+))\s\]\]/)[1];
+  const addVideo = (child: AstNode): void => {
+    const url = child.raw.match(videoShortcodeRegEx)?.[1];
 
     const entityKey = Object.keys(entityMap).length;
     entityMap[entityKey] = {
@@ -152,9 +184,7 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
     });
   };
 
-  const parseChildren = (child, style) => {
-    // RegEx: [[ embed url=<anything> ]]
-    const videoShortcodeRegEx = /^\[\[\s(?:embed)\s(?:url=(\S+))\s\]\]/;
+  const parseChildren = (child: AstNode, style?: InlineStyleMapping): void => {
     switch (child.type) {
       case 'Link':
         addLink(child);
@@ -167,43 +197,46 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
           addVideo(child);
         }
         break;
-      default:
     }
 
-    if (!videoShortcodeRegEx.test(child.raw) && child.children && style) {
+    const isVideo = videoShortcodeRegEx.test(child.raw);
+    if (!isVideo && child.children && style) {
       const rawLength = getRawLength(child.children);
       addInlineStyleRange(text.length, rawLength, style.type);
       const newStyle = inlineStyles[child.type];
-      child.children.forEach((grandChild) => {
+      for (const grandChild of child.children) {
         parseChildren(grandChild, newStyle);
-      });
-    } else if (!videoShortcodeRegEx.test(child.raw) && child.children) {
+      }
+    } else if (!isVideo && child.children) {
       const newStyle = inlineStyles[child.type];
-      child.children.forEach((grandChild) => {
+      for (const grandChild of child.children) {
         parseChildren(grandChild, newStyle);
-      });
+      }
     } else {
+      // `value` is undefined for nodes without text, such as thematic breaks.
+      // The text then becomes the string "undefined"; that is a known bug (#79).
+      const value = child.value as string;
       if (style) {
-        addInlineStyleRange(text.length, child.value.length, style.type);
+        addInlineStyleRange(text.length, value.length, style.type);
       }
-      if (inlineStyles[child.type]) {
-        addInlineStyleRange(text.length, child.value.length, inlineStyles[child.type].type);
+      const ownStyle = inlineStyles[child.type];
+      if (ownStyle) {
+        addInlineStyleRange(text.length, value.length, ownStyle.type);
       }
-      text = `${text}${
-        child.type === 'Image' || videoShortcodeRegEx.test(child.raw) ? ' ' : child.value
-      }`;
+      text = `${text}${child.type === 'Image' || isVideo ? ' ' : value}`;
     }
   };
 
-  astString.children.forEach((child) => {
+  for (const child of astString.children ?? []) {
     const style = inlineStyles[child.type];
     parseChildren(child, style);
-  });
+  }
 
   // add block style if it exists
   let blockStyle = 'unstyled';
-  if (astString.children[0]) {
-    const style = getBlockStyleForMd(astString.children[0], blockStyles);
+  const firstChild = astString.children?.[0];
+  if (firstChild) {
+    const style = getBlockStyleForMd(firstChild, blockStyles);
     if (style) {
       blockStyle = style;
     }
@@ -218,12 +251,12 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
   };
 };
 
-function mdToDraftjs(mdString, extraStyles) {
+function mdToDraftjs(mdString: string, extraStyles?: MdToDraftjsOptions): RawDraftContentState {
   const paragraphs = splitMdBlocks(mdString);
-  const blocks = [];
-  let entityMap = {};
+  const blocks: RawDraftContentBlock[] = [];
+  let entityMap: Record<string, RawDraftEntity> = {};
 
-  paragraphs.forEach((paragraph) => {
+  for (const paragraph of paragraphs) {
     const result = parseMdLine(paragraph, entityMap, extraStyles);
     blocks.push({
       text: result.text,
@@ -233,16 +266,12 @@ function mdToDraftjs(mdString, extraStyles) {
       entityRanges: result.entityRanges,
     });
     entityMap = result.entityMap;
-  });
+  }
 
-  // add a default value
-  // not sure why that's needed but Draftjs convertToRaw fails without it
+  // Draft.js accepts an empty entityMap. This placeholder has been part of the
+  // output since 1.0 and is kept for compatibility until the 2.0 release.
   if (Object.keys(entityMap).length === 0) {
-    entityMap = {
-      data: '',
-      mutability: '',
-      type: '',
-    };
+    entityMap = { data: '', mutability: '', type: '' } as unknown as Record<string, RawDraftEntity>;
   }
   return {
     blocks,
