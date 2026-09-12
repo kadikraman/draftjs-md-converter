@@ -1,9 +1,9 @@
-declare module "draftjs-md-converter" {
-  import type { Syntax as ASTNodeTypes } from "@textlint/markdown-to-ast";
-  import type { RawDraftContentState } from "draft-js";
+declare module 'draftjs-md-converter' {
+  import type { Syntax as ASTNodeTypes } from '@textlint/markdown-to-ast';
+  import type { RawDraftContentState } from 'draft-js';
   export function draftjsToMd(
     raw: RawDraftContentState,
-    extraMarkdownDict?: { [key: string]: string }
+    extraMarkdownDict?: { [key: string]: string },
   ): string;
   export function mdToDraftjs(
     mdString: string,
@@ -18,6 +18,6 @@ declare module "draftjs-md-converter" {
       blockStyles?: {
         [key: string]: string;
       };
-    }
+    },
   ): RawDraftContentState;
 }

@@ -1,7 +1,5 @@
-const draftjsToMd = require('../src/draftjsToMd.js');
-const chai = require('chai');
-const expect = chai.expect; // eslint-disable-line no-unused-vars
-const should = chai.should(); // eslint-disable-line no-unused-vars
+import { describe, expect, it } from 'vitest';
+import draftjsToMd from '../src/draftjsToMd.js';
 
 describe('draftjsToMd', () => {
   it('returns an empty string correctly', () => {
@@ -12,12 +10,12 @@ describe('draftjsToMd', () => {
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = '';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('returns unstyled text correctly', () => {
@@ -28,12 +26,12 @@ describe('draftjsToMd', () => {
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = 'There is no styling anywhere in this text.';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts draftjs blocks to bold markdown', () => {
@@ -47,15 +45,15 @@ describe('draftjsToMd', () => {
             {
               offset: 9,
               length: 4,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = 'No style __bold__ no style.';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts draftjs blocks to unstyled markdown if the style is not in dict', () => {
@@ -69,15 +67,15 @@ describe('draftjsToMd', () => {
             {
               offset: 9,
               length: 4,
-              style: 'FAKE_STYLE'
-            }
+              style: 'FAKE_STYLE',
+            },
           ],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = 'I should have no style anywhere.';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts several italic draftjs blocks to markdown', () => {
@@ -91,20 +89,20 @@ describe('draftjsToMd', () => {
             {
               offset: 9,
               length: 6,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 25,
               length: 11,
-              style: 'ITALIC'
-            }
+              style: 'ITALIC',
+            },
           ],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = 'No style *italic* no style *more italic*.';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts nested styles correctly', () => {
@@ -118,20 +116,20 @@ describe('draftjsToMd', () => {
             {
               offset: 7,
               length: 16,
-              style: 'BOLD'
+              style: 'BOLD',
             },
             {
               offset: 12,
               length: 4,
-              style: 'ITALIC'
-            }
+              style: 'ITALIC',
+            },
           ],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = 'I am a __text *with* nested__ styles.';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts overlapping styles correctly, whether or not the "longer" one is first', () => {
@@ -145,20 +143,20 @@ describe('draftjsToMd', () => {
             {
               offset: 0,
               length: 24,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 0,
               length: 48,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = '__*I start with italic bold* and end with only bold.__';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts the last word correctly if it is styled', () => {
@@ -172,15 +170,15 @@ describe('draftjsToMd', () => {
             {
               offset: 0,
               length: 21,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = '__I am styled all over.__';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts two styles applied to the same word correctly', () => {
@@ -194,20 +192,20 @@ describe('draftjsToMd', () => {
             {
               offset: 0,
               length: 6,
-              style: 'BOLD'
+              style: 'BOLD',
             },
             {
               offset: 0,
               length: 6,
-              style: 'ITALIC'
-            }
+              style: 'ITALIC',
+            },
           ],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = '__*Potato*__';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts several paragraphs to markdown correctly', () => {
@@ -221,15 +219,15 @@ describe('draftjsToMd', () => {
             {
               offset: 0,
               length: 13,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 6,
               length: 7,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Second content block.',
@@ -239,15 +237,15 @@ describe('draftjsToMd', () => {
             {
               offset: 0,
               length: 14,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 7,
               length: 7,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Third content block.',
@@ -257,21 +255,21 @@ describe('draftjsToMd', () => {
             {
               offset: 0,
               length: 13,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 6,
               length: 7,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown =
       '*First __content__* block.\n*Second __content__* block.\n*Third __content__* block.';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts several consecutive styled draftjs paragraphs to markdown', () => {
@@ -285,10 +283,10 @@ describe('draftjsToMd', () => {
             {
               offset: 0,
               length: 1,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'C [d]',
@@ -298,10 +296,10 @@ describe('draftjsToMd', () => {
             {
               offset: 0,
               length: 2,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Want more',
@@ -311,15 +309,15 @@ describe('draftjsToMd', () => {
             {
               offset: 0,
               length: 9,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = '__A__ [b]\n__C__ [d]\n__Want more__';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts unordered lists to markdown correctly', () => {
@@ -330,19 +328,19 @@ describe('draftjsToMd', () => {
           type: 'unordered-list-item',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Second',
           type: 'unordered-list-item',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = '- First\n- Second';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts ordered lists to markdown correctly', () => {
@@ -353,26 +351,26 @@ describe('draftjsToMd', () => {
           type: 'ordered-list-item',
           inlineStyleRanges: [],
           depth: 0,
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Second',
           type: 'ordered-list-item',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Third',
           type: 'ordered-list-item',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = '1. First\n2. Second\n3. Third';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts H1 - H6 to markdown correctly', () => {
@@ -383,47 +381,47 @@ describe('draftjsToMd', () => {
           type: 'header-one',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Two',
           type: 'header-two',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Three',
           type: 'header-three',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Four',
           type: 'header-four',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Five',
           type: 'header-five',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Six',
           type: 'header-six',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = '# One\n## Two\n### Three\n#### Four\n##### Five\n###### Six';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts code blocks to markdown correctly', () => {
@@ -434,19 +432,19 @@ describe('draftjsToMd', () => {
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'const country = Estonia;',
           type: 'code-block',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = 'Country Code:\n```\nconst country = Estonia;\n```';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts link entities to markdown correctly', () => {
@@ -456,9 +454,9 @@ describe('draftjsToMd', () => {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/'
-          }
-        }
+            url: 'http://red-badger.com/',
+          },
+        },
       },
       blocks: [
         {
@@ -470,14 +468,14 @@ describe('draftjsToMd', () => {
             {
               offset: 10,
               length: 4,
-              key: 0
-            }
-          ]
-        }
-      ]
+              key: 0,
+            },
+          ],
+        },
+      ],
     };
     const expectedMarkdown = 'This is a [link](http://red-badger.com/) in text.';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts several links to markdown correctly', () => {
@@ -487,16 +485,16 @@ describe('draftjsToMd', () => {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/'
-          }
+            url: 'http://red-badger.com/',
+          },
         },
         1: {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/'
-          }
-        }
+            url: 'http://red-badger.com/',
+          },
+        },
       },
       blocks: [
         {
@@ -508,20 +506,20 @@ describe('draftjsToMd', () => {
             {
               offset: 4,
               length: 4,
-              key: 0
+              key: 0,
             },
             {
               offset: 14,
               length: 5,
-              key: 1
-            }
-          ]
-        }
-      ]
+              key: 1,
+            },
+          ],
+        },
+      ],
     };
     const expectedMarkdown =
       'One [link](http://red-badger.com/). Two [links](http://red-badger.com/).';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts bold links to markdown correctly', () => {
@@ -531,9 +529,9 @@ describe('draftjsToMd', () => {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/'
-          }
-        }
+            url: 'http://red-badger.com/',
+          },
+        },
       },
       blocks: [
         {
@@ -544,21 +542,21 @@ describe('draftjsToMd', () => {
             {
               offset: 7,
               length: 4,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
           entityRanges: [
             {
               offset: 7,
               length: 4,
-              key: 0
-            }
-          ]
-        }
-      ]
+              key: 0,
+            },
+          ],
+        },
+      ],
     };
     const expectedMarkdown = 'I am a __[bold](http://red-badger.com/)__ link.';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('handles leading and trailing spaces around styled text', () => {
@@ -572,15 +570,15 @@ describe('draftjsToMd', () => {
             {
               offset: 9,
               length: 6,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = 'No style  __bold__  no style.';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('handles leading and trailing spaces around styled text without duplicating string', () => {
@@ -594,15 +592,15 @@ describe('draftjsToMd', () => {
             {
               offset: 5,
               length: 2,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
     const expectedMarkdown = 'this __is__ a test';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('converts block quotes to markdown correctly', () => {
@@ -615,12 +613,12 @@ describe('draftjsToMd', () => {
           depth: 0,
           inlineStyleRanges: [],
           entityRanges: [],
-          data: {}
-        }
-      ]
+          data: {},
+        },
+      ],
     };
     const expectedMarkdown = '> Here is a block quote.';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   it('inline styles do not remove spaces', () => {
@@ -633,21 +631,21 @@ describe('draftjsToMd', () => {
           entityRanges: [],
           inlineStyleRanges: [
             { offset: 0, length: 4, style: 'BOLD' },
-            { offset: 12, length: 4, style: 'ITALIC' }
+            { offset: 12, length: 4, style: 'ITALIC' },
           ],
           text: 'This is not fine',
-          type: 'unstyled'
-        }
-      ]
+          type: 'unstyled',
+        },
+      ],
     };
     const expectedMarkdown = '__This__ is not *fine*';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
   describe('custom markdownDict', () => {
     const customMarkdownDict = {
       BOLD: '**',
-      STRIKETHROUGH: '~~'
+      STRIKETHROUGH: '~~',
     };
 
     it('returns unstyled text correctly', () => {
@@ -658,12 +656,12 @@ describe('draftjsToMd', () => {
             type: 'unstyled',
             depth: 0,
             inlineStyleRanges: [],
-            entityRanges: []
-          }
-        ]
+            entityRanges: [],
+          },
+        ],
       };
       const expectedMarkdown = 'There is no styling anywhere in this text.';
-      draftjsToMd(raw, customMarkdownDict).should.equal(expectedMarkdown);
+      expect(draftjsToMd(raw, customMarkdownDict)).toBe(expectedMarkdown);
     });
 
     it('converts draftjs blocks to bold markdown with overriden style', () => {
@@ -677,15 +675,15 @@ describe('draftjsToMd', () => {
               {
                 offset: 9,
                 length: 4,
-                style: 'BOLD'
-              }
+                style: 'BOLD',
+              },
             ],
-            entityRanges: []
-          }
-        ]
+            entityRanges: [],
+          },
+        ],
       };
       const expectedMarkdown = 'No style **bold** no style.';
-      draftjsToMd(raw, customMarkdownDict).should.equal(expectedMarkdown);
+      expect(draftjsToMd(raw, customMarkdownDict)).toBe(expectedMarkdown);
     });
 
     it('converts draftjs blocks to italic markdown with default style', () => {
@@ -699,15 +697,15 @@ describe('draftjsToMd', () => {
               {
                 offset: 9,
                 length: 6,
-                style: 'ITALIC'
-              }
+                style: 'ITALIC',
+              },
             ],
-            entityRanges: []
-          }
-        ]
+            entityRanges: [],
+          },
+        ],
       };
       const expectedMarkdown = 'No style *italic* no style.';
-      draftjsToMd(raw, customMarkdownDict).should.equal(expectedMarkdown);
+      expect(draftjsToMd(raw, customMarkdownDict)).toBe(expectedMarkdown);
     });
 
     it('converts draftjs blocks to strike-through markdown with overriden style', () => {
@@ -721,15 +719,15 @@ describe('draftjsToMd', () => {
               {
                 offset: 9,
                 length: 14,
-                style: 'STRIKETHROUGH'
-              }
+                style: 'STRIKETHROUGH',
+              },
             ],
-            entityRanges: []
-          }
-        ]
+            entityRanges: [],
+          },
+        ],
       };
       const expectedMarkdown = 'No style ~~strike-through~~ no style.';
-      draftjsToMd(raw, customMarkdownDict).should.equal(expectedMarkdown);
+      expect(draftjsToMd(raw, customMarkdownDict)).toBe(expectedMarkdown);
     });
   });
 
@@ -742,9 +740,9 @@ describe('draftjsToMd', () => {
             mutability: 'IMMUTABLE',
             data: {
               url: '//images.mine.com/myImage.jpg',
-              fileName: 'My Image Name'
-            }
-          }
+              fileName: 'My Image Name',
+            },
+          },
         },
         blocks: [
           {
@@ -757,14 +755,14 @@ describe('draftjsToMd', () => {
               {
                 offset: 0,
                 length: 1,
-                key: 1
-              }
-            ]
-          }
-        ]
+                key: 1,
+              },
+            ],
+          },
+        ],
       };
       const expectedMarkdown = '![My Image Name](//images.mine.com/myImage.jpg)';
-      draftjsToMd(raw).should.equal(expectedMarkdown);
+      expect(draftjsToMd(raw)).toBe(expectedMarkdown);
     });
 
     it('converts image media to markdown correctly with src format', () => {
@@ -774,9 +772,9 @@ describe('draftjsToMd', () => {
             type: 'image',
             mutability: 'IMMUTABLE',
             data: {
-              src: '//images.mine.com/myImage.jpg'
-            }
-          }
+              src: '//images.mine.com/myImage.jpg',
+            },
+          },
         },
         blocks: [
           {
@@ -789,29 +787,28 @@ describe('draftjsToMd', () => {
               {
                 offset: 0,
                 length: 1,
-                key: 1
-              }
-            ]
-          }
-        ]
+                key: 1,
+              },
+            ],
+          },
+        ],
       };
       const expectedMarkdown = '![](//images.mine.com/myImage.jpg)';
-      draftjsToMd(raw).should.equal(expectedMarkdown);
+      expect(draftjsToMd(raw)).toBe(expectedMarkdown);
     });
   });
 
   describe('Videos', () => {
     it('converts video media created by draft-js-video-plugin to markdown correctly with src format', () => {
-      // eslint-disable-line max-len
       const raw = {
         entityMap: {
           1: {
             type: 'draft-js-video-plugin-video',
             mutability: 'IMMUTABLE',
             data: {
-              src: '//youtu.be/wfWIs2gFTAM'
-            }
-          }
+              src: '//youtu.be/wfWIs2gFTAM',
+            },
+          },
         },
         blocks: [
           {
@@ -824,14 +821,14 @@ describe('draftjsToMd', () => {
               {
                 offset: 0,
                 length: 1,
-                key: 1
-              }
-            ]
-          }
-        ]
+                key: 1,
+              },
+            ],
+          },
+        ],
       };
       const expectedMarkdown = '[[ embed url=//youtu.be/wfWIs2gFTAM ]]';
-      draftjsToMd(raw).should.equal(expectedMarkdown);
+      expect(draftjsToMd(raw)).toBe(expectedMarkdown);
     });
   });
 
@@ -847,16 +844,16 @@ describe('draftjsToMd', () => {
             {
               offset: 0,
               length: 14,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
           entityRanges: [],
-          data: {}
-        }
+          data: {},
+        },
       ],
-      entityMap: {}
+      entityMap: {},
     };
     const expectedMarkdown = '__Trying again.🕺__';
-    draftjsToMd(raw).should.equal(expectedMarkdown);
+    expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 });

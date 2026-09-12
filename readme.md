@@ -169,20 +169,15 @@ getMarkdown() {
 [---]
 ```
 
-## Run tests
+## Development
 
-```
-npm test
-```
+This project uses [pnpm](https://pnpm.io). Node.js 22 or later is required.
 
-## Run tests with a watcher
-
-```
-npm run test-dev
-```
-
-## Lint
-
-```
-npm run lint
+```sh
+pnpm install
+pnpm test          # run the tests once
+pnpm test:watch    # run the tests in watch mode
+pnpm lint          # check formatting and lint rules with Biome
+pnpm lint:fix      # fix formatting and lint problems
+pnpm build         # build dist/ with tsdown
 ```

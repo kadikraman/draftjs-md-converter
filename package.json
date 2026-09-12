@@ -2,28 +2,37 @@
   "name": "draftjs-md-converter",
   "version": "1.5.2",
   "description": "Converter for converting Draft.js state into Markdown and vice versa",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "types": "index.d.ts",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "index.d.ts"
+  ],
+  "sideEffects": false,
   "license": "MIT",
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=22"
   },
+  "packageManager": "pnpm@10.33.4",
   "scripts": {
-    "lint": "$(npm bin)/eslint src test",
-    "test": "$(npm bin)/mocha && npm run lint",
-    "test-dev": "$(npm bin)/mocha --compilers js:babel-register --watch",
-    "test-brk": "$(npm bin)/mocha --debug-brk",
-    "compile": "rm -rf dist && mkdir dist && node build.js",
-    "prepublish": "npm run compile",
-    "precommit": "lint-staged",
+    "build": "tsdown",
+    "lint": "biome check",
+    "lint:fix": "biome check --write",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "pnpm run lint && pnpm run test && pnpm run build",
     "deploy-demo": "cd demo && yarn build && gh-pages -d build"
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ]
   },
   "repository": {
     "type": "git",
@@ -44,29 +53,16 @@
   },
   "homepage": "https://kadikraman.github.io/draftjs-md-converter",
   "devDependencies": {
-    "@babel/core": "7.11.6",
-    "babel-eslint": "^10.1.0",
-    "chai": "^3.5.0",
-    "dirty-chai": "^1.2.2",
-    "esbuild": "0.8.36",
-    "eslint": "^3.9.0",
-    "eslint-config-airbnb": "^6.2.0",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-prettier": "^2.6.0",
-    "eslint-plugin-react": "^4.3.0",
-    "eslint-scope": "5.0.0",
+    "@biomejs/biome": "2.5.13",
     "gh-pages": "^3.1.0",
-    "husky": "4.2.1",
-    "lint-staged": "^7.0.4",
-    "mocha": "^2.4.5",
-    "prettier": "1.19.1"
+    "tsdown": "^0.23.0",
+    "vitest": "^5.0.0"
   },
   "dependencies": {
-    "@textlint/markdown-to-ast": "12.0.2"
+    "@textlint/markdown-to-ast": "^15.8.0"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }

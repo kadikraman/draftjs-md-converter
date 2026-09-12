@@ -1,7 +1,5 @@
-const mdToDraftjs = require('../src/mdToDraftjs.js');
-const chai = require('chai');
-const expect = chai.expect; // eslint-disable-line no-unused-vars
-const should = chai.should(); // eslint-disable-line no-unused-vars
+import { describe, expect, it } from 'vitest';
+import mdToDraftjs from '../src/mdToDraftjs.js';
 
 describe('mdToDraftjs', () => {
   it('returns empty text correctly', () => {
@@ -13,16 +11,16 @@ describe('mdToDraftjs', () => {
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('returns unstyled text correctly', () => {
@@ -34,16 +32,16 @@ describe('mdToDraftjs', () => {
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts bold markdown to draftjs blocks', () => {
@@ -58,19 +56,19 @@ describe('mdToDraftjs', () => {
             {
               offset: 9,
               length: 4,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts several italic markdown to draftjs blocks', () => {
@@ -85,24 +83,24 @@ describe('mdToDraftjs', () => {
             {
               offset: 9,
               length: 6,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 25,
               length: 11,
-              style: 'ITALIC'
-            }
+              style: 'ITALIC',
+            },
           ],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts nested styles correctly', () => {
@@ -117,34 +115,34 @@ describe('mdToDraftjs', () => {
             {
               offset: 7,
               length: 5,
-              style: 'BOLD'
+              style: 'BOLD',
             },
             {
               offset: 12,
               length: 4,
-              style: 'BOLD'
+              style: 'BOLD',
             },
             {
               offset: 12,
               length: 4,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 16,
               length: 7,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts two styles applied to the same word correctly', () => {
@@ -159,24 +157,24 @@ describe('mdToDraftjs', () => {
             {
               offset: 0,
               length: 6,
-              style: 'BOLD'
+              style: 'BOLD',
             },
             {
               offset: 0,
               length: 6,
-              style: 'ITALIC'
-            }
+              style: 'ITALIC',
+            },
           ],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts two styles applied outside a link correctly', () => {
@@ -191,34 +189,34 @@ describe('mdToDraftjs', () => {
             {
               key: 0,
               length: 5,
-              offset: 0
-            }
+              offset: 0,
+            },
           ],
           inlineStyleRanges: [
             {
               length: 5,
               offset: 0,
-              style: 'BOLD'
+              style: 'BOLD',
             },
             {
               length: 5,
               offset: 0,
-              style: 'ITALIC'
-            }
-          ]
-        }
+              style: 'ITALIC',
+            },
+          ],
+        },
       ],
       entityMap: {
         0: {
           type: 'LINK',
           mutability: 'MUTABLE',
-          data: { url: 'http://example.com/here' }
-        }
-      }
+          data: { url: 'http://example.com/here' },
+        },
+      },
     };
 
     const resultDraftJs = mdToDraftjs(markdown);
-    resultDraftJs.should.deep.equal(expectedDraftjs);
+    expect(resultDraftJs).toStrictEqual(expectedDraftjs);
   });
 
   it('converts a style applied inside a link correctly', () => {
@@ -233,29 +231,29 @@ describe('mdToDraftjs', () => {
             {
               key: 0,
               length: 5,
-              offset: 0
-            }
+              offset: 0,
+            },
           ],
           inlineStyleRanges: [
             {
               length: 1,
               offset: 2,
-              style: 'BOLD'
-            }
-          ]
-        }
+              style: 'BOLD',
+            },
+          ],
+        },
       ],
       entityMap: {
         0: {
           type: 'LINK',
           mutability: 'MUTABLE',
-          data: { url: 'http://example.com/here' }
-        }
-      }
+          data: { url: 'http://example.com/here' },
+        },
+      },
     };
 
     const resultDraftJs = mdToDraftjs(markdown);
-    resultDraftJs.should.deep.equal(expectedDraftjs);
+    expect(resultDraftJs).toStrictEqual(expectedDraftjs);
   });
 
   it('converts several paragraphs to markdown correctly', () => {
@@ -271,20 +269,20 @@ describe('mdToDraftjs', () => {
             {
               offset: 0,
               length: 6,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 6,
               length: 7,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 6,
               length: 7,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Second content block.',
@@ -294,20 +292,20 @@ describe('mdToDraftjs', () => {
             {
               offset: 0,
               length: 7,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 7,
               length: 7,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 7,
               length: 7,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Third content block.',
@@ -317,29 +315,29 @@ describe('mdToDraftjs', () => {
             {
               offset: 0,
               length: 6,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 6,
               length: 7,
-              style: 'ITALIC'
+              style: 'ITALIC',
             },
             {
               offset: 6,
               length: 7,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to unordered lists correctly', () => {
@@ -351,23 +349,23 @@ describe('mdToDraftjs', () => {
           type: 'unordered-list-item',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Second',
           type: 'unordered-list-item',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to ordered lists correctly', () => {
@@ -379,30 +377,30 @@ describe('mdToDraftjs', () => {
           type: 'ordered-list-item',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Second',
           type: 'ordered-list-item',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Third',
           type: 'ordered-list-item',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to H1 - H6 correctly', () => {
@@ -414,51 +412,51 @@ describe('mdToDraftjs', () => {
           type: 'header-one',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Two',
           type: 'header-two',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Three',
           type: 'header-three',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Four',
           type: 'header-four',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Five',
           type: 'header-five',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Six',
           type: 'header-six',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to code blocks correctly', () => {
@@ -470,16 +468,16 @@ describe('mdToDraftjs', () => {
           type: 'code-block',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to code blocks with inline styles correctly', () => {
@@ -491,21 +489,21 @@ describe('mdToDraftjs', () => {
           type: 'code-block',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts multiple markdown to code blocks correctly', () => {
     const markdown =
-      'Cats are cool\n```\nPurr Purr 🐱\n```\nBut birds are too!\n```\nCaw-cawwww! 🐦\n```'; // eslint-disable-line max-len
+      'Cats are cool\n```\nPurr Purr 🐱\n```\nBut birds are too!\n```\nCaw-cawwww! 🐦\n```';
     const expectedDraftjs = {
       blocks: [
         {
@@ -513,37 +511,37 @@ describe('mdToDraftjs', () => {
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Purr Purr 🐱',
           type: 'code-block',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'But birds are too!',
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Caw-cawwww! 🐦',
           type: 'code-block',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to unclosed code blocks correctly', () => {
@@ -555,23 +553,23 @@ describe('mdToDraftjs', () => {
           type: 'code-block',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
+          entityRanges: [],
         },
         {
           text: 'Oh no, I only opened a code block',
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
       entityMap: {
         type: '',
         mutability: '',
-        data: ''
-      }
+        data: '',
+      },
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts link entities to markdown correctly', () => {
@@ -582,9 +580,9 @@ describe('mdToDraftjs', () => {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/'
-          }
-        }
+            url: 'http://red-badger.com/',
+          },
+        },
       },
       blocks: [
         {
@@ -596,13 +594,13 @@ describe('mdToDraftjs', () => {
             {
               offset: 10,
               length: 4,
-              key: 0
-            }
-          ]
-        }
-      ]
+              key: 0,
+            },
+          ],
+        },
+      ],
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to several links correctly', () => {
@@ -613,16 +611,16 @@ describe('mdToDraftjs', () => {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/'
-          }
+            url: 'http://red-badger.com/',
+          },
         },
         1: {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/'
-          }
-        }
+            url: 'http://red-badger.com/',
+          },
+        },
       },
       blocks: [
         {
@@ -634,18 +632,18 @@ describe('mdToDraftjs', () => {
             {
               offset: 4,
               length: 4,
-              key: 0
+              key: 0,
             },
             {
               offset: 14,
               length: 5,
-              key: 1
-            }
-          ]
-        }
-      ]
+              key: 1,
+            },
+          ],
+        },
+      ],
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('converts markdown to bold links correctly', () => {
@@ -656,9 +654,9 @@ describe('mdToDraftjs', () => {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/'
-          }
-        }
+            url: 'http://red-badger.com/',
+          },
+        },
       },
       blocks: [
         {
@@ -669,20 +667,20 @@ describe('mdToDraftjs', () => {
             {
               offset: 7,
               length: 4,
-              style: 'BOLD'
-            }
+              style: 'BOLD',
+            },
           ],
           entityRanges: [
             {
               offset: 7,
               length: 4,
-              key: 0
-            }
-          ]
-        }
-      ]
+              key: 0,
+            },
+          ],
+        },
+      ],
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   describe('Images', () => {
@@ -696,9 +694,9 @@ describe('mdToDraftjs', () => {
             data: {
               url: '//images.mine.com/myImage.jpg',
               src: '//images.mine.com/myImage.jpg',
-              fileName: 'My Image Name'
-            }
-          }
+              fileName: 'My Image Name',
+            },
+          },
         },
         blocks: [
           {
@@ -710,13 +708,13 @@ describe('mdToDraftjs', () => {
               {
                 offset: 0,
                 length: 1,
-                key: 0
-              }
-            ]
-          }
-        ]
+                key: 0,
+              },
+            ],
+          },
+        ],
       };
-      mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+      expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
     });
   });
 
@@ -729,9 +727,9 @@ describe('mdToDraftjs', () => {
             type: 'draft-js-video-plugin-video',
             mutability: 'IMMUTABLE',
             data: {
-              src: '//youtu.be/wfWIs2gFTAM'
-            }
-          }
+              src: '//youtu.be/wfWIs2gFTAM',
+            },
+          },
         },
         blocks: [
           {
@@ -743,13 +741,13 @@ describe('mdToDraftjs', () => {
               {
                 offset: 0,
                 length: 1,
-                key: 0
-              }
-            ]
-          }
-        ]
+                key: 0,
+              },
+            ],
+          },
+        ],
       };
-      mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+      expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
     });
   });
 
@@ -759,7 +757,7 @@ describe('mdToDraftjs', () => {
       entityMap: {
         data: '',
         mutability: '',
-        type: ''
+        type: '',
       },
       blocks: [
         {
@@ -767,11 +765,11 @@ describe('mdToDraftjs', () => {
           type: 'blockquote',
           depth: 0,
           inlineStyleRanges: [],
-          entityRanges: []
-        }
-      ]
+          entityRanges: [],
+        },
+      ],
     };
-    mdToDraftjs(markdown).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
 
   it('parses inline code correctly', () => {
@@ -783,22 +781,22 @@ describe('mdToDraftjs', () => {
           type: 'unstyled',
           depth: 0,
           inlineStyleRanges: [{ offset: 0, length: 4, style: 'CODE' }],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
-      entityMap: { data: '', mutability: '', type: '' }
+      entityMap: { data: '', mutability: '', type: '' },
     };
 
     const customDict = {
       inlineStyles: {
         Code: {
           type: 'CODE',
-          symbol: '`'
-        }
-      }
+          symbol: '`',
+        },
+      },
     };
 
-    mdToDraftjs(markdown, customDict).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown, customDict)).toStrictEqual(expectedDraftjs);
   });
   it('parses inline code mixed with other styles correctly', () => {
     const markdown = '__`code`__';
@@ -810,23 +808,23 @@ describe('mdToDraftjs', () => {
           depth: 0,
           inlineStyleRanges: [
             { offset: 0, length: 4, style: 'BOLD' },
-            { offset: 0, length: 4, style: 'CODE' }
+            { offset: 0, length: 4, style: 'CODE' },
           ],
-          entityRanges: []
-        }
+          entityRanges: [],
+        },
       ],
-      entityMap: { data: '', mutability: '', type: '' }
+      entityMap: { data: '', mutability: '', type: '' },
     };
 
     const customDict = {
       inlineStyles: {
         Code: {
           type: 'CODE',
-          symbol: '`'
-        }
-      }
+          symbol: '`',
+        },
+      },
     };
 
-    mdToDraftjs(markdown, customDict).should.deep.equal(expectedDraftjs);
+    expect(mdToDraftjs(markdown, customDict)).toStrictEqual(expectedDraftjs);
   });
 });

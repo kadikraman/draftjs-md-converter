@@ -1,16 +1,14 @@
-'use strict';
-
-const parse = require('@textlint/markdown-to-ast').parse;
+import { parse } from '@textlint/markdown-to-ast';
 
 const defaultInlineStyles = {
   Strong: {
     type: 'BOLD',
-    symbol: '__'
+    symbol: '__',
   },
   Emphasis: {
     type: 'ITALIC',
-    symbol: '*'
-  }
+    symbol: '*',
+  },
 };
 
 const defaultBlockStyles = {
@@ -22,7 +20,7 @@ const defaultBlockStyles = {
   Header5: 'header-five',
   Header6: 'header-six',
   CodeBlock: 'code-block',
-  BlockQuote: 'blockquote'
+  BlockQuote: 'blockquote',
 };
 
 const getBlockStyleForMd = (node, blockStyles) => {
@@ -46,7 +44,7 @@ const getBlockStyleForMd = (node, blockStyles) => {
   return blockStyles[style];
 };
 
-const joinCodeBlocks = splitMd => {
+const joinCodeBlocks = (splitMd) => {
   const opening = splitMd.indexOf('```');
   const closing = splitMd.indexOf('```', opening + 1);
 
@@ -56,7 +54,7 @@ const joinCodeBlocks = splitMd => {
     const updatedSplitMarkdown = [
       ...splitMd.slice(0, opening),
       codeBlockJoined,
-      ...splitMd.slice(closing + 1)
+      ...splitMd.slice(closing + 1),
     ];
 
     return joinCodeBlocks(updatedSplitMarkdown);
@@ -65,7 +63,7 @@ const joinCodeBlocks = splitMd => {
   return splitMd;
 };
 
-const splitMdBlocks = md => {
+const splitMdBlocks = (md) => {
   const splitMd = md.split('\n');
 
   // Process the split markdown include the
@@ -89,33 +87,33 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
     inlineStyleRanges.push({ offset, length, style });
   };
 
-  const getRawLength = children =>
+  const getRawLength = (children) =>
     children.reduce((prev, current) => {
       if (current.value) {
         return prev + current.value.length;
-      } else if (current.children && current.children.length) {
+      } else if (current.children?.length) {
         return prev + getRawLength(current.children);
       }
       return prev;
     }, 0);
 
-  const addLink = child => {
+  const addLink = (child) => {
     const entityKey = Object.keys(entityMap).length;
     entityMap[entityKey] = {
       type: 'LINK',
       mutability: 'MUTABLE',
       data: {
-        url: child.url
-      }
+        url: child.url,
+      },
     };
     entityRanges.push({
       key: entityKey,
       length: getRawLength(child.children),
-      offset: text.length
+      offset: text.length,
     });
   };
 
-  const addImage = child => {
+  const addImage = (child) => {
     const entityKey = Object.keys(entityMap).length;
     entityMap[entityKey] = {
       type: 'IMAGE',
@@ -123,17 +121,17 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
       data: {
         url: child.url,
         src: child.url,
-        fileName: child.alt || ''
-      }
+        fileName: child.alt || '',
+      },
     };
     entityRanges.push({
       key: entityKey,
       length: 1,
-      offset: text.length
+      offset: text.length,
     });
   };
 
-  const addVideo = child => {
+  const addVideo = (child) => {
     const string = child.raw;
 
     // RegEx: [[ embed url=<anything> ]]
@@ -144,13 +142,13 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
       type: 'draft-js-video-plugin-video',
       mutability: 'IMMUTABLE',
       data: {
-        src: url
-      }
+        src: url,
+      },
     };
     entityRanges.push({
       key: entityKey,
       length: 1,
-      offset: text.length
+      offset: text.length,
     });
   };
 
@@ -176,12 +174,12 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
       const rawLength = getRawLength(child.children);
       addInlineStyleRange(text.length, rawLength, style.type);
       const newStyle = inlineStyles[child.type];
-      child.children.forEach(grandChild => {
+      child.children.forEach((grandChild) => {
         parseChildren(grandChild, newStyle);
       });
     } else if (!videoShortcodeRegEx.test(child.raw) && child.children) {
       const newStyle = inlineStyles[child.type];
-      child.children.forEach(grandChild => {
+      child.children.forEach((grandChild) => {
         parseChildren(grandChild, newStyle);
       });
     } else {
@@ -197,7 +195,7 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
     }
   };
 
-  astString.children.forEach(child => {
+  astString.children.forEach((child) => {
     const style = inlineStyles[child.type];
     parseChildren(child, style);
   });
@@ -216,7 +214,7 @@ const parseMdLine = (line, existingEntities, extraStyles = {}) => {
     inlineStyleRanges,
     entityRanges,
     blockStyle,
-    entityMap
+    entityMap,
   };
 };
 
@@ -225,14 +223,14 @@ function mdToDraftjs(mdString, extraStyles) {
   const blocks = [];
   let entityMap = {};
 
-  paragraphs.forEach(paragraph => {
+  paragraphs.forEach((paragraph) => {
     const result = parseMdLine(paragraph, entityMap, extraStyles);
     blocks.push({
       text: result.text,
       type: result.blockStyle,
       depth: 0,
       inlineStyleRanges: result.inlineStyleRanges,
-      entityRanges: result.entityRanges
+      entityRanges: result.entityRanges,
     });
     entityMap = result.entityMap;
   });
@@ -243,13 +241,13 @@ function mdToDraftjs(mdString, extraStyles) {
     entityMap = {
       data: '',
       mutability: '',
-      type: ''
+      type: '',
     };
   }
   return {
     blocks,
-    entityMap
+    entityMap,
   };
 }
 
-module.exports = mdToDraftjs;
+export default mdToDraftjs;
