@@ -7,8 +7,9 @@
   "types": "index.d.ts",
   "license": "MIT",
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=22"
   },
+  "packageManager": "pnpm@10.33.4",
   "scripts": {
     "lint": "$(npm bin)/eslint src test",
     "test": "$(npm bin)/mocha && npm run lint",
