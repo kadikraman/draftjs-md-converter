@@ -13,11 +13,10 @@ Draft.js itself is archived. People who use this package maintain existing apps,
 
 ## Layout
 
-- `src/`: library source as ES modules. `index.js` re-exports the two converters.
+- `src/`: TypeScript source. `index.ts` re-exports the two converters and the public types. `types.ts` mirrors the raw Draft.js content state shapes so the package does not depend on `draft-js`.
 - `test/`: Vitest tests, one file per converter. These are the regression baseline.
-- `index.d.ts`: hand-written type declarations, published as the package types.
 - `demo/`: a separate Create React App demo site. It is not part of the pnpm install and Biome skips it. Leave it alone unless the task is about the demo.
-- `dist/`: build output. Git-ignored, published to npm.
+- `dist/`: build output, including generated type declarations. Git-ignored, published to npm.
 
 ## Commands
 
@@ -29,16 +28,17 @@ pnpm test          # run the tests once
 pnpm test:watch    # run the tests in watch mode
 pnpm lint          # Biome: formatting and lint rules
 pnpm lint:fix      # apply Biome fixes
+pnpm typecheck     # tsc --noEmit over src and test
 pnpm build         # tsdown: emits dist/index.js (ESM) and dist/index.cjs (CJS)
 ```
 
-Run `pnpm lint` and `pnpm test` before handing over changes.
+Run `pnpm lint`, `pnpm typecheck` and `pnpm test` before handing over changes.
 
 ## Conventions and gotchas
 
 - One Draft.js block maps to one Markdown line. `draftjsToMd` joins blocks with a single newline and `mdToDraftjs` splits on newlines. This is not CommonMark paragraph semantics, but existing users depend on it. Do not change the output format without an explicit decision from the maintainer and a changelog entry.
 - Draft.js measures `inlineStyleRanges` and `entityRanges` offsets in Unicode code points, not UTF-16 code units. Walk text with `Array.from(text)` and count lengths the same way. Plain `.length` breaks on emoji.
-- Custom inline styles for `mdToDraftjs` are keyed by textlint AST node type, for example `Strong`, `Emphasis`, `Delete`, `Code`. The parser decides the syntax.
+- Custom inline styles for `mdToDraftjs` are keyed by textlint AST node type, for example `Strong`, `Emphasis`, `Delete`, `Code`. Each entry only names the Draft.js style, `{ type: 'BOLD' }`. The parser decides the syntax.
 - Every bug fix needs a test in `test/` that fails before the fix. When a bug affects both directions, add a round-trip case as well.
 - Dependencies are not bundled into `dist/`. `@textlint/markdown-to-ast` stays a runtime dependency.
 - Formatting is Biome's job. Do not hand-format or argue with it.

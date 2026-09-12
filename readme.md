@@ -16,6 +16,10 @@ This library exists because I needed a highly customisable rich text editor whic
 npm install draftjs-md-converter
 ```
 
+## TypeScript
+
+Type declarations ship with the package, so no `@types/draft-js` is needed. The exported types include `RawDraftContentState`, `MdToDraftjsOptions` and `MarkdownDict`.
+
 ## Support
 
 The following inline styles are supported:
@@ -49,14 +53,8 @@ The default supported inline styles:
 
 ```js
 {
-  Strong: {
-    type: 'BOLD',
-    symbol: '__'
-  },
-  Emphasis: {
-    type: 'ITALIC',
-    symbol: '*'
-  }
+  Strong: { type: 'BOLD' },
+  Emphasis: { type: 'ITALIC' }
 }
 ```
 
@@ -85,11 +83,9 @@ const myCustomStyles = {
   inlineStyles: {
     Delete: {
       type: "STRIKETHROUGH",
-      symbol: "~~",
     },
     Code: {
       type: "CODE",
-      symbol: "`",
     },
   },
   blockStyles: {
