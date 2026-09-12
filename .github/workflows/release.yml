@@ -29,6 +29,7 @@ jobs:
           fi
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
+      - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
       # Trusted publishing needs npm 11.5.1 or later.

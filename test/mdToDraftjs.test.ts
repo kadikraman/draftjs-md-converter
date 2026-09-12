@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import mdToDraftjs from '../src/mdToDraftjs.js';
+import mdToDraftjs from '../src/mdToDraftjs';
 
 describe('mdToDraftjs', () => {
   it('returns empty text correctly', () => {
@@ -791,7 +791,6 @@ describe('mdToDraftjs', () => {
       inlineStyles: {
         Code: {
           type: 'CODE',
-          symbol: '`',
         },
       },
     };
@@ -820,7 +819,6 @@ describe('mdToDraftjs', () => {
       inlineStyles: {
         Code: {
           type: 'CODE',
-          symbol: '`',
         },
       },
     };
