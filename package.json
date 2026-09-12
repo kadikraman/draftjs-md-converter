@@ -3,20 +3,34 @@
   "version": "1.5.2",
   "description": "Converter for converting Draft.js state into Markdown and vice versa",
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "types": "index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "index.d.ts"
+  ],
+  "sideEffects": false,
   "license": "MIT",
   "engines": {
     "node": ">=22"
   },
   "packageManager": "pnpm@10.33.4",
   "scripts": {
+    "build": "tsdown",
     "lint": "$(npm bin)/eslint src test",
     "test": "vitest run",
     "test:watch": "vitest",
-    "compile": "rm -rf dist && mkdir dist && node build.js",
-    "prepublish": "npm run compile",
+    "prepublishOnly": "pnpm run test && pnpm run build",
     "precommit": "lint-staged",
     "deploy-demo": "cd demo && yarn build && gh-pages -d build"
   },
@@ -47,7 +61,6 @@
   "devDependencies": {
     "@babel/core": "7.11.6",
     "babel-eslint": "^10.1.0",
-    "esbuild": "0.8.36",
     "eslint": "^3.9.0",
     "eslint-config-airbnb": "^6.2.0",
     "eslint-config-prettier": "^2.9.0",
@@ -58,6 +71,7 @@
     "husky": "4.2.1",
     "lint-staged": "^7.0.4",
     "prettier": "1.19.1",
+    "tsdown": "^0.23.0",
     "vitest": "^5.0.0"
   },
   "dependencies": {
