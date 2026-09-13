@@ -20,5 +20,6 @@
 
 ### Fixed
 
+- Fenced code blocks with a language tag, such as ```js, were split into empty code blocks and plain text. They now become one code block. The language is kept in the block's `data.language` and `draftjsToMd` writes it back onto the opening fence.
 - Markdown nodes without text, such as a thematic break `---` or a link reference definition, produced the word "undefined" as block text. They now produce an empty block. An image inside an inline style no longer throws (#79).
 - Source maps no longer point at files that are not in the package (#78).

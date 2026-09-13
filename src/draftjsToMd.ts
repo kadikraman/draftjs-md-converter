@@ -46,13 +46,13 @@ const getBlockStyle = (currentStyle: string, appliedBlockStyles: string[]): stri
   return blockStyleDict[currentStyle] || '';
 };
 
-const applyWrappingBlockStyle = (currentStyle: string, content: string): string => {
-  if (currentStyle in wrappingBlockStyleDict) {
-    const wrappingSymbol = wrappingBlockStyleDict[currentStyle];
-    return `${wrappingSymbol}\n${content}\n${wrappingSymbol}`;
+const applyWrappingBlockStyle = (block: RawDraftContentBlock, content: string): string => {
+  const wrappingSymbol = wrappingBlockStyleDict[block.type];
+  if (!wrappingSymbol) {
+    return content;
   }
-
-  return content;
+  const language = typeof block.data?.language === 'string' ? block.data.language : '';
+  return `${wrappingSymbol}${language}\n${content}\n${wrappingSymbol}`;
 };
 
 const applyAtomicStyle = (
@@ -185,7 +185,7 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
         return newText;
       }, '');
 
-      returnString = applyWrappingBlockStyle(block.type, returnString);
+      returnString = applyWrappingBlockStyle(block, returnString);
       returnString = applyAtomicStyle(block, raw.entityMap, returnString);
 
       return returnString;
