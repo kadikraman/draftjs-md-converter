@@ -895,4 +895,27 @@ describe('draftjsToMd', () => {
     };
     expect(draftjsToMd(raw)).toBe('```js\nconst a = 1;\n```');
   });
+
+  it('restarts the numbering of an ordered list that follows other blocks', () => {
+    const item = (text: string, type: string) => ({
+      text,
+      type,
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    });
+    const raw: RawDraftContentState = {
+      entityMap: {},
+      blocks: [
+        item('Install Expo', 'ordered-list-item'),
+        item('Build your app', 'ordered-list-item'),
+        item('Then, to ship it:', 'unstyled'),
+        item('Run EAS Build', 'ordered-list-item'),
+        item('Submit to the stores', 'ordered-list-item'),
+      ],
+    };
+    expect(draftjsToMd(raw)).toBe(
+      '1. Install Expo\n2. Build your app\nThen, to ship it:\n1. Run EAS Build\n2. Submit to the stores',
+    );
+  });
 });

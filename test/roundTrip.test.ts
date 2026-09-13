@@ -12,4 +12,10 @@ describe('round trip', () => {
       '🚀 Build your __apps__ with *Expo* and read the [docs](https://docs.expo.dev) 🎉';
     expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
   });
+
+  it('keeps two ordered lists separate', () => {
+    const markdown =
+      '1. Install Expo\n2. Build your app\nThen ship it:\n1. Run EAS Build\n2. Submit';
+    expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
+  });
 });
