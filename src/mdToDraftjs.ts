@@ -39,6 +39,9 @@ const defaultBlockStyles: Record<string, string> = {
   BlockQuote: 'blockquote',
 };
 
+// Draft.js counts offsets and lengths in Unicode code points, not UTF-16 units
+const codePointLength = (value: string): number => Array.from(value).length;
+
 // RegEx: [[ embed url=<anything> ]]
 const videoShortcodeRegEx = /^\[\[\s(?:embed)\s(?:url=(\S+))\s\]\]/;
 
@@ -114,6 +117,7 @@ const parseMdLine = (
 
   const astString = parse(line) as AstNode;
   let text = '';
+  let textLength = 0;
   const inlineStyleRanges: RawDraftInlineStyleRange[] = [];
   const entityRanges: RawDraftEntityRange[] = [];
   const entityMap = existingEntities;
@@ -128,7 +132,7 @@ const parseMdLine = (
       return 1;
     }
     if (node.value) {
-      return node.value.length;
+      return codePointLength(node.value);
     }
     if (node.children?.length) {
       return getRawLength(node.children);
@@ -151,7 +155,7 @@ const parseMdLine = (
     entityRanges.push({
       key: entityKey,
       length: getRawLength(child.children ?? []),
-      offset: text.length,
+      offset: textLength,
     });
   };
 
@@ -169,7 +173,7 @@ const parseMdLine = (
     entityRanges.push({
       key: entityKey,
       length: 1,
-      offset: text.length,
+      offset: textLength,
     });
   };
 
@@ -187,7 +191,7 @@ const parseMdLine = (
     entityRanges.push({
       key: entityKey,
       length: 1,
-      offset: text.length,
+      offset: textLength,
     });
   };
 
@@ -209,7 +213,7 @@ const parseMdLine = (
     const isVideo = videoShortcodeRegEx.test(child.raw);
     if (!isVideo && child.children && style) {
       const rawLength = getRawLength(child.children);
-      addInlineStyleRange(text.length, rawLength, style.type);
+      addInlineStyleRange(textLength, rawLength, style.type);
       const newStyle = inlineStyles[child.type];
       for (const grandChild of child.children) {
         parseChildren(grandChild, newStyle);
@@ -221,16 +225,18 @@ const parseMdLine = (
       }
     } else {
       const value = child.type === 'Image' || isVideo ? ' ' : (child.value ?? '');
-      if (value.length > 0) {
+      const valueLength = codePointLength(value);
+      if (valueLength > 0) {
         if (style) {
-          addInlineStyleRange(text.length, value.length, style.type);
+          addInlineStyleRange(textLength, valueLength, style.type);
         }
         const ownStyle = inlineStyles[child.type];
         if (ownStyle) {
-          addInlineStyleRange(text.length, value.length, ownStyle.type);
+          addInlineStyleRange(textLength, valueLength, ownStyle.type);
         }
       }
       text = `${text}${value}`;
+      textLength += valueLength;
     }
   };
 
