@@ -26,10 +26,9 @@ const wrappingBlockStyleDict: Record<string, string> = {
   'code-block': '```',
 };
 
-/** An opened inline style waiting for its closing symbol. */
+/** An opened inline style waiting for its closing symbol at character index `end`. */
 interface AppliedStyle {
   symbol: string;
-  range: { start: number; end: number };
   end: number;
 }
 
@@ -91,25 +90,23 @@ const getEntityEnd = (entity: RawDraftEntity): string => {
   }
 };
 
-function fixWhitespacesInsideStyle(text: string, style: AppliedStyle): string {
-  // Move spaces at the edges of a styled range outside its markers: "__ a __" -> " __a__ "
-  const { symbol } = style;
+const isWhitespace = (char: string): boolean => /\s/u.test(char);
 
-  const pre = text.slice(0, style.range.start);
-  const body = text.slice(style.range.start, style.range.end);
-  const bodyTrimmed = body.trim();
-  const post = text.slice(style.range.end);
-
-  const bodyTrimmedStart = style.range.start + body.indexOf(bodyTrimmed);
-
-  const prefix = text.slice(style.range.start, bodyTrimmedStart);
-  const postfix = text.slice(bodyTrimmedStart + bodyTrimmed.length, style.range.end);
-
-  const newText = `${pre}${bodyTrimmed}${post}`;
-  return newText.replace(
-    `${symbol}${bodyTrimmed}${symbol}`,
-    `${prefix}${symbol}${bodyTrimmed}${symbol}${postfix}`,
-  );
+// Draft.js may style the spaces around a word, but Markdown symbols must hug the word.
+// Returns the range without leading and trailing whitespace, or undefined if nothing is left.
+function trimRange(
+  range: RawDraftInlineStyleRange,
+  chars: string[],
+): RawDraftInlineStyleRange | undefined {
+  let start = range.offset;
+  let end = range.offset + range.length;
+  while (start < end && isWhitespace(chars[start])) {
+    start++;
+  }
+  while (end > start && isWhitespace(chars[end - 1])) {
+    end--;
+  }
+  return end > start ? { ...range, offset: start, length: end - start } : undefined;
 }
 
 function getInlineStyleRangesByLength(
@@ -124,8 +121,6 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
 
   return raw.blocks
     .map((block) => {
-      // symbol characters inserted so far
-      let totalOffset = 0;
       let returnString = '';
 
       returnString += getBlockStyle(block.type, appliedBlockStyles);
@@ -135,28 +130,23 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
       const lastAppliedStyle = (): AppliedStyle | undefined =>
         appliedStyles[appliedStyles.length - 1];
 
-      returnString += Array.from(block.text).reduce((text, currentChar, index) => {
+      const chars = Array.from(block.text);
+      const inlineStyleRanges = getInlineStyleRangesByLength(
+        block.inlineStyleRanges
+          .filter((range) => markdownDict[range.style]) // skip styles the dict does not know
+          .flatMap((range) => trimRange(range, chars) ?? []),
+      );
+
+      returnString += chars.reduce((text, currentChar, index) => {
         let newText = text;
 
-        const sortedInlineStyleRanges = getInlineStyleRangesByLength(block.inlineStyleRanges);
-
-        const stylesStartAtChar = sortedInlineStyleRanges
-          .filter((range) => range.offset === index)
-          .filter((range) => markdownDict[range.style]); // skip styles the dict does not know
-
         // open styles starting here
-        for (const currentStyle of stylesStartAtChar) {
-          const symbol = markdownDict[currentStyle.style];
-          newText += symbol;
-          totalOffset += symbol.length;
-          appliedStyles.push({
-            symbol,
-            range: {
-              start: currentStyle.offset + totalOffset,
-              end: currentStyle.offset + currentStyle.length + totalOffset,
-            },
-            end: currentStyle.offset + (currentStyle.length - 1),
-          });
+        for (const currentStyle of inlineStyleRanges) {
+          if (currentStyle.offset === index) {
+            const symbol = markdownDict[currentStyle.style];
+            newText += symbol;
+            appliedStyles.push({ symbol, end: currentStyle.offset + currentStyle.length - 1 });
+          }
         }
 
         const entitiesStartAtChar = block.entityRanges.filter((range) => range.offset === index);
@@ -178,9 +168,6 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
         while (endingStyle?.end === index) {
           appliedStyles.pop();
           newText += endingStyle.symbol;
-
-          newText = fixWhitespacesInsideStyle(newText, endingStyle);
-          totalOffset += endingStyle.symbol.length;
           endingStyle = lastAppliedStyle();
         }
 
