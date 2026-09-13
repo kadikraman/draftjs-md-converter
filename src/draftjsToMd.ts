@@ -35,12 +35,14 @@ interface AppliedStyle {
 
 const getBlockStyle = (currentStyle: string, appliedBlockStyles: string[]): string => {
   if (currentStyle === 'ordered-list-item') {
-    const counter = appliedBlockStyles.reduce((prev, style) => {
-      if (style === 'ordered-list-item') {
-        return prev + 1;
+    // number continues only while the blocks directly before are ordered list items
+    let counter = 1;
+    for (let i = appliedBlockStyles.length - 1; i >= 0; i--) {
+      if (appliedBlockStyles[i] !== 'ordered-list-item') {
+        break;
       }
-      return prev;
-    }, 1);
+      counter++;
+    }
     return `${counter}. `;
   }
   return blockStyleDict[currentStyle] || '';
