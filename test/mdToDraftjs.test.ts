@@ -876,4 +876,36 @@ describe('mdToDraftjs', () => {
       expect(result.entityMap[0].type).toBe('IMAGE');
     });
   });
+
+  describe('fenced code blocks with a language tag', () => {
+    it('keeps the block together and stores the language in block data', () => {
+      expect(mdToDraftjs('```js\nconst a = 1;\n```').blocks).toStrictEqual([
+        {
+          text: 'const a = 1;',
+          type: 'code-block',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [],
+          data: { language: 'js' },
+        },
+      ]);
+    });
+
+    it('handles tagged and untagged blocks in one document', () => {
+      const result = mdToDraftjs('Cats\n```ts\nPurr\n```\nBirds\n```\nCaw\n```');
+      expect(result.blocks.map((block) => [block.type, block.text, block.data])).toStrictEqual([
+        ['unstyled', 'Cats', undefined],
+        ['code-block', 'Purr', { language: 'ts' }],
+        ['unstyled', 'Birds', undefined],
+        ['code-block', 'Caw', undefined],
+      ]);
+    });
+
+    it('accepts a closing fence with trailing spaces', () => {
+      const result = mdToDraftjs('```js\nx\n```  ');
+      expect(result.blocks.map((block) => [block.type, block.text])).toStrictEqual([
+        ['code-block', 'x'],
+      ]);
+    });
+  });
 });

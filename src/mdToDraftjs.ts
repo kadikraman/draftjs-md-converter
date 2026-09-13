@@ -19,6 +19,7 @@ interface AstNode {
   alt?: string | null;
   ordered?: boolean | null;
   depth?: number;
+  lang?: string | null;
 }
 
 const defaultInlineStyles: Record<string, InlineStyleMapping> = {
@@ -63,23 +64,24 @@ const getBlockStyleForMd = (
   return blockStyles[style];
 };
 
-const joinCodeBlocks = (splitMd: string[]): string[] => {
-  const opening = splitMd.indexOf('```');
-  const closing = splitMd.indexOf('```', opening + 1);
+const isOpeningFence = (line: string): boolean => line.startsWith('```');
+const isClosingFence = (line: string): boolean => /^```\s*$/.test(line);
 
-  if (opening >= 0 && closing >= 0) {
-    const codeBlock = splitMd.slice(opening, closing + 1);
-    const codeBlockJoined = codeBlock.join('\n');
-    const updatedSplitMarkdown = [
-      ...splitMd.slice(0, opening),
-      codeBlockJoined,
-      ...splitMd.slice(closing + 1),
-    ];
-
-    return joinCodeBlocks(updatedSplitMarkdown);
+const joinCodeBlocks = (lines: string[]): string[] => {
+  const result: string[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (isOpeningFence(line)) {
+      const closing = lines.findIndex((candidate, j) => j > i && isClosingFence(candidate));
+      if (closing >= 0) {
+        result.push(lines.slice(i, closing + 1).join('\n'));
+        i = closing;
+        continue;
+      }
+    }
+    result.push(line);
   }
-
-  return splitMd;
+  return result;
 };
 
 const splitMdBlocks = (md: string): string[] => {
@@ -96,6 +98,7 @@ interface ParsedLine {
   entityRanges: RawDraftEntityRange[];
   blockStyle: string;
   entityMap: Record<string, RawDraftEntity>;
+  data?: Record<string, unknown>;
 }
 
 const parseMdLine = (
@@ -237,11 +240,15 @@ const parseMdLine = (
   }
 
   let blockStyle = 'unstyled';
+  let data: Record<string, unknown> | undefined;
   const firstChild = astString.children?.[0];
   if (firstChild) {
     const style = getBlockStyleForMd(firstChild, blockStyles);
     if (style) {
       blockStyle = style;
+    }
+    if (firstChild.type === 'CodeBlock' && firstChild.lang) {
+      data = { language: firstChild.lang };
     }
   }
 
@@ -251,6 +258,7 @@ const parseMdLine = (
     entityRanges,
     blockStyle,
     entityMap,
+    data,
   };
 };
 
@@ -267,6 +275,7 @@ function mdToDraftjs(mdString: string, extraStyles?: MdToDraftjsOptions): RawDra
       depth: 0,
       inlineStyleRanges: result.inlineStyleRanges,
       entityRanges: result.entityRanges,
+      ...(result.data ? { data: result.data } : {}),
     });
     entityMap = result.entityMap;
   }

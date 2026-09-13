@@ -878,4 +878,21 @@ describe('draftjsToMd', () => {
     const expectedMarkdown = '__Trying again.🕺__';
     expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
+
+  it('writes the language of a code block from block data', () => {
+    const raw: RawDraftContentState = {
+      entityMap: {},
+      blocks: [
+        {
+          text: 'const a = 1;',
+          type: 'code-block',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [],
+          data: { language: 'js' },
+        },
+      ],
+    };
+    expect(draftjsToMd(raw)).toBe('```js\nconst a = 1;\n```');
+  });
 });
