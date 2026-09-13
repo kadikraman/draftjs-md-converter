@@ -908,4 +908,27 @@ describe('mdToDraftjs', () => {
       ]);
     });
   });
+
+  describe('emoji', () => {
+    it('counts offsets in code points so a style after an emoji lines up', () => {
+      const result = mdToDraftjs('🕺 __bold__');
+      expect(result.blocks[0].text).toBe('🕺 bold');
+      expect(result.blocks[0].inlineStyleRanges).toStrictEqual([
+        { offset: 2, length: 4, style: 'BOLD' },
+      ]);
+    });
+
+    it('counts the length of styled text in code points', () => {
+      const result = mdToDraftjs('__🕺 dance__');
+      expect(result.blocks[0].inlineStyleRanges).toStrictEqual([
+        { offset: 0, length: 7, style: 'BOLD' },
+      ]);
+    });
+
+    it('counts entity offsets in code points', () => {
+      const result = mdToDraftjs('🚀 [Expo](https://expo.dev)');
+      expect(result.blocks[0].entityRanges).toStrictEqual([{ key: 0, length: 4, offset: 2 }]);
+      expect(result.entityMap[0].data.url).toBe('https://expo.dev');
+    });
+  });
 });
