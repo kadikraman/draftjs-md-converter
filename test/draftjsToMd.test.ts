@@ -1004,4 +1004,66 @@ describe('draftjsToMd', () => {
       expect(draftjsToMd(raw)).toBe('[Expo]()');
     });
   });
+
+  describe('images inside a text block', () => {
+    const image = (data: Record<string, unknown>) => ({
+      type: 'IMAGE',
+      mutability: 'IMMUTABLE' as const,
+      data,
+    });
+
+    it('writes an image entity in place of its placeholder text', () => {
+      const raw: RawDraftContentState = {
+        entityMap: { 0: image({ src: 'https://expo.dev/logo.png', fileName: 'Expo logo' }) },
+        blocks: [
+          {
+            text: 'Read the   docs',
+            type: 'unstyled',
+            depth: 0,
+            inlineStyleRanges: [],
+            entityRanges: [{ offset: 9, length: 1, key: 0 }],
+          },
+        ],
+      };
+      expect(draftjsToMd(raw)).toBe('Read the ![Expo logo](https://expo.dev/logo.png) docs');
+    });
+
+    it('writes a pasted image whose placeholder is an emoji', () => {
+      const raw: RawDraftContentState = {
+        entityMap: { 0: image({ src: 'https://expo.dev/logo.png' }) },
+        blocks: [
+          {
+            text: '📷',
+            type: 'unstyled',
+            depth: 0,
+            inlineStyleRanges: [],
+            entityRanges: [{ offset: 0, length: 1, key: 0 }],
+          },
+        ],
+      };
+      expect(draftjsToMd(raw)).toBe('![](https://expo.dev/logo.png)');
+    });
+
+    it('keeps an image inside a link', () => {
+      const raw: RawDraftContentState = {
+        entityMap: {
+          0: { type: 'LINK', mutability: 'MUTABLE', data: { url: 'https://expo.dev' } },
+          1: image({ src: 'https://expo.dev/logo.png', fileName: 'logo' }),
+        },
+        blocks: [
+          {
+            text: ' ',
+            type: 'unstyled',
+            depth: 0,
+            inlineStyleRanges: [],
+            entityRanges: [
+              { offset: 0, length: 1, key: 0 },
+              { offset: 0, length: 1, key: 1 },
+            ],
+          },
+        ],
+      };
+      expect(draftjsToMd(raw)).toBe('[![logo](https://expo.dev/logo.png)](https://expo.dev)');
+    });
+  });
 });

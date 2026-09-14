@@ -18,4 +18,9 @@ describe('round trip', () => {
       '1. Install Expo\n2. Build your app\nThen ship it:\n1. Run EAS Build\n2. Submit';
     expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
   });
+
+  it('keeps an image inside a paragraph', () => {
+    const markdown = 'Read the ![Expo logo](https://expo.dev/logo.png) docs';
+    expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
+  });
 });

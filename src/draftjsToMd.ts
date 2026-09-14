@@ -62,6 +62,12 @@ const getEntity = (
   key: number,
 ): RawDraftEntity | undefined => entityMap[key];
 
+const isImage = (entity: RawDraftEntity | undefined): boolean =>
+  entity?.type.toUpperCase() === 'IMAGE';
+
+const imageMarkdown = ({ data }: RawDraftEntity): string =>
+  `![${data.fileName || ''}](${data.url || data.src})`;
+
 const applyAtomicStyle = (
   block: RawDraftContentBlock,
   entityMap: Record<string, RawDraftEntity>,
@@ -77,7 +83,7 @@ const applyAtomicStyle = (
   if (type === 'draft-js-video-plugin-video') {
     return `${strippedContent}[[ embed url=${data.url || data.src} ]]`;
   }
-  return `${strippedContent}![${data.fileName || ''}](${data.url || data.src})`;
+  return `${strippedContent}${imageMarkdown(entity)}`;
 };
 
 const getEntityStart = (entity: RawDraftEntity | undefined): string => {
@@ -145,6 +151,14 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
           .flatMap((range) => trimRange(range, chars) ?? []),
       );
 
+      // images inside a text block are written in place of their placeholder text
+      const inlineImages =
+        block.type === 'atomic'
+          ? []
+          : block.entityRanges.filter((range) => isImage(getEntity(raw.entityMap, range.key)));
+      const isImagePlaceholder = (index: number): boolean =>
+        inlineImages.some((range) => index >= range.offset && index < range.offset + range.length);
+
       returnString += chars.reduce((text, currentChar, index) => {
         let newText = text;
 
@@ -162,7 +176,15 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
           newText += getEntityStart(getEntity(raw.entityMap, entity.key));
         }
 
-        newText += currentChar;
+        for (const range of inlineImages) {
+          const entity = getEntity(raw.entityMap, range.key);
+          if (range.offset === index && entity) {
+            newText += imageMarkdown(entity);
+          }
+        }
+        if (!isImagePlaceholder(index)) {
+          newText += currentChar;
+        }
 
         const entitiesEndAtChar = block.entityRanges.filter(
           (range) => range.offset + range.length - 1 === index,
