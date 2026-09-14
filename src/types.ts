@@ -44,6 +44,14 @@ export interface RawDraftContentState {
  */
 export type MarkdownDict = Record<string, string>;
 
+export interface DraftjsToMdOptions {
+  /**
+   * Escape characters in plain text that Markdown would otherwise interpret, such as `*`, `_`,
+   * backticks, brackets and list or heading markers at the start of a block. Off by default.
+   */
+  escape?: boolean;
+}
+
 /** The Draft.js inline style to apply for a Markdown AST node type. */
 export interface InlineStyleMapping {
   type: string;

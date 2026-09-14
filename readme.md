@@ -127,6 +127,17 @@ const markdown = draftjsToMd(blocks, myMdDict);
 
 **NOTE: at this point you cannot override block styles!**
 
+### Escaping Markdown characters
+
+By default, text is written as it is, so a paragraph containing `*` or `_` may be read back as styled text. Pass `{ escape: true }` as the third argument to escape such characters:
+
+```js
+const markdown = draftjsToMd(blocks, undefined, { escape: true });
+// 'Use *stars*' becomes 'Use \*stars\*'
+```
+
+Inline characters (`\`, `` ` ``, `*`, `_`, `[`, `]`, `<`, `~`) are escaped anywhere in the text. Heading, quote, list and rule markers are escaped only at the start of a block. Code blocks are never escaped.
+
 ## Example
 
 ```js

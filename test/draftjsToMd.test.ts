@@ -1107,4 +1107,102 @@ describe('draftjsToMd', () => {
       );
     });
   });
+
+  describe('escape option', () => {
+    const plain = (text: string, type = 'unstyled'): RawDraftContentState => ({
+      entityMap: {},
+      blocks: [{ text, type, depth: 0, inlineStyleRanges: [], entityRanges: [] }],
+    });
+    const escaped = (raw: RawDraftContentState) => draftjsToMd(raw, undefined, { escape: true });
+
+    it('leaves text alone by default', () => {
+      expect(draftjsToMd(plain('__not_bold__ and *not italic*'))).toBe(
+        '__not_bold__ and *not italic*',
+      );
+    });
+
+    it('escapes inline formatting characters', () => {
+      expect(escaped(plain('__not_bold__ and *not italic* or `code` [x] <b> ~a~ \\'))).toBe(
+        '\\_\\_not\\_bold\\_\\_ and \\*not italic\\* or \\`code\\` \\[x\\] \\<b> \\~a\\~ \\\\',
+      );
+    });
+
+    it('escapes block markers at the start of a block', () => {
+      const lines = [
+        '# not a heading',
+        '> not a quote',
+        '- not a list',
+        '+ not a list',
+        '1. not a list',
+        '2) not a list',
+        '---',
+        '===',
+      ];
+      const raw: RawDraftContentState = {
+        entityMap: {},
+        blocks: lines.map((text) => ({
+          text,
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [],
+        })),
+      };
+      expect(escaped(raw)).toBe(
+        [
+          '\\# not a heading',
+          '\\> not a quote',
+          '\\- not a list',
+          '\\+ not a list',
+          '1\\. not a list',
+          '2\\) not a list',
+          '\\---',
+          '\\===',
+        ].join('\n'),
+      );
+    });
+
+    it('does not escape markers that are not at the start or not followed by a space', () => {
+      expect(escaped(plain('Tag #expo, 3.5 stars, 2024-09 and a-b'))).toBe(
+        'Tag #expo, 3.5 stars, 2024-09 and a-b',
+      );
+    });
+
+    it('keeps code blocks and Markdown symbols untouched', () => {
+      expect(escaped(plain('const a = *b* + _c_;', 'code-block'))).toBe(
+        '```\nconst a = *b* + _c_;\n```',
+      );
+      const raw: RawDraftContentState = {
+        entityMap: {},
+        blocks: [
+          {
+            text: 'snake_case word',
+            type: 'unstyled',
+            depth: 0,
+            inlineStyleRanges: [{ offset: 0, length: 10, style: 'BOLD' }],
+            entityRanges: [],
+          },
+        ],
+      };
+      expect(escaped(raw)).toBe('__snake\\_case__ word');
+    });
+
+    it('escapes brackets inside link text but not the link itself', () => {
+      const raw: RawDraftContentState = {
+        entityMap: {
+          0: { type: 'LINK', mutability: 'MUTABLE', data: { url: 'https://docs.expo.dev' } },
+        },
+        blocks: [
+          {
+            text: 'the [docs]',
+            type: 'unstyled',
+            depth: 0,
+            inlineStyleRanges: [],
+            entityRanges: [{ offset: 0, length: 10, key: 0 }],
+          },
+        ],
+      };
+      expect(escaped(raw)).toBe('[the \\[docs\\]](https://docs.expo.dev)');
+    });
+  });
 });
