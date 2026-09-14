@@ -20,6 +20,7 @@
 
 ### Fixed
 
+- Nested lists are supported. `mdToDraftjs` reads the nesting level from the indentation of list items, accepting two, three, or four spaces or a tab per level, and sets the block `depth`. `draftjsToMd` indents nested items by four spaces per level and numbers ordered items per level. Indented list lines used to become code blocks or flat items (#40).
 - `draftjsToMd` dropped images that sit inside a text block instead of their own atomic block, which is what a pasted image or an inline `![alt](src)` in Markdown produces. Such IMAGE entities are now written as `![alt](src)` in place of their placeholder text (#48).
 - `draftjsToMd` no longer throws on an atomic block without an entity, or on an entity range whose key is missing from `entityMap`. Such blocks and ranges are written as plain text. Link entities that keep the address in `data.href` instead of `data.url` are written correctly, and a link without an address gets an empty target instead of the word "undefined".
 - `draftjsToMd` could drop a space or lose a closing symbol when a styled range that ends in a space sat inside another style, for example "this is a test" became "*__this__ is atest*". Styled ranges are now trimmed to the text they wrap before symbols are written, and ranges that cover only whitespace are ignored (#52).

@@ -87,6 +87,29 @@ const joinCodeBlocks = (lines: string[]): string[] => {
   return result;
 };
 
+// a list marker after optional indentation: "- ", "* ", "+ ", "1. ", "1) "
+const listLineRegEx = /^([ \t]*)(?:[-*+]|\d+[.)])(?:[ \t]|$)/;
+
+interface ListLine {
+  indent: number;
+  content: string;
+}
+
+// The parser sees one line at a time, so nesting has to be read from the indentation here.
+// Indentation is removed before parsing because four or more spaces would make a code block.
+const parseListLine = (line: string): ListLine | undefined => {
+  const match = listLineRegEx.exec(line);
+  if (!match) {
+    return undefined;
+  }
+  const indentation = match[1];
+  const indent = Array.from(indentation).reduce(
+    (width, char) => width + (char === '\t' ? 4 : 1),
+    0,
+  );
+  return { indent, content: line.slice(indentation.length) };
+};
+
 const splitMdBlocks = (md: string): string[] => {
   const splitMd = md.split('\n');
 
@@ -272,13 +295,31 @@ function mdToDraftjs(mdString: string, extraStyles?: MdToDraftjsOptions): RawDra
   const paragraphs = splitMdBlocks(mdString);
   const blocks: RawDraftContentBlock[] = [];
   let entityMap: Record<string, RawDraftEntity> = {};
+  // indentation widths of the open list levels; a wider indent opens a level, a narrower one closes
+  const listIndents: number[] = [];
 
   for (const paragraph of paragraphs) {
-    const result = parseMdLine(paragraph, entityMap, extraStyles);
+    const listLine = parseListLine(paragraph);
+    let depth = 0;
+    let source = paragraph;
+    if (listLine) {
+      while (listIndents.length > 0 && listLine.indent < listIndents[listIndents.length - 1]) {
+        listIndents.pop();
+      }
+      if (listIndents.length === 0 || listLine.indent > listIndents[listIndents.length - 1]) {
+        listIndents.push(listLine.indent);
+      }
+      depth = listIndents.length - 1;
+      source = listLine.content;
+    } else {
+      listIndents.length = 0;
+    }
+
+    const result = parseMdLine(source, entityMap, extraStyles);
     blocks.push({
       text: result.text,
       type: result.blockStyle,
-      depth: 0,
+      depth,
       inlineStyleRanges: result.inlineStyleRanges,
       entityRanges: result.entityRanges,
       ...(result.data ? { data: result.data } : {}),

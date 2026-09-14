@@ -23,4 +23,10 @@ describe('round trip', () => {
     const markdown = 'Read the ![Expo logo](https://expo.dev/logo.png) docs';
     expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
   });
+
+  it('keeps nested lists', () => {
+    const markdown =
+      '- Install Expo\n    - Run create-expo-app\n        - Pick a template\n- Build\n1. First\n    1. Nested\n2. Second';
+    expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
+  });
 });

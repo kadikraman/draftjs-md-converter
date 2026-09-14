@@ -12,7 +12,6 @@ const defaultMarkdownDict: MarkdownDict = {
 };
 
 const blockStyleDict: Record<string, string> = {
-  'unordered-list-item': '- ',
   'header-one': '# ',
   'header-two': '## ',
   'header-three': '### ',
@@ -32,19 +31,38 @@ interface AppliedStyle {
   end: number;
 }
 
-const getBlockStyle = (currentStyle: string, appliedBlockStyles: string[]): string => {
-  if (currentStyle === 'ordered-list-item') {
-    // number continues only while the blocks directly before are ordered list items
-    let counter = 1;
-    for (let i = appliedBlockStyles.length - 1; i >= 0; i--) {
-      if (appliedBlockStyles[i] !== 'ordered-list-item') {
-        break;
-      }
-      counter++;
-    }
-    return `${counter}. `;
+const listItemTypes = new Set(['unordered-list-item', 'ordered-list-item']);
+
+// four spaces nest under both "- " and "1. " markers in CommonMark
+const listIndent = '    ';
+
+const getBlockStyle = (
+  block: RawDraftContentBlock,
+  previousBlocks: RawDraftContentBlock[],
+): string => {
+  if (!listItemTypes.has(block.type)) {
+    return blockStyleDict[block.type] || '';
   }
-  return blockStyleDict[currentStyle] || '';
+  const indent = listIndent.repeat(block.depth);
+  if (block.type === 'unordered-list-item') {
+    return `${indent}- `;
+  }
+  // count the ordered siblings directly before this item; deeper items in between do not break the run
+  let counter = 1;
+  for (let i = previousBlocks.length - 1; i >= 0; i--) {
+    const previous = previousBlocks[i];
+    if (!listItemTypes.has(previous.type) || previous.depth < block.depth) {
+      break;
+    }
+    if (previous.depth > block.depth) {
+      continue;
+    }
+    if (previous.type !== 'ordered-list-item') {
+      break;
+    }
+    counter++;
+  }
+  return `${indent}${counter}. `;
 };
 
 const applyWrappingBlockStyle = (block: RawDraftContentBlock, content: string): string => {
@@ -131,14 +149,14 @@ function getInlineStyleRangesByLength(
 
 function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict): string {
   const markdownDict: MarkdownDict = { ...defaultMarkdownDict, ...extraMarkdownDict };
-  const appliedBlockStyles: string[] = [];
+  const previousBlocks: RawDraftContentBlock[] = [];
 
   return raw.blocks
     .map((block) => {
       let returnString = '';
 
-      returnString += getBlockStyle(block.type, appliedBlockStyles);
-      appliedBlockStyles.push(block.type);
+      returnString += getBlockStyle(block, previousBlocks);
+      previousBlocks.push(block);
 
       const appliedStyles: AppliedStyle[] = [];
       const lastAppliedStyle = (): AppliedStyle | undefined =>
