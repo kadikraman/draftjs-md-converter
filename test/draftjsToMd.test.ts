@@ -954,4 +954,54 @@ describe('draftjsToMd', () => {
       expect(draftjsToMd(raw)).toBe('Ship *🚀* fast');
     });
   });
+
+  describe('incomplete entities', () => {
+    const block = (
+      text: string,
+      type: string,
+      entityRanges: RawDraftContentState['blocks'][0]['entityRanges'] = [],
+    ) => ({ text, type, depth: 0, inlineStyleRanges: [], entityRanges });
+    const link = (data: Record<string, unknown>) => ({
+      type: 'LINK',
+      mutability: 'MUTABLE' as const,
+      data,
+    });
+
+    it('writes an atomic block without an entity as its text', () => {
+      const raw: RawDraftContentState = { entityMap: {}, blocks: [block(' ', 'atomic')] };
+      expect(draftjsToMd(raw)).toBe(' ');
+    });
+
+    it('writes an atomic block whose entity is missing from the map as its text', () => {
+      const raw: RawDraftContentState = {
+        entityMap: {},
+        blocks: [block(' ', 'atomic', [{ offset: 0, length: 1, key: 7 }])],
+      };
+      expect(draftjsToMd(raw)).toBe(' ');
+    });
+
+    it('ignores an entity range whose key is missing from the map', () => {
+      const raw: RawDraftContentState = {
+        entityMap: {},
+        blocks: [block('Expo', 'unstyled', [{ offset: 0, length: 4, key: 3 }])],
+      };
+      expect(draftjsToMd(raw)).toBe('Expo');
+    });
+
+    it('reads a link address from data.href when data.url is absent', () => {
+      const raw: RawDraftContentState = {
+        entityMap: { 0: link({ href: 'https://expo.dev' }) },
+        blocks: [block('Expo', 'unstyled', [{ offset: 0, length: 4, key: 0 }])],
+      };
+      expect(draftjsToMd(raw)).toBe('[Expo](https://expo.dev)');
+    });
+
+    it('writes an empty target for a link without an address', () => {
+      const raw: RawDraftContentState = {
+        entityMap: { 0: link({}) },
+        blocks: [block('Expo', 'unstyled', [{ offset: 0, length: 4, key: 0 }])],
+      };
+      expect(draftjsToMd(raw)).toBe('[Expo]()');
+    });
+  });
 });

@@ -56,24 +56,32 @@ const applyWrappingBlockStyle = (block: RawDraftContentBlock, content: string): 
   return `${wrappingSymbol}${language}\n${content}\n${wrappingSymbol}`;
 };
 
+// entityMap is typed as complete, but content from the wild can reference keys it lacks
+const getEntity = (
+  entityMap: Record<string, RawDraftEntity>,
+  key: number,
+): RawDraftEntity | undefined => entityMap[key];
+
 const applyAtomicStyle = (
   block: RawDraftContentBlock,
   entityMap: Record<string, RawDraftEntity>,
   content: string,
 ): string => {
   if (block.type !== 'atomic') return content;
+  const entityRange = block.entityRanges[0];
+  const entity = entityRange ? getEntity(entityMap, entityRange.key) : undefined;
+  if (!entity) return content;
   // drop the placeholder text of the media block
   const strippedContent = content.substring(0, content.length - block.text.length);
-  const key = block.entityRanges[0].key;
-  const { type, data } = entityMap[key];
+  const { type, data } = entity;
   if (type === 'draft-js-video-plugin-video') {
     return `${strippedContent}[[ embed url=${data.url || data.src} ]]`;
   }
   return `${strippedContent}![${data.fileName || ''}](${data.url || data.src})`;
 };
 
-const getEntityStart = (entity: RawDraftEntity): string => {
-  switch (entity.type) {
+const getEntityStart = (entity: RawDraftEntity | undefined): string => {
+  switch (entity?.type) {
     case 'LINK':
       return '[';
     default:
@@ -81,10 +89,10 @@ const getEntityStart = (entity: RawDraftEntity): string => {
   }
 };
 
-const getEntityEnd = (entity: RawDraftEntity): string => {
-  switch (entity.type) {
+const getEntityEnd = (entity: RawDraftEntity | undefined): string => {
+  switch (entity?.type) {
     case 'LINK':
-      return `](${entity.data.url})`;
+      return `](${entity.data.url || entity.data.href || ''})`;
     default:
       return '';
   }
@@ -151,7 +159,7 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
 
         const entitiesStartAtChar = block.entityRanges.filter((range) => range.offset === index);
         for (const entity of entitiesStartAtChar) {
-          newText += getEntityStart(raw.entityMap[entity.key]);
+          newText += getEntityStart(getEntity(raw.entityMap, entity.key));
         }
 
         newText += currentChar;
@@ -160,7 +168,7 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
           (range) => range.offset + range.length - 1 === index,
         );
         for (const entity of entitiesEndAtChar) {
-          newText += getEntityEnd(raw.entityMap[entity.key]);
+          newText += getEntityEnd(getEntity(raw.entityMap, entity.key));
         }
 
         // close styles ending here, innermost first

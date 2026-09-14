@@ -20,6 +20,7 @@
 
 ### Fixed
 
+- `draftjsToMd` no longer throws on an atomic block without an entity, or on an entity range whose key is missing from `entityMap`. Such blocks and ranges are written as plain text. Link entities that keep the address in `data.href` instead of `data.url` are written correctly, and a link without an address gets an empty target instead of the word "undefined".
 - `draftjsToMd` could drop a space or lose a closing symbol when a styled range that ends in a space sat inside another style, for example "this is a test" became "*__this__ is atest*". Styled ranges are now trimmed to the text they wrap before symbols are written, and ranges that cover only whitespace are ignored (#52).
 - `draftjsToMd` numbered every ordered list in a document as one continuous sequence. A list that starts after another block now starts at 1 again (#74).
 - `mdToDraftjs` measured offsets and lengths in UTF-16 code units. Draft.js counts Unicode code points, so every style or link after an emoji was shifted by one position per emoji. Offsets are now counted in code points, matching `draftjsToMd`.
