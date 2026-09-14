@@ -48,7 +48,7 @@ Run `pnpm lint`, `pnpm typecheck` and `pnpm test` before handing over changes.
 
 - Do not commit, do not open pull requests, and do not post on GitHub issues or pull requests. Leave changes in the working tree for the maintainer to review, test, and commit.
 - Never add AI attribution to commit messages or pull request descriptions. No `Co-Authored-By` trailers and no "generated with" lines.
-- Add an entry under Unreleased in `CHANGELOG.md` for every user-visible change. Mark breaking changes clearly.
+- Add an entry under Unreleased in `CHANGELOG.md` for every user-visible change. Mark breaking changes clearly. End each entry with an inline link to its pull request using the full URL, for example `([#88](https://github.com/kadikraman/draftjs-md-converter/pull/88))`. Do not link the issue; the pull request already says which issue it resolves. The PR number is the next free number on GitHub, which numbers issues and PRs together; check it once the PR exists.
 - Keep `readme.md` in sync when the public API or the supported Markdown syntax changes.
 
 ## Releasing
