@@ -10,6 +10,10 @@
 - The published code targets ES2020. ([#80](https://github.com/kadikraman/draftjs-md-converter/pull/80))
 - The `symbol` field on `inlineStyles` entries passed to `mdToDraftjs` is removed from the types. It was never read; the Markdown parser decides the syntax. ([#81](https://github.com/kadikraman/draftjs-md-converter/pull/81))
 
+### Added
+
+- `draftjsToMd` accepts a third argument, `{ escape: true }`, which escapes Markdown characters in plain text so that text such as `__not_bold__` or `# not a heading` survives the trip to Markdown and back. Off by default because existing content may already contain literal backslashes. ([#90](https://github.com/kadikraman/draftjs-md-converter/pull/90))
+
 ### Changed
 
 - The source is TypeScript. Type declarations are generated from it and shipped for both ESM and CommonJS. They no longer import from `draft-js`, so `@types/draft-js` is not needed. The types `RawDraftContentState`, `RawDraftContentBlock`, `RawDraftEntity`, `MdToDraftjsOptions` and `MarkdownDict` are exported. ([#81](https://github.com/kadikraman/draftjs-md-converter/pull/81))

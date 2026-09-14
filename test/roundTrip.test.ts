@@ -29,4 +29,28 @@ describe('round trip', () => {
       '- Install Expo\n    - Run create-expo-app\n        - Pick a template\n- Build\n1. First\n    1. Nested\n2. Second';
     expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
   });
+
+  it('brings escaped plain text back unchanged and unstyled', () => {
+    const texts = [
+      '__not_bold__ with *stars* and `ticks`',
+      '# not a heading',
+      '1. not a list',
+      '- not a list',
+      '---',
+    ];
+    const raw = {
+      entityMap: {},
+      blocks: texts.map((text) => ({
+        text,
+        type: 'unstyled',
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: [],
+      })),
+    };
+    const back = mdToDraftjs(draftjsToMd(raw, undefined, { escape: true }));
+    expect(
+      back.blocks.map((block) => [block.type, block.text, block.inlineStyleRanges]),
+    ).toStrictEqual(texts.map((text) => ['unstyled', text, []]));
+  });
 });

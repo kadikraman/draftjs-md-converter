@@ -1,4 +1,5 @@
 import type {
+  DraftjsToMdOptions,
   MarkdownDict,
   RawDraftContentBlock,
   RawDraftContentState,
@@ -141,22 +142,49 @@ function trimRange(
   return end > start ? { ...range, offset: start, length: end - start } : undefined;
 }
 
+// characters that can start inline Markdown anywhere in a line
+const inlineMarkdownChar = /[\\`*_[\]<~]/;
+
+const escapeChar = (char: string): string => (inlineMarkdownChar.test(char) ? `\\${char}` : char);
+
+// constructs that only count at the start of a block: headings, quotes, list markers, rules
+const blockStartPatterns: [RegExp, string][] = [
+  [/^(\s*)(#{1,6})(?=\s|$)/, '$1\\$2'],
+  [/^(\s*)>/, '$1\\>'],
+  [/^(\s*)([-+])(?=\s|$)/, '$1\\$2'],
+  [/^(\s*)(\d+)([.)])(?=\s|$)/, '$1$2\\$3'],
+  [/^(\s*)([-=])(?=[-=\s]*$)/, '$1\\$2'],
+];
+
+const escapeBlockStart = (text: string): string => {
+  for (const [pattern, replacement] of blockStartPatterns) {
+    if (pattern.test(text)) {
+      return text.replace(pattern, replacement);
+    }
+  }
+  return text;
+};
+
 function getInlineStyleRangesByLength(
   inlineStyleRanges: RawDraftInlineStyleRange[],
 ): RawDraftInlineStyleRange[] {
   return [...inlineStyleRanges].sort((a, b) => b.length - a.length);
 }
 
-function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict): string {
+function draftjsToMd(
+  raw: RawDraftContentState,
+  extraMarkdownDict?: MarkdownDict,
+  options: DraftjsToMdOptions = {},
+): string {
   const markdownDict: MarkdownDict = { ...defaultMarkdownDict, ...extraMarkdownDict };
   const previousBlocks: RawDraftContentBlock[] = [];
 
   return raw.blocks
     .map((block) => {
-      let returnString = '';
-
-      returnString += getBlockStyle(block, previousBlocks);
+      const blockPrefix = getBlockStyle(block, previousBlocks);
       previousBlocks.push(block);
+      const shouldEscape =
+        options.escape === true && block.type !== 'code-block' && block.type !== 'atomic';
 
       const appliedStyles: AppliedStyle[] = [];
       const lastAppliedStyle = (): AppliedStyle | undefined =>
@@ -177,7 +205,7 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
       const isImagePlaceholder = (index: number): boolean =>
         inlineImages.some((range) => index >= range.offset && index < range.offset + range.length);
 
-      returnString += chars.reduce((text, currentChar, index) => {
+      let body = chars.reduce((text, currentChar, index) => {
         let newText = text;
 
         // open styles starting here
@@ -201,7 +229,7 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
           }
         }
         if (!isImagePlaceholder(index)) {
-          newText += currentChar;
+          newText += shouldEscape ? escapeChar(currentChar) : currentChar;
         }
 
         const entitiesEndAtChar = block.entityRanges.filter(
@@ -222,6 +250,10 @@ function draftjsToMd(raw: RawDraftContentState, extraMarkdownDict?: MarkdownDict
         return newText;
       }, '');
 
+      if (shouldEscape) {
+        body = escapeBlockStart(body);
+      }
+      let returnString = blockPrefix + body;
       returnString = applyWrappingBlockStyle(block, returnString);
       returnString = applyAtomicStyle(block, raw.entityMap, returnString);
 
