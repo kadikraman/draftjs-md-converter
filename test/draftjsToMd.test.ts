@@ -918,4 +918,40 @@ describe('draftjsToMd', () => {
       '1. Install Expo\n2. Build your app\nThen, to ship it:\n1. Run EAS Build\n2. Submit to the stores',
     );
   });
+
+  describe('whitespace at the edges of styled ranges', () => {
+    const block = (
+      text: string,
+      inlineStyleRanges: RawDraftContentState['blocks'][0]['inlineStyleRanges'],
+    ) => ({
+      entityMap: {},
+      blocks: [{ text, type: 'unstyled', depth: 0, inlineStyleRanges, entityRanges: [] }],
+    });
+
+    it('keeps the space before the last word when a nested style precedes it', () => {
+      const raw = block('this is a test', [
+        { offset: 0, length: 14, style: 'ITALIC' },
+        { offset: 0, length: 4, style: 'BOLD' },
+      ]);
+      expect(draftjsToMd(raw)).toBe('*__this__ is a test*');
+    });
+
+    it('moves a trailing space out of a nested style', () => {
+      const raw = block('Build with Expo today', [
+        { offset: 0, length: 21, style: 'BOLD' },
+        { offset: 11, length: 5, style: 'ITALIC' },
+      ]);
+      expect(draftjsToMd(raw)).toBe('__Build with *Expo* today__');
+    });
+
+    it('ignores a style that covers only whitespace', () => {
+      const raw = block('Expo Go', [{ offset: 4, length: 1, style: 'BOLD' }]);
+      expect(draftjsToMd(raw)).toBe('Expo Go');
+    });
+
+    it('trims both edges of a style with surrounding spaces and an emoji', () => {
+      const raw = block('Ship 🚀 fast', [{ offset: 4, length: 3, style: 'ITALIC' }]);
+      expect(draftjsToMd(raw)).toBe('Ship *🚀* fast');
+    });
+  });
 });

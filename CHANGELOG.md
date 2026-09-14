@@ -20,6 +20,7 @@
 
 ### Fixed
 
+- `draftjsToMd` could drop a space or lose a closing symbol when a styled range that ends in a space sat inside another style, for example "this is a test" became "*__this__ is atest*". Styled ranges are now trimmed to the text they wrap before symbols are written, and ranges that cover only whitespace are ignored (#52).
 - `draftjsToMd` numbered every ordered list in a document as one continuous sequence. A list that starts after another block now starts at 1 again (#74).
 - `mdToDraftjs` measured offsets and lengths in UTF-16 code units. Draft.js counts Unicode code points, so every style or link after an emoji was shifted by one position per emoji. Offsets are now counted in code points, matching `draftjsToMd`.
 - Fenced code blocks with a language tag, such as ```js, were split into empty code blocks and plain text. They now become one code block. The language is kept in the block's `data.language` and `draftjsToMd` writes it back onto the opening fence.
