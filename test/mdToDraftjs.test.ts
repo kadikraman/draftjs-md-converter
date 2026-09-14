@@ -931,4 +931,51 @@ describe('mdToDraftjs', () => {
       expect(result.entityMap[0].data.url).toBe('https://expo.dev');
     });
   });
+
+  describe('nested lists', () => {
+    const outline = (markdown: string) =>
+      mdToDraftjs(markdown).blocks.map((block) => [block.type, block.depth, block.text]);
+
+    it('reads nesting from two-space indentation', () => {
+      expect(
+        outline('- Install Expo\n  - Run create-expo-app\n    - Pick a template\n- Build'),
+      ).toStrictEqual([
+        ['unordered-list-item', 0, 'Install Expo'],
+        ['unordered-list-item', 1, 'Run create-expo-app'],
+        ['unordered-list-item', 2, 'Pick a template'],
+        ['unordered-list-item', 0, 'Build'],
+      ]);
+    });
+
+    it('reads nesting from four-space indentation instead of making a code block', () => {
+      expect(
+        outline('- Install Expo\n    - Run create-expo-app\n        - Pick a template'),
+      ).toStrictEqual([
+        ['unordered-list-item', 0, 'Install Expo'],
+        ['unordered-list-item', 1, 'Run create-expo-app'],
+        ['unordered-list-item', 2, 'Pick a template'],
+      ]);
+    });
+
+    it('nests ordered items and returns to a middle level', () => {
+      expect(
+        outline('1. Build\n   1. iOS\n      - Simulator\n   2. Android\n2. Submit'),
+      ).toStrictEqual([
+        ['ordered-list-item', 0, 'Build'],
+        ['ordered-list-item', 1, 'iOS'],
+        ['unordered-list-item', 2, 'Simulator'],
+        ['ordered-list-item', 1, 'Android'],
+        ['ordered-list-item', 0, 'Submit'],
+      ]);
+    });
+
+    it('starts a new list after a paragraph', () => {
+      expect(outline('- a\n    - b\nText\n- c')).toStrictEqual([
+        ['unordered-list-item', 0, 'a'],
+        ['unordered-list-item', 1, 'b'],
+        ['unstyled', 0, 'Text'],
+        ['unordered-list-item', 0, 'c'],
+      ]);
+    });
+  });
 });

@@ -1066,4 +1066,45 @@ describe('draftjsToMd', () => {
       expect(draftjsToMd(raw)).toBe('[![logo](https://expo.dev/logo.png)](https://expo.dev)');
     });
   });
+
+  describe('nested lists', () => {
+    const item = (text: string, type: string, depth: number) => ({
+      text,
+      type,
+      depth,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    });
+
+    it('indents nested unordered items by four spaces per level', () => {
+      const raw: RawDraftContentState = {
+        entityMap: {},
+        blocks: [
+          item('Install Expo', 'unordered-list-item', 0),
+          item('Run create-expo-app', 'unordered-list-item', 1),
+          item('Pick a template', 'unordered-list-item', 2),
+          item('Build', 'unordered-list-item', 0),
+        ],
+      };
+      expect(draftjsToMd(raw)).toBe(
+        '- Install Expo\n    - Run create-expo-app\n        - Pick a template\n- Build',
+      );
+    });
+
+    it('numbers ordered items per level and continues past nested children', () => {
+      const raw: RawDraftContentState = {
+        entityMap: {},
+        blocks: [
+          item('Build', 'ordered-list-item', 0),
+          item('iOS', 'ordered-list-item', 1),
+          item('Simulator', 'unordered-list-item', 2),
+          item('Android', 'ordered-list-item', 1),
+          item('Submit', 'ordered-list-item', 0),
+        ],
+      };
+      expect(draftjsToMd(raw)).toBe(
+        '1. Build\n    1. iOS\n        - Simulator\n    2. Android\n2. Submit',
+      );
+    });
+  });
 });
