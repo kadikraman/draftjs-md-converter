@@ -978,4 +978,15 @@ describe('mdToDraftjs', () => {
       ]);
     });
   });
+
+  describe('input validation', () => {
+    it('throws a clear error when the input is not a string', () => {
+      expect(() => mdToDraftjs(undefined as unknown as string)).toThrow(
+        new TypeError('mdToDraftjs expects a Markdown string, received undefined'),
+      );
+      expect(() => mdToDraftjs(42 as unknown as string)).toThrow(
+        new TypeError('mdToDraftjs expects a Markdown string, received a number'),
+      );
+    });
+  });
 });

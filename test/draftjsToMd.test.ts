@@ -1205,4 +1205,26 @@ describe('draftjsToMd', () => {
       expect(escaped(raw)).toBe('[the \\[docs\\]](https://docs.expo.dev)');
     });
   });
+
+  describe('input validation', () => {
+    it('throws a clear error when there is no blocks array', () => {
+      expect(() => draftjsToMd(undefined as unknown as RawDraftContentState)).toThrow(
+        new TypeError(
+          'draftjsToMd expects a raw Draft.js content state with a blocks array, received undefined',
+        ),
+      );
+      expect(() => draftjsToMd({} as unknown as RawDraftContentState)).toThrow(
+        new TypeError(
+          'draftjsToMd expects a raw Draft.js content state with a blocks array, received an object',
+        ),
+      );
+    });
+
+    it('treats a missing entityMap and missing block arrays as empty', () => {
+      const raw = {
+        blocks: [{ text: 'Build with Expo', type: 'unordered-list-item' }],
+      } as unknown as RawDraftContentState;
+      expect(draftjsToMd(raw)).toBe('- Build with Expo');
+    });
+  });
 });

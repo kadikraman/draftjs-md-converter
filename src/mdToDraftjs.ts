@@ -1,4 +1,5 @@
 import { parse } from '@textlint/markdown-to-ast';
+import { describe } from './describe';
 import type {
   InlineStyleMapping,
   MdToDraftjsOptions,
@@ -292,6 +293,9 @@ const parseMdLine = (
 };
 
 function mdToDraftjs(mdString: string, extraStyles?: MdToDraftjsOptions): RawDraftContentState {
+  if (typeof mdString !== 'string') {
+    throw new TypeError(`mdToDraftjs expects a Markdown string, received ${describe(mdString)}`);
+  }
   const paragraphs = splitMdBlocks(mdString);
   const blocks: RawDraftContentBlock[] = [];
   let entityMap: Record<string, RawDraftEntity> = {};

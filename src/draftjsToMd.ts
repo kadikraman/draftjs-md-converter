@@ -1,3 +1,4 @@
+import { describe } from './describe';
 import type {
   DraftjsToMdOptions,
   MarkdownDict,
@@ -176,11 +177,24 @@ function draftjsToMd(
   extraMarkdownDict?: MarkdownDict,
   options: DraftjsToMdOptions = {},
 ): string {
+  if (!raw || !Array.isArray(raw.blocks)) {
+    throw new TypeError(
+      `draftjsToMd expects a raw Draft.js content state with a blocks array, received ${describe(raw)}`,
+    );
+  }
   const markdownDict: MarkdownDict = { ...defaultMarkdownDict, ...extraMarkdownDict };
   const previousBlocks: RawDraftContentBlock[] = [];
+  // content written by hand or by older tools may leave these out
+  const entityMap = raw.entityMap ?? {};
 
   return raw.blocks
-    .map((block) => {
+    .map((rawBlock) => {
+      const block: RawDraftContentBlock = {
+        ...rawBlock,
+        depth: rawBlock.depth ?? 0,
+        inlineStyleRanges: rawBlock.inlineStyleRanges ?? [],
+        entityRanges: rawBlock.entityRanges ?? [],
+      };
       const blockPrefix = getBlockStyle(block, previousBlocks);
       previousBlocks.push(block);
       const shouldEscape =
@@ -201,7 +215,7 @@ function draftjsToMd(
       const inlineImages =
         block.type === 'atomic'
           ? []
-          : block.entityRanges.filter((range) => isImage(getEntity(raw.entityMap, range.key)));
+          : block.entityRanges.filter((range) => isImage(getEntity(entityMap, range.key)));
       const isImagePlaceholder = (index: number): boolean =>
         inlineImages.some((range) => index >= range.offset && index < range.offset + range.length);
 
@@ -219,11 +233,11 @@ function draftjsToMd(
 
         const entitiesStartAtChar = block.entityRanges.filter((range) => range.offset === index);
         for (const entity of entitiesStartAtChar) {
-          newText += getEntityStart(getEntity(raw.entityMap, entity.key));
+          newText += getEntityStart(getEntity(entityMap, entity.key));
         }
 
         for (const range of inlineImages) {
-          const entity = getEntity(raw.entityMap, range.key);
+          const entity = getEntity(entityMap, range.key);
           if (range.offset === index && entity) {
             newText += imageMarkdown(entity);
           }
@@ -236,7 +250,7 @@ function draftjsToMd(
           (range) => range.offset + range.length - 1 === index,
         );
         for (const entity of entitiesEndAtChar) {
-          newText += getEntityEnd(getEntity(raw.entityMap, entity.key));
+          newText += getEntityEnd(getEntity(entityMap, entity.key));
         }
 
         // close styles ending here, innermost first
@@ -255,7 +269,7 @@ function draftjsToMd(
       }
       let returnString = blockPrefix + body;
       returnString = applyWrappingBlockStyle(block, returnString);
-      returnString = applyAtomicStyle(block, raw.entityMap, returnString);
+      returnString = applyAtomicStyle(block, entityMap, returnString);
 
       return returnString;
     })
