@@ -470,7 +470,7 @@ describe('draftjsToMd', () => {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/',
+            url: 'https://expo.dev/',
           },
         },
       },
@@ -490,7 +490,7 @@ describe('draftjsToMd', () => {
         },
       ],
     };
-    const expectedMarkdown = 'This is a [link](http://red-badger.com/) in text.';
+    const expectedMarkdown = 'This is a [link](https://expo.dev/) in text.';
     expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
@@ -501,14 +501,14 @@ describe('draftjsToMd', () => {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/',
+            url: 'https://expo.dev/',
           },
         },
         1: {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/',
+            url: 'https://expo.dev/',
           },
         },
       },
@@ -533,8 +533,7 @@ describe('draftjsToMd', () => {
         },
       ],
     };
-    const expectedMarkdown =
-      'One [link](http://red-badger.com/). Two [links](http://red-badger.com/).';
+    const expectedMarkdown = 'One [link](https://expo.dev/). Two [links](https://expo.dev/).';
     expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 
@@ -545,7 +544,7 @@ describe('draftjsToMd', () => {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/',
+            url: 'https://expo.dev/',
           },
         },
       },
@@ -571,7 +570,7 @@ describe('draftjsToMd', () => {
         },
       ],
     };
-    const expectedMarkdown = 'I am a __[bold](http://red-badger.com/)__ link.';
+    const expectedMarkdown = 'I am a __[bold](https://expo.dev/)__ link.';
     expect(draftjsToMd(raw)).toBe(expectedMarkdown);
   });
 

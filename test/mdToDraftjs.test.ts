@@ -573,14 +573,14 @@ describe('mdToDraftjs', () => {
   });
 
   it('converts link entities to markdown correctly', () => {
-    const markdown = 'This is a [link](http://red-badger.com/) in text.';
+    const markdown = 'This is a [link](https://expo.dev/) in text.';
     const expectedDraftjs = {
       entityMap: {
         0: {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/',
+            url: 'https://expo.dev/',
           },
         },
       },
@@ -604,21 +604,21 @@ describe('mdToDraftjs', () => {
   });
 
   it('converts markdown to several links correctly', () => {
-    const markdown = 'One [link](http://red-badger.com/). Two [links](http://red-badger.com/).';
+    const markdown = 'One [link](https://expo.dev/). Two [links](https://expo.dev/).';
     const expectedDraftjs = {
       entityMap: {
         0: {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/',
+            url: 'https://expo.dev/',
           },
         },
         1: {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/',
+            url: 'https://expo.dev/',
           },
         },
       },
@@ -647,14 +647,14 @@ describe('mdToDraftjs', () => {
   });
 
   it('converts markdown to bold links correctly', () => {
-    const markdown = 'I am a __[bold](http://red-badger.com/)__ link.';
+    const markdown = 'I am a __[bold](https://expo.dev/)__ link.';
     const expectedDraftjs = {
       entityMap: {
         0: {
           type: 'LINK',
           mutability: 'MUTABLE',
           data: {
-            url: 'http://red-badger.com/',
+            url: 'https://expo.dev/',
           },
         },
       },

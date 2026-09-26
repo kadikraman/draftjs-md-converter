@@ -59,7 +59,11 @@
   "homepage": "https://kadikraman.github.io/draftjs-md-converter",
   "devDependencies": {
     "@biomejs/biome": "2.5.13",
+    "@types/draft-js": "0.11.20",
+    "draft-js": "0.11.7",
     "gh-pages": "^3.1.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
     "tsdown": "^0.23.0",
     "typescript": "^6.0.3",
     "vitest": "^5.0.0"

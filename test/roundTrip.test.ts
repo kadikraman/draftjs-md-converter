@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { draftjsToMd, mdToDraftjs } from '../src/index';
+import { documents } from './fixtures/documents';
 
 describe('round trip', () => {
   it('keeps the language tag of a fenced code block', () => {
@@ -53,4 +54,10 @@ describe('round trip', () => {
       back.blocks.map((block) => [block.type, block.text, block.inlineStyleRanges]),
     ).toStrictEqual(texts.map((text) => ['unstyled', text, []]));
   });
+
+  for (const [name, markdown] of Object.entries(documents)) {
+    it(`keeps the "${name}" document unchanged`, () => {
+      expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
+    });
+  }
 });
