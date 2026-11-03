@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!demo"]
+    "includes": ["**"]
   },
   "formatter": {
     "enabled": true,

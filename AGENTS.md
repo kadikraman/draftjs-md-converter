@@ -15,7 +15,7 @@ Draft.js itself is archived. People who use this package maintain existing apps,
 
 - `src/`: TypeScript source. `index.ts` re-exports the two converters and the public types. `types.ts` mirrors the raw Draft.js content state shapes so the package does not depend on `draft-js`.
 - `test/`: Vitest tests, one file per converter. These are the regression baseline.
-- `demo/`: a separate Create React App demo site. It is not part of the pnpm install and Biome skips it. Leave it alone unless the task is about the demo.
+- `demo/`: the demo site, a Vite and React app. A Vite alias points `draftjs-md-converter` at `src/index.ts`, so the demo always runs the current source. Its dependencies are root dev dependencies, and lint and typecheck cover it. Leave it alone unless the task is about the demo.
 - `dist/`: build output, including generated type declarations. Git-ignored, published to npm.
 
 ## Commands
@@ -28,8 +28,10 @@ pnpm test          # run the tests once
 pnpm test:watch    # run the tests in watch mode
 pnpm lint          # Biome: formatting and lint rules
 pnpm lint:fix      # apply Biome fixes
-pnpm typecheck     # tsc --noEmit over src and test
+pnpm typecheck     # tsc --noEmit over src and test, then over demo
 pnpm build         # tsdown: emits dist/index.js (ESM) and dist/index.cjs (CJS)
+pnpm demo          # Vite dev server for the demo
+pnpm demo:build    # builds the demo to demo/dist
 ```
 
 Run `pnpm lint`, `pnpm typecheck` and `pnpm test` before handing over changes.

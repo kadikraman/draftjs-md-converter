@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- The demo site is rebuilt with Vite, React 19 and TypeScript, with a new design and a dark mode. It runs the current source, shows the converter version and the commit it was built from, and deploys to GitHub Pages from a GitHub Actions workflow on each release. ([#104](https://github.com/kadikraman/draftjs-md-converter/pull/104))
+
 ## 2.0.0 - 2026-11-03
 
 2.0 has breaking changes. [Upgrading to 2.0](https://github.com/kadikraman/draftjs-md-converter#upgrading-to-20) in the README sums up what to check.
