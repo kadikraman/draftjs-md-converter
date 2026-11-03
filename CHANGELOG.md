@@ -25,6 +25,7 @@
 
 ### Fixed
 
+- `draftjsToMd` lost a closing symbol when two styles crossed, that is when one style started inside another and ended after it. For example, `test test` with bold on `test te` and italic on the second `test` became `__test *test*`. The crossing style is now closed and opened again, which gives `__test *te*__*st*`. ([#97](https://github.com/kadikraman/draftjs-md-converter/pull/97))
 - Both converters check their input. `mdToDraftjs` throws a `TypeError` with a clear message when it receives something other than a string, and `draftjsToMd` does the same when it receives no `blocks` array. `draftjsToMd` treats a missing `entityMap`, `depth`, `inlineStyleRanges` or `entityRanges` as empty instead of throwing. ([#91](https://github.com/kadikraman/draftjs-md-converter/pull/91))
 - Nested lists are supported. `mdToDraftjs` reads the nesting level from the indentation of list items, accepting two, three, or four spaces or a tab per level, and sets the block `depth`. `draftjsToMd` indents nested items by four spaces per level and numbers ordered items per level. Indented list lines used to become code blocks or flat items. ([#89](https://github.com/kadikraman/draftjs-md-converter/pull/89))
 - `draftjsToMd` dropped images that sit inside a text block instead of their own atomic block, which is what a pasted image or an inline `![alt](src)` in Markdown produces. Such IMAGE entities are now written as `![alt](src)` in place of their placeholder text. ([#88](https://github.com/kadikraman/draftjs-md-converter/pull/88))

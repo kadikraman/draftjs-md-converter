@@ -47,4 +47,27 @@ describe('with Draft.js in the loop', () => {
     ]);
     expect(draftjsToMd(viaDraft)).toBe(markdown);
   });
+
+  it('brings crossing styles back as Draft.js wrote them', () => {
+    const original = convertToRaw(
+      fromRaw({
+        entityMap: {},
+        blocks: [
+          {
+            text: 'test test',
+            type: 'unstyled',
+            depth: 0,
+            inlineStyleRanges: [
+              { offset: 0, length: 7, style: 'BOLD' },
+              { offset: 5, length: 4, style: 'ITALIC' },
+            ],
+            entityRanges: [],
+          },
+        ],
+      }),
+    );
+    const back = convertToRaw(fromRaw(mdToDraftjs(draftjsToMd(original))));
+    expect(back.blocks[0].text).toBe('test test');
+    expect(back.blocks[0].inlineStyleRanges).toStrictEqual(original.blocks[0].inlineStyleRanges);
+  });
 });

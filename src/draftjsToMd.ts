@@ -143,6 +143,34 @@ function trimRange(
   return end > start ? { ...range, offset: start, length: end - start } : undefined;
 }
 
+const rangeEnd = (range: RawDraftInlineStyleRange): number => range.offset + range.length;
+
+const byOffsetThenLongest = (a: RawDraftInlineStyleRange, b: RawDraftInlineStyleRange): number =>
+  a.offset - b.offset || b.length - a.length;
+
+// Markdown cannot write styles that cross, so a range that starts inside another and ends after it
+// is split where the other one ends. The result has only nested or separate ranges.
+function splitCrossingRanges(ranges: RawDraftInlineStyleRange[]): RawDraftInlineStyleRange[] {
+  const queue = [...ranges].sort(byOffsetThenLongest);
+  const result: RawDraftInlineStyleRange[] = [];
+  for (let range = queue.shift(); range; range = queue.shift()) {
+    const { offset } = range;
+    const end = rangeEnd(range);
+    const crossingEnds = result
+      .filter((other) => other.offset < offset && rangeEnd(other) > offset && rangeEnd(other) < end)
+      .map(rangeEnd);
+    if (crossingEnds.length === 0) {
+      result.push(range);
+      continue;
+    }
+    const splitAt = Math.min(...crossingEnds);
+    result.push({ ...range, length: splitAt - offset });
+    queue.push({ ...range, offset: splitAt, length: end - splitAt });
+    queue.sort(byOffsetThenLongest);
+  }
+  return result;
+}
+
 // characters that can start inline Markdown anywhere in a line
 const inlineMarkdownChar = /[\\`*_[\]<~]/;
 
@@ -206,9 +234,9 @@ function draftjsToMd(
 
       const chars = Array.from(block.text);
       const inlineStyleRanges = getInlineStyleRangesByLength(
-        block.inlineStyleRanges
-          .filter((range) => markdownDict[range.style]) // skip styles the dict does not know
-          .flatMap((range) => trimRange(range, chars) ?? []),
+        splitCrossingRanges(
+          block.inlineStyleRanges.filter((range) => markdownDict[range.style]), // skip styles the dict does not know
+        ).flatMap((range) => trimRange(range, chars) ?? []),
       );
 
       // images inside a text block are written in place of their placeholder text
