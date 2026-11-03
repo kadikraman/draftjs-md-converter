@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 2.0.0 - 2026-11-03
+
+2.0 has breaking changes. [Upgrading to 2.0](https://github.com/kadikraman/draftjs-md-converter#upgrading-to-20) in the README sums up what to check.
 
 ### Breaking changes
 
@@ -19,7 +21,7 @@
 
 ### Changed
 
-- The source is TypeScript. Type declarations are generated from it and shipped for both ESM and CommonJS. They no longer import from `draft-js`, so `@types/draft-js` is not needed. The types `RawDraftContentState`, `RawDraftContentBlock`, `RawDraftEntity`, `MdToDraftjsOptions` and `MarkdownDict` are exported. ([#81](https://github.com/kadikraman/draftjs-md-converter/pull/81))
+- The source is TypeScript. Type declarations are generated from it and shipped for both ESM and CommonJS. They no longer import from `draft-js`, so `@types/draft-js` is not needed. The types `RawDraftContentState`, `RawDraftContentBlock`, `RawDraftEntity`, `RawDraftEntityRange`, `RawDraftInlineStyleRange`, `DraftEntityMutability`, `MdToDraftjsOptions`, `InlineStyleMapping`, `MarkdownDict` and `DraftjsToMdOptions` are exported. ([#81](https://github.com/kadikraman/draftjs-md-converter/pull/81))
 - Development tooling: pnpm, Vitest, Biome, and tsdown replace Yarn 1, Mocha, Chai, ESLint 3, Prettier 1, and esbuild 0.8. ([#80](https://github.com/kadikraman/draftjs-md-converter/pull/80))
 - CI runs on Node.js 22 and 24 with current GitHub Actions. ([#80](https://github.com/kadikraman/draftjs-md-converter/pull/80))
 - Releases publish to npm from a GitHub release through npm trusted publishing with provenance. ([#80](https://github.com/kadikraman/draftjs-md-converter/pull/80))
