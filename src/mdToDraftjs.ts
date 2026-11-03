@@ -331,10 +331,6 @@ function mdToDraftjs(mdString: string, extraStyles?: MdToDraftjsOptions): RawDra
     entityMap = result.entityMap;
   }
 
-  // placeholder kept for compatibility; Draft.js accepts {} and 2.0 will return that
-  if (Object.keys(entityMap).length === 0) {
-    entityMap = { data: '', mutability: '', type: '' } as unknown as Record<string, RawDraftEntity>;
-  }
   return {
     blocks,
     entityMap,

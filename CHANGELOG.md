@@ -8,6 +8,7 @@
 - The package now has an `exports` map. Import the package root only. The ESM entry is `dist/index.js` and the CommonJS entry is `dist/index.cjs`. The old `dist/index.esm.js` file no longer exists. ([#80](https://github.com/kadikraman/draftjs-md-converter/pull/80))
 - Dependencies are no longer bundled into the published files. `@textlint/markdown-to-ast` is installed as a normal dependency. ([#80](https://github.com/kadikraman/draftjs-md-converter/pull/80))
 - The published code targets ES2020. ([#80](https://github.com/kadikraman/draftjs-md-converter/pull/80))
+- `mdToDraftjs` returns an empty `entityMap` (`{}`) when the Markdown has no links, images or videos. It used to return a placeholder object with empty `type`, `mutability` and `data` fields, which Draft.js never needed. ([#95](https://github.com/kadikraman/draftjs-md-converter/pull/95))
 - The `symbol` field on `inlineStyles` entries passed to `mdToDraftjs` is removed from the types. It was never read; the Markdown parser decides the syntax. ([#81](https://github.com/kadikraman/draftjs-md-converter/pull/81))
 
 ### Added
