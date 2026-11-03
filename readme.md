@@ -26,6 +26,8 @@ The following inline styles are supported:
 
 - bold
 - italic
+- strikethrough
+- inline code
 - H1 - H6
 
 The following block styles are supported:
@@ -54,7 +56,9 @@ The default supported inline styles:
 ```js
 {
   Strong: { type: 'BOLD' },
-  Emphasis: { type: 'ITALIC' }
+  Emphasis: { type: 'ITALIC' },
+  Delete: { type: 'STRIKETHROUGH' },
+  Code: { type: 'CODE' }
 }
 ```
 
@@ -111,7 +115,9 @@ The default Markdown dictionary is
 ```js
 {
   BOLD: '__',
-  ITALIC: '*'
+  ITALIC: '*',
+  STRIKETHROUGH: '~~',
+  CODE: '`'
 };
 ```
 
@@ -124,6 +130,8 @@ const myMdDict = {
 };
 const markdown = draftjsToMd(blocks, myMdDict);
 ```
+
+To write a style as plain text, set its symbol to an empty string, for example `{ CODE: '' }`.
 
 **NOTE: at this point you cannot override block styles!**
 

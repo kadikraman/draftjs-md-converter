@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import draftjsToMd from '../src/draftjsToMd';
-import type { RawDraftContentState } from '../src/types';
+import type { RawDraftContentState, RawDraftInlineStyleRange } from '../src/types';
 
 describe('draftjsToMd', () => {
   it('returns an empty string correctly', () => {
@@ -657,6 +657,58 @@ describe('draftjsToMd', () => {
     };
     const expectedMarkdown = '__This__ is not *fine*';
     expect(draftjsToMd(raw)).toBe(expectedMarkdown);
+  });
+
+  describe('code and strikethrough', () => {
+    const block = (
+      text: string,
+      inlineStyleRanges: RawDraftInlineStyleRange[],
+    ): RawDraftContentState => ({
+      entityMap: {},
+      blocks: [{ text, type: 'unstyled', depth: 0, inlineStyleRanges, entityRanges: [] }],
+    });
+
+    it('writes CODE and STRIKETHROUGH without a custom dict', () => {
+      const raw = block('Run npx expo not yarn', [
+        { offset: 4, length: 8, style: 'CODE' },
+        { offset: 17, length: 4, style: 'STRIKETHROUGH' },
+      ]);
+      expect(draftjsToMd(raw)).toBe('Run `npx expo` not ~~yarn~~');
+    });
+
+    it('writes nothing for a style whose symbol is an empty string', () => {
+      const raw = block('Run npx expo not yarn', [
+        { offset: 4, length: 8, style: 'CODE' },
+        { offset: 17, length: 4, style: 'STRIKETHROUGH' },
+      ]);
+      expect(draftjsToMd(raw, { CODE: '', STRIKETHROUGH: '' })).toBe('Run npx expo not yarn');
+    });
+
+    it('opens code inside another style on the same text', () => {
+      const raw = block('foo', [
+        { offset: 0, length: 3, style: 'CODE' },
+        { offset: 0, length: 3, style: 'BOLD' },
+      ]);
+      expect(draftjsToMd(raw)).toBe('__`foo`__');
+    });
+
+    it('keeps other styles out of code that they do not wrap', () => {
+      const inside = block('a b c', [
+        { offset: 0, length: 5, style: 'CODE' },
+        { offset: 2, length: 1, style: 'BOLD' },
+      ]);
+      const crossing = block('ab cd', [
+        { offset: 0, length: 4, style: 'BOLD' },
+        { offset: 3, length: 2, style: 'CODE' },
+      ]);
+      expect(draftjsToMd(inside)).toBe('`a b c`');
+      expect(draftjsToMd(crossing)).toBe('__ab__ `cd`');
+    });
+
+    it('does not escape text inside code', () => {
+      const raw = block('use a*b or c*d', [{ offset: 4, length: 3, style: 'CODE' }]);
+      expect(draftjsToMd(raw, undefined, { escape: true })).toBe('use `a*b` or c\\*d');
+    });
   });
 
   describe('custom markdownDict', () => {

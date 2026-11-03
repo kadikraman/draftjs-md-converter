@@ -27,4 +27,8 @@ export const documents: Record<string, string> = {
     '    2. Nested item with a [link](https://expo.dev)',
     '- Plain item 🍎',
   ].join('\n'),
+  'code and strikethrough': [
+    'Run `npx expo start`, then press __`r`__ to reload.',
+    '~~Use yarn~~ Use `npm` or ~~*pnpm*~~ instead.',
+  ].join('\n'),
 };

@@ -766,6 +766,15 @@ describe('mdToDraftjs', () => {
     expect(mdToDraftjs(markdown, customDict)).toStrictEqual(expectedDraftjs);
   });
 
+  it('parses inline code and strikethrough without options', () => {
+    const { blocks } = mdToDraftjs('Run `npx expo` not ~~yarn~~');
+    expect(blocks[0].text).toBe('Run npx expo not yarn');
+    expect(blocks[0].inlineStyleRanges).toStrictEqual([
+      { offset: 4, length: 8, style: 'CODE' },
+      { offset: 17, length: 4, style: 'STRIKETHROUGH' },
+    ]);
+  });
+
   describe('nodes without text', () => {
     it('converts a thematic break to an empty block instead of the word "undefined"', () => {
       const result = mdToDraftjs('text\n---\nmore');

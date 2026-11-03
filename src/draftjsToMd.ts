@@ -11,6 +11,8 @@ import type {
 const defaultMarkdownDict: MarkdownDict = {
   BOLD: '__',
   ITALIC: '*',
+  STRIKETHROUGH: '~~',
+  CODE: '`',
 };
 
 const blockStyleDict: Record<string, string> = {
@@ -166,6 +168,43 @@ const escapeBlockStart = (text: string): string => {
   return text;
 };
 
+const isCodeSymbol = (symbol: string | undefined): boolean => /^`+$/.test(symbol ?? '');
+
+const contains = (outer: RawDraftInlineStyleRange, inner: RawDraftInlineStyleRange): boolean =>
+  outer.offset <= inner.offset && inner.offset + inner.length <= outer.offset + outer.length;
+
+// the parts of a range that are outside a code range, unless the range wraps all of the code
+const outsideCode = (
+  range: RawDraftInlineStyleRange,
+  code: RawDraftInlineStyleRange,
+): RawDraftInlineStyleRange[] => {
+  const codeEnd = code.offset + code.length;
+  const end = range.offset + range.length;
+  if (end <= code.offset || codeEnd <= range.offset || contains(range, code)) {
+    return [range];
+  }
+  return [
+    { ...range, length: code.offset - range.offset },
+    { ...range, offset: codeEnd, length: end - codeEnd },
+  ].filter((part) => part.length > 0);
+};
+
+// Markdown shows a code span literally, so other styles must wrap all of it or stay out of it.
+// Code ranges go last so that they open inside other styles that start at the same character.
+function keepCodeLiteral(
+  ranges: RawDraftInlineStyleRange[],
+  markdownDict: MarkdownDict,
+): RawDraftInlineStyleRange[] {
+  const isCode = (range: RawDraftInlineStyleRange): boolean =>
+    isCodeSymbol(markdownDict[range.style]);
+  const codeRanges = ranges.filter(isCode);
+  const otherRanges = codeRanges.reduce(
+    (parts, code) => parts.flatMap((part) => outsideCode(part, code)),
+    ranges.filter((range) => !isCode(range)),
+  );
+  return [...otherRanges, ...codeRanges];
+}
+
 function getInlineStyleRangesByLength(
   inlineStyleRanges: RawDraftInlineStyleRange[],
 ): RawDraftInlineStyleRange[] {
@@ -192,13 +231,20 @@ function draftjsToMd(
       const block: RawDraftContentBlock = {
         ...rawBlock,
         depth: rawBlock.depth ?? 0,
-        inlineStyleRanges: rawBlock.inlineStyleRanges ?? [],
+        inlineStyleRanges: keepCodeLiteral(rawBlock.inlineStyleRanges ?? [], markdownDict),
         entityRanges: rawBlock.entityRanges ?? [],
       };
       const blockPrefix = getBlockStyle(block, previousBlocks);
       previousBlocks.push(block);
       const shouldEscape =
         options.escape === true && block.type !== 'code-block' && block.type !== 'atomic';
+      const isInCode = (index: number): boolean =>
+        block.inlineStyleRanges.some(
+          (range) =>
+            isCodeSymbol(markdownDict[range.style]) &&
+            index >= range.offset &&
+            index < range.offset + range.length,
+        );
 
       const appliedStyles: AppliedStyle[] = [];
       const lastAppliedStyle = (): AppliedStyle | undefined =>
@@ -243,7 +289,7 @@ function draftjsToMd(
           }
         }
         if (!isImagePlaceholder(index)) {
-          newText += shouldEscape ? escapeChar(currentChar) : currentChar;
+          newText += shouldEscape && !isInCode(index) ? escapeChar(currentChar) : currentChar;
         }
 
         const entitiesEndAtChar = block.entityRanges.filter(
