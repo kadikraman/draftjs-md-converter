@@ -13,6 +13,7 @@ export const documents: Record<string, string> = {
     'npx expo start',
     '```',
     'Read the [docs](https://docs.expo.dev) or view the ![logo](https://expo.dev/logo.png) 🎉',
+    '![Expo Go](https://expo.dev/go.png) Scan the QR code to open the app',
   ].join('\n'),
   'nested styles and links': [
     '## Release notes',
