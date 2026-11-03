@@ -14,11 +14,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: {
-        type: '',
-        mutability: '',
-        data: '',
-      },
+      entityMap: {},
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -35,11 +31,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: {
-        type: '',
-        mutability: '',
-        data: '',
-      },
+      entityMap: {},
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -62,11 +54,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: {
-        type: '',
-        mutability: '',
-        data: '',
-      },
+      entityMap: {},
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -94,11 +82,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: {
-        type: '',
-        mutability: '',
-        data: '',
-      },
+      entityMap: {},
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -136,11 +120,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: {
-        type: '',
-        mutability: '',
-        data: '',
-      },
+      entityMap: {},
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -168,11 +148,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: {
-        type: '',
-        mutability: '',
-        data: '',
-      },
+      entityMap: {},
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -331,11 +307,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: {
-        type: '',
-        mutability: '',
-        data: '',
-      },
+      entityMap: {},
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -359,11 +331,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: {
-        type: '',
-        mutability: '',
-        data: '',
-      },
+      entityMap: {},
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -394,11 +362,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: {
-        type: '',
-        mutability: '',
-        data: '',
-      },
+      entityMap: {},
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -450,11 +414,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: {
-        type: '',
-        mutability: '',
-        data: '',
-      },
+      entityMap: {},
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -471,11 +431,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: {
-        type: '',
-        mutability: '',
-        data: '',
-      },
+      entityMap: {},
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -492,11 +448,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: {
-        type: '',
-        mutability: '',
-        data: '',
-      },
+      entityMap: {},
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -535,11 +487,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: {
-        type: '',
-        mutability: '',
-        data: '',
-      },
+      entityMap: {},
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -563,11 +511,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: {
-        type: '',
-        mutability: '',
-        data: '',
-      },
+      entityMap: {},
     };
     expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
   });
@@ -754,11 +698,7 @@ describe('mdToDraftjs', () => {
   it('converts markdown to block quotes correctly', () => {
     const markdown = '> Here is a block quote.';
     const expectedDraftjs = {
-      entityMap: {
-        data: '',
-        mutability: '',
-        type: '',
-      },
+      entityMap: {},
       blocks: [
         {
           text: 'Here is a block quote.',
@@ -784,7 +724,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: { data: '', mutability: '', type: '' },
+      entityMap: {},
     };
 
     const customDict = {
@@ -812,7 +752,7 @@ describe('mdToDraftjs', () => {
           entityRanges: [],
         },
       ],
-      entityMap: { data: '', mutability: '', type: '' },
+      entityMap: {},
     };
 
     const customDict = {
