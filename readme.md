@@ -77,19 +77,19 @@ The default supported block styles:
 Inline styles and block styles can be extended or overridden by passing a custom styles object as a second optional argument to `mdToDraftjs`, e.g.
 
 ```js
-const markdown = "Some `markdown` with ~~deleted~~ text";
+const markdown = 'Some `markdown` with ~~deleted~~ text';
 
 const myCustomStyles = {
   inlineStyles: {
     Delete: {
-      type: "STRIKETHROUGH",
+      type: 'STRIKETHROUGH',
     },
     Code: {
-      type: "CODE",
+      type: 'CODE',
     },
   },
   blockStyles: {
-    CustomBlock: "custom-block",
+    CustomBlock: 'custom-block',
   },
 };
 
@@ -119,8 +119,8 @@ The inline styles can be extended or overridden by passing a custom dictionary o
 
 ```js
 const myMdDict = {
-  BOLD: "**",
-  STRIKETHROUGH: "~~",
+  BOLD: '**',
+  STRIKETHROUGH: '~~',
 };
 const markdown = draftjsToMd(blocks, myMdDict);
 ```
