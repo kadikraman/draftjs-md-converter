@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import draftjsToMd from '../src/draftjsToMd';
-import type { RawDraftContentState } from '../src/types';
+import type { RawDraftContentState, RawDraftInlineStyleRange } from '../src/types';
 
 describe('draftjsToMd', () => {
   it('returns an empty string correctly', () => {
@@ -165,6 +165,38 @@ describe('draftjsToMd', () => {
     };
     const expectedMarkdown = '__*I start with italic bold* and end with only bold.__';
     expect(draftjsToMd(raw)).toBe(expectedMarkdown);
+  });
+
+  it('closes and reopens a style whose range crosses the end of another style', () => {
+    const block = (inlineStyleRanges: RawDraftInlineStyleRange[]): RawDraftContentState => ({
+      entityMap: {},
+      blocks: [
+        { text: 'test test', type: 'unstyled', depth: 0, inlineStyleRanges, entityRanges: [] },
+      ],
+    });
+    const bold = { offset: 0, length: 7, style: 'BOLD' };
+    const italic = { offset: 5, length: 4, style: 'ITALIC' };
+    expect(draftjsToMd(block([bold, italic]))).toBe('__test *te*__*st*');
+    expect(draftjsToMd(block([italic, bold]))).toBe('__test *te*__*st*');
+  });
+
+  it('trims the reopened part of a crossing style to its text', () => {
+    const raw: RawDraftContentState = {
+      entityMap: {},
+      blocks: [
+        {
+          text: 'ab cd ef',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [
+            { offset: 0, length: 5, style: 'BOLD' },
+            { offset: 3, length: 5, style: 'ITALIC' },
+          ],
+          entityRanges: [],
+        },
+      ],
+    };
+    expect(draftjsToMd(raw)).toBe('__ab *cd*__ *ef*');
   });
 
   it('converts the last word correctly if it is styled', () => {
