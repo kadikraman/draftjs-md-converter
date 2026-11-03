@@ -10,6 +10,7 @@
 - The published code targets ES2020. ([#80](https://github.com/kadikraman/draftjs-md-converter/pull/80))
 - `mdToDraftjs` returns an empty `entityMap` (`{}`) when the Markdown has no links, images or videos. It used to return a placeholder object with empty `type`, `mutability` and `data` fields, which Draft.js never needed. ([#95](https://github.com/kadikraman/draftjs-md-converter/pull/95))
 - The `symbol` field on `inlineStyles` entries passed to `mdToDraftjs` is removed from the types. It was never read; the Markdown parser decides the syntax. ([#81](https://github.com/kadikraman/draftjs-md-converter/pull/81))
+- Inline code and strikethrough convert by default. `mdToDraftjs` gives `` `code` `` the `CODE` style and `~~text~~` the `STRIKETHROUGH` style, which Draft.js has built in, and `draftjsToMd` writes those styles back as Markdown. Before, `mdToDraftjs` removed the backticks and tildes without adding a style, and `draftjsToMd` ignored the two styles. To write them as plain text as before, pass `{ CODE: '', STRIKETHROUGH: '' }` to `draftjsToMd`. Markdown shows code literally, so other styles that cover only part of a code range are left out of it, and the `escape` option does not escape text inside code. ([#98](https://github.com/kadikraman/draftjs-md-converter/pull/98))
 
 ### Added
 

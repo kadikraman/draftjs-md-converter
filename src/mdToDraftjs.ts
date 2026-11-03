@@ -26,6 +26,8 @@ interface AstNode {
 const defaultInlineStyles: Record<string, InlineStyleMapping> = {
   Strong: { type: 'BOLD' },
   Emphasis: { type: 'ITALIC' },
+  Delete: { type: 'STRIKETHROUGH' },
+  Code: { type: 'CODE' },
 };
 
 const defaultBlockStyles: Record<string, string> = {
