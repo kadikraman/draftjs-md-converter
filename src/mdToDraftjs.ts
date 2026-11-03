@@ -194,6 +194,7 @@ const parseMdLine = (
         url: child.url,
         src: child.url,
         fileName: child.alt || '',
+        alt: child.alt || '',
       },
     };
     entityRanges.push({

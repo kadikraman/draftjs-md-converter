@@ -870,6 +870,28 @@ describe('draftjsToMd', () => {
       expect(draftjsToMd(raw)).toBe(expectedMarkdown);
     });
 
+    it('writes data.alt as the alt text in preference to data.fileName', () => {
+      const raw: RawDraftContentState = {
+        entityMap: {
+          0: {
+            type: 'IMAGE',
+            mutability: 'IMMUTABLE',
+            data: { src: 'https://expo.dev/logo.png', alt: 'Expo logo', fileName: 'logo.png' },
+          },
+        },
+        blocks: [
+          {
+            text: ' ',
+            type: 'atomic',
+            depth: 0,
+            inlineStyleRanges: [],
+            entityRanges: [{ offset: 0, length: 1, key: 0 }],
+          },
+        ],
+      };
+      expect(draftjsToMd(raw)).toBe('![Expo logo](https://expo.dev/logo.png)');
+    });
+
     it('converts image media to markdown correctly with src format', () => {
       const raw: RawDraftContentState = {
         entityMap: {
