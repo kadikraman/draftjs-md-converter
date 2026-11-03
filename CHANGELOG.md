@@ -13,6 +13,7 @@
 
 ### Added
 
+- `mdToDraftjs` also writes the alt text of an image to `data.alt`, next to `data.fileName`. `draftjsToMd` uses `data.alt` for the alt text if it is set, and `data.fileName` if not. ([#99](https://github.com/kadikraman/draftjs-md-converter/pull/99))
 - `draftjsToMd` accepts a third argument, `{ escape: true }`, which escapes Markdown characters in plain text so that text such as `__not_bold__` or `# not a heading` survives the trip to Markdown and back. Off by default because existing content may already contain literal backslashes. ([#90](https://github.com/kadikraman/draftjs-md-converter/pull/90))
 
 ### Changed

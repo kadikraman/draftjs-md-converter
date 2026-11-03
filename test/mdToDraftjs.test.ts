@@ -639,6 +639,7 @@ describe('mdToDraftjs', () => {
               url: '//images.mine.com/myImage.jpg',
               src: '//images.mine.com/myImage.jpg',
               fileName: 'My Image Name',
+              alt: 'My Image Name',
             },
           },
         },

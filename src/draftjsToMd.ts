@@ -86,7 +86,7 @@ const isImage = (entity: RawDraftEntity | undefined): boolean =>
   entity?.type.toUpperCase() === 'IMAGE';
 
 const imageMarkdown = ({ data }: RawDraftEntity): string =>
-  `![${data.fileName || ''}](${data.url || data.src})`;
+  `![${data.alt || data.fileName || ''}](${data.url || data.src})`;
 
 const applyAtomicStyle = (
   block: RawDraftContentBlock,
