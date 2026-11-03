@@ -661,6 +661,19 @@ describe('mdToDraftjs', () => {
       };
       expect(mdToDraftjs(markdown)).toStrictEqual(expectedDraftjs);
     });
+
+    it('makes a text block when text follows an image at the start of a paragraph', () => {
+      const result = mdToDraftjs('![Expo logo](https://expo.dev/logo.png) Read the docs');
+      expect(result.blocks).toStrictEqual([
+        {
+          text: '  Read the docs',
+          type: 'unstyled',
+          depth: 0,
+          inlineStyleRanges: [],
+          entityRanges: [{ offset: 0, length: 1, key: 0 }],
+        },
+      ]);
+    });
   });
 
   describe('Videos', () => {

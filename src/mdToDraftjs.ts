@@ -61,7 +61,11 @@ const getBlockStyleForMd = (
   if (style === 'Header') {
     return blockStyles[`${style}${depth}`];
   }
-  if (node.type === 'Paragraph' && node.children?.[0]?.type === 'Image') {
+  if (
+    node.type === 'Paragraph' &&
+    node.children?.length === 1 &&
+    node.children[0].type === 'Image'
+  ) {
     return 'atomic';
   }
   if (node.type === 'Paragraph' && /^\[\[\s\S+\s.*\S+\s\]\]/.test(node.raw)) {
