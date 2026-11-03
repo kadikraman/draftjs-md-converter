@@ -1,6 +1,6 @@
 [![npm version](https://badge.fury.io/js/draftjs-md-converter.svg)](https://badge.fury.io/js/draftjs-md-converter)
 
-<p align="center"><img src="https://raw.githubusercontent.com/kadikraman/draftjs-md-converter/master/demo/src/logo.svg" width=224></p>
+<p align="center"><img src="https://raw.githubusercontent.com/kadikraman/draftjs-md-converter/main/demo/src/logo.svg" width=224></p>
 <h2 align="center">Draft.js to Markdown to Draft.js converter</h2>
 <p align="center">
 <strong>Converts rich text content between Draft.js blocks and Markdown.</strong>
@@ -16,56 +16,122 @@ This library exists because I needed a highly customisable rich text editor whic
 npm install draftjs-md-converter
 ```
 
-## TypeScript
+Node.js 22 or later is required. The package ships an ES module and a CommonJS build, both with type declarations, so `import` and `require` both work. It does not depend on `draft-js`: it reads and returns the raw content state that Draft.js's `convertToRaw` returns and `convertFromRaw` accepts.
 
-Type declarations ship with the package, so no `@types/draft-js` is needed. The exported types include `RawDraftContentState`, `MdToDraftjsOptions` and `MarkdownDict`.
-
-## Support
-
-The following inline styles are supported:
-
-- bold
-- italic
-- strikethrough
-- inline code
-- H1 - H6
-
-The following block styles are supported:
-
-- ordered list
-- unordered list
-- block quote
-
-The following media types are supported:
-
-- images
-- videos (with draft-js-video-plugin, parsing can be done using remark-shortcodes)
+Upgrading from 1.x? See [Upgrading to 2.0](#upgrading-to-20) below.
 
 ## Usage
 
-### Converting from Markdown to Draft.js
-
-### `mdToDraftjs(markdown: String): RawDraftContentState`
-
-Use [convertToRaw](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) from the `draft-js library` to convert the resulting RawDraftContentState into a draft-js ContentState.
-
-### Custom inline styles and block styles
-
-The default supported inline styles:
-
 ```js
-{
-  Strong: { type: 'BOLD' },
-  Emphasis: { type: 'ITALIC' },
-  Delete: { type: 'STRIKETHROUGH' },
-  Code: { type: 'CODE' }
+import { convertFromRaw, convertToRaw, EditorState } from 'draft-js';
+import { draftjsToMd, mdToDraftjs } from 'draftjs-md-converter';
+
+// Markdown to Draft.js
+const rawContent = mdToDraftjs('Some __bold__ and *italic* text');
+const editorState = EditorState.createWithContent(convertFromRaw(rawContent));
+
+// Draft.js to Markdown
+const markdown = draftjsToMd(convertToRaw(editorState.getCurrentContent()));
+```
+
+For example, an editor that starts from Markdown and reports Markdown on every change:
+
+```jsx
+import { convertFromRaw, convertToRaw, Editor, EditorState } from 'draft-js';
+import { useState } from 'react';
+import { draftjsToMd, mdToDraftjs } from 'draftjs-md-converter';
+
+function MarkdownEditor({ defaultValue, onChange }) {
+  const [editorState, setEditorState] = useState(() =>
+    EditorState.createWithContent(convertFromRaw(mdToDraftjs(defaultValue))),
+  );
+
+  const handleChange = (nextEditorState) => {
+    setEditorState(nextEditorState);
+    onChange(draftjsToMd(convertToRaw(nextEditorState.getCurrentContent())));
+  };
+
+  return <Editor editorState={editorState} onChange={handleChange} />;
 }
 ```
 
-The default supported block styles:
+## One block, one line
+
+Each Draft.js block is one line of Markdown. `draftjsToMd` joins blocks with a single newline, and `mdToDraftjs` makes a block from every line. An empty block is an empty line, so `'one\n\ntwo'` becomes three blocks: `one`, an empty block, and `two`. The only exception is a fenced code block, which is one block with the newlines inside it.
+
+This is not how standard Markdown treats paragraphs. There, a single newline continues the paragraph and a blank line starts a new one. Apps already store content in this line-based format, so it stays as it is.
+
+## Supported Markdown
+
+| Markdown                                 | Draft.js                                                  |
+| ---------------------------------------- | --------------------------------------------------------- |
+| `__bold__` or `**bold**`                 | `BOLD` inline style                                       |
+| `*italic*` or `_italic_`                 | `ITALIC` inline style                                     |
+| `~~strikethrough~~`                      | `STRIKETHROUGH` inline style                              |
+| `` `inline code` ``                      | `CODE` inline style                                       |
+| `[text](https://example.com)`            | `LINK` entity                                             |
+| `![alt text](https://example.com/a.png)` | `IMAGE` entity                                            |
+| `# Heading` to `###### Heading`          | `header-one` to `header-six` blocks                       |
+| `- item`                                 | `unordered-list-item` block                               |
+| `1. item`                                | `ordered-list-item` block                                 |
+| `> quote`                                | `blockquote` block                                        |
+| A fenced code block                      | `code-block` block                                        |
+| `[[ embed url=https://example.com ]]`    | `draft-js-video-plugin-video` entity in an `atomic` block |
+
+`draftjsToMd` writes bold as `__bold__` and italic as `*italic*`. To change this, pass a [custom dictionary](#custom-markdown-symbols). Inline styles that are not in the dictionary, such as `UNDERLINE`, are written as plain text.
+
+### Links
+
+`mdToDraftjs` keeps the address in `data.url`. `draftjsToMd` reads `data.url`, or `data.href` when there is no `data.url`.
+
+### Images
+
+`mdToDraftjs` gives each image an `IMAGE` entity with this data:
 
 ```js
 {
+  url: 'https://example.com/a.png',
+  src: 'https://example.com/a.png',
+  fileName: 'alt text',
+  alt: 'alt text',
+}
+```
+
+A line that holds only an image becomes an `atomic` block, the block type Draft.js uses for media. An image with text before or after it stays inline in a text block. `draftjsToMd` writes images from both kinds of block. It takes the alt text from `data.alt`, or `data.fileName` when there is no `data.alt`, and the address from `data.url`, or `data.src` when there is no `data.url`.
+
+### Lists
+
+Nested list items use the block `depth`. `mdToDraftjs` reads the nesting from the indentation: two, three or four spaces, or a tab, per level. `draftjsToMd` indents nested items by four spaces per level. Ordered items are numbered per level, and a list that starts after another block starts again at 1.
+
+### Code blocks
+
+A fenced code block becomes one `code-block` block. Its text keeps the newlines, and the language tag, such as `js` in ` ```js `, is kept in the block's `data.language`. `draftjsToMd` writes the language back onto the opening fence.
+
+### Videos
+
+A line with the shortcode `[[ embed url=https://example.com ]]` becomes an `atomic` block with a `draft-js-video-plugin-video` entity, for use with draft-js-video-plugin. The address is in `data.src`. To parse the shortcode in other Markdown tools, use remark-shortcodes.
+
+## API
+
+### `mdToDraftjs(markdown, options?)`
+
+```ts
+function mdToDraftjs(markdown: string, options?: MdToDraftjsOptions): RawDraftContentState;
+```
+
+Converts Markdown to a raw content state. Pass the result to Draft.js's `convertFromRaw`. When the Markdown has no links, images or videos, `entityMap` is `{}`. Throws a `TypeError` when `markdown` is not a string.
+
+`options.inlineStyles` and `options.blockStyles` extend or override the defaults. Their keys are [textlint AST node types](https://github.com/textlint/textlint/blob/master/docs/txtnode.md), so the Markdown parser decides which syntax gives each type. The defaults are:
+
+```js
+const inlineStyles = {
+  Strong: { type: 'BOLD' },
+  Emphasis: { type: 'ITALIC' },
+  Delete: { type: 'STRIKETHROUGH' },
+  Code: { type: 'CODE' },
+};
+
+const blockStyles = {
   List: 'unordered-list-item',
   Header1: 'header-one',
   Header2: 'header-two',
@@ -74,115 +140,87 @@ The default supported block styles:
   Header5: 'header-five',
   Header6: 'header-six',
   CodeBlock: 'code-block',
-  BlockQuote: 'blockquote'
-}
-```
-
-Inline styles and block styles can be extended or overridden by passing a custom styles object as a second optional argument to `mdToDraftjs`, e.g.
-
-```js
-const markdown = 'Some `markdown` with ~~deleted~~ text';
-
-const myCustomStyles = {
-  inlineStyles: {
-    Delete: {
-      type: 'STRIKETHROUGH',
-    },
-    Code: {
-      type: 'CODE',
-    },
-  },
-  blockStyles: {
-    CustomBlock: 'custom-block',
-  },
+  BlockQuote: 'blockquote',
 };
-
-const content = mdToDraftjs(markdown, myCustomStyles);
 ```
 
-The keys to the `inlineStyles` object should be valid [AST node types](https://github.com/textlint/textlint/blob/master/docs/txtnode.md).
-
-### Converting from Draft.js to Markdown
-
-### `draftjsToMd(rawData: RawDraftContentState): String`
-
-Use [convertFromRaw](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) from the `draft-js library` to get the raw RawDraftContentState to then pass into the converter.
-
-### Custom dictionaries
-
-The default Markdown dictionary is
+For example, to give bold text your own inline style and turn a `---` line into a custom block type:
 
 ```js
-{
+const rawContent = mdToDraftjs(markdown, {
+  inlineStyles: { Strong: { type: 'MY_BOLD' } },
+  blockStyles: { HorizontalRule: 'horizontal-rule' },
+});
+```
+
+### `draftjsToMd(rawContent, markdownDict?, options?)`
+
+```ts
+function draftjsToMd(
+  rawContent: RawDraftContentState,
+  markdownDict?: MarkdownDict,
+  options?: DraftjsToMdOptions,
+): string;
+```
+
+Converts a raw content state from Draft.js's `convertToRaw` to Markdown. Throws a `TypeError` when `rawContent` has no `blocks` array. A missing `entityMap`, `depth`, `inlineStyleRanges` or `entityRanges` counts as empty.
+
+#### Custom Markdown symbols
+
+`markdownDict` maps Draft.js inline styles to the Markdown symbols that wrap them. It extends or overrides the default dictionary:
+
+```js
+const markdownDict = {
   BOLD: '__',
   ITALIC: '*',
   STRIKETHROUGH: '~~',
-  CODE: '`'
+  CODE: '`',
 };
 ```
 
-The inline styles can be extended or overridden by passing a custom dictionary object as a second optional argument to `draftjsToMd`, e.g.
+For example, to write bold with asterisks:
 
 ```js
-const myMdDict = {
-  BOLD: '**',
-  STRIKETHROUGH: '~~',
-};
-const markdown = draftjsToMd(blocks, myMdDict);
+const markdown = draftjsToMd(rawContent, { BOLD: '**' });
 ```
 
-To write a style as plain text, set its symbol to an empty string, for example `{ CODE: '' }`.
+To write a style as plain text, set its symbol to an empty string, for example `{ CODE: '' }`. Block styles cannot be changed.
 
-**NOTE: at this point you cannot override block styles!**
-
-### Escaping Markdown characters
+#### Escaping Markdown characters
 
 By default, text is written as it is, so a paragraph containing `*` or `_` may be read back as styled text. Pass `{ escape: true }` as the third argument to escape such characters:
 
 ```js
-const markdown = draftjsToMd(blocks, undefined, { escape: true });
+const markdown = draftjsToMd(rawContent, undefined, { escape: true });
 // 'Use *stars*' becomes 'Use \*stars\*'
 ```
 
-Inline characters (`\`, `` ` ``, `*`, `_`, `[`, `]`, `<`, `~`) are escaped anywhere in the text. Heading, quote, list and rule markers are escaped only at the start of a block. Code blocks are never escaped.
+Inline characters (`\`, `` ` ``, `*`, `_`, `[`, `]`, `<`, `~`) are escaped anywhere in the text. Heading, quote, list and rule markers are escaped only at the start of a block. Code blocks and inline code are never escaped.
 
-## Example
+## TypeScript
 
-```js
-[---]
+Type declarations ship with the package. The exported types are `RawDraftContentState`, `RawDraftContentBlock`, `RawDraftEntity`, `RawDraftEntityRange`, `RawDraftInlineStyleRange`, `DraftEntityMutability`, `MdToDraftjsOptions`, `InlineStyleMapping`, `MarkdownDict` and `DraftjsToMdOptions`.
 
-import { mdToDraftjs, draftjsToMd } from 'draftjs-md-converter';
-import { EditorState, ContentState, convertToRaw, convertFromRaw } from 'draft-js';
+`mdToDraftjs` leaves block keys for Draft.js to generate, but the types in `@types/draft-js` require a `key` on every block. When you use those types, assert the type before `convertFromRaw`:
 
-[---]
+```ts
+import { convertFromRaw, type RawDraftContentState } from 'draft-js';
 
-constructor(props) {
-  super(props);
-
-  // some default value in markdown
-  const defaultValue = this.props.defaultValue;
-  const rawData = mdToDraftjs(defaultValue);
-  const contentState = convertFromRaw(rawData);
-  const newEditorState = EditorState.createWithContent(contentState);
-
-  this.state = {
-    editorState: newEditorState,
-  };
-  this.onChange = (editorState) => {
-    this.props.onChange(this.getMarkdown());
-    this.setState({ editorState });
-  };
-}
-
-[---]
-
-getMarkdown() {
-  const content = this.state.editorState.getCurrentContent();
-  return draftjsToMd(convertToRaw(content));
-}
-
-[---]
+const contentState = convertFromRaw(mdToDraftjs(markdown) as RawDraftContentState);
 ```
+
+## Upgrading to 2.0
+
+2.0 has breaking changes. The [changelog](https://github.com/kadikraman/draftjs-md-converter/blob/main/CHANGELOG.md) lists every change.
+
+- Node.js 22 or later is required, and the code targets ES2020.
+- The package has an `exports` map. Import from `draftjs-md-converter` only. Paths inside the package, such as `draftjs-md-converter/dist/index.esm.js`, no longer work.
+- `@textlint/markdown-to-ast` is a normal dependency and is no longer bundled.
+- `mdToDraftjs` returns `entityMap: {}` when there are no entities, instead of a placeholder entity.
+- Inline code and strikethrough convert by default in both directions. To get the 1.x output from `draftjsToMd`, pass `{ CODE: '', STRIKETHROUGH: '' }`.
+- The `symbol` field of `inlineStyles` entries is gone from the types. It was never read.
+- Image entities have `data.alt` next to `data.fileName`.
+- A line that starts with an image and has more after it becomes a text block with the image inline, instead of an `atomic` block.
 
 ## Development
 
@@ -194,5 +232,6 @@ pnpm test          # run the tests once
 pnpm test:watch    # run the tests in watch mode
 pnpm lint          # check formatting and lint rules with Biome
 pnpm lint:fix      # fix formatting and lint problems
+pnpm typecheck     # type-check the source and tests
 pnpm build         # build dist/ with tsdown
 ```
