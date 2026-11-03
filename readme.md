@@ -10,6 +10,8 @@
 
 This library exists because I needed a highly customisable rich text editor which posts to an external API in Markdown. [Draft.js](https://facebook.github.io/draft-js/) to the rescue! It provides the editor state but, alas, doesn't ship with any sort of conversion to or from markdown. So, I've written my own.
 
+Try it in the [demo](https://kadikraman.github.io/draftjs-md-converter/).
+
 ## Installation
 
 ```sh
@@ -232,6 +234,8 @@ pnpm test          # run the tests once
 pnpm test:watch    # run the tests in watch mode
 pnpm lint          # check formatting and lint rules with Biome
 pnpm lint:fix      # fix formatting and lint problems
-pnpm typecheck     # type-check the source and tests
+pnpm typecheck     # type-check the source, tests and demo
 pnpm build         # build dist/ with tsdown
+pnpm demo          # start the demo site, which runs on the source in src/
+pnpm demo:build    # build the demo site to demo/dist/
 ```
