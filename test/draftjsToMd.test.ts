@@ -1328,6 +1328,28 @@ describe('draftjsToMd', () => {
       blocks: [block('docs', [], [{ offset: 0, length: 4, key: 0 }])],
     });
 
+    it('writes bold that starts or ends inside a word with asterisks', () => {
+      const start = block('unbelievable', [{ offset: 0, length: 2, style: 'BOLD' }]);
+      const middle = block('unbelievable', [{ offset: 2, length: 4, style: 'BOLD' }]);
+      const accented = block('déjà', [{ offset: 2, length: 2, style: 'BOLD' }]);
+      expect(draftjsToMd({ entityMap: {}, blocks: [start] })).toBe('**un**believable');
+      expect(draftjsToMd({ entityMap: {}, blocks: [middle] })).toBe('un**beli**evable');
+      expect(draftjsToMd({ entityMap: {}, blocks: [accented] })).toBe('dé**jà**');
+    });
+
+    it('writes italic around bold inside a word with asterisks only', () => {
+      const raw = block('unbelievable', [
+        { offset: 0, length: 2, style: 'ITALIC' },
+        { offset: 0, length: 2, style: 'BOLD' },
+      ]);
+      expect(draftjsToMd({ entityMap: {}, blocks: [raw] })).toBe('***un***believable');
+    });
+
+    it('writes a custom underscore symbol inside a word with asterisks', () => {
+      const raw = block('unbelievable', [{ offset: 0, length: 2, style: 'ITALIC' }]);
+      expect(draftjsToMd({ entityMap: {}, blocks: [raw] }, { ITALIC: '_' })).toBe('*un*believable');
+    });
+
     it('fences inline code that contains backticks with a longer run', () => {
       const code = (text: string) => ({
         entityMap: {},

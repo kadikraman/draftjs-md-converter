@@ -213,6 +213,9 @@ const escapeBlockStart = (text: string): string => {
 
 const isCodeSymbol = (symbol: string | undefined): boolean => /^`+$/.test(symbol ?? '');
 
+const isWordChar = (char: string | undefined): boolean =>
+  char !== undefined && /[\p{L}\p{N}]/u.test(char);
+
 // the shortest backtick run, from the dict symbol up, that the code text does not contain
 const codeDelimiters = (symbol: string, text: string): { open: string; close: string } => {
   const runs = new Set((text.match(/`+/g) ?? []).map((run) => run.length));
@@ -223,14 +226,29 @@ const codeDelimiters = (symbol: string, text: string): { open: string; close: st
   return { open: fence + padding, close: padding + fence };
 };
 
+/** Character indexes where some style or entity opens, and where one has just closed. */
+interface Boundaries {
+  opens: Set<number>;
+  closes: Set<number>;
+}
+
+// `_` cannot open or close emphasis next to a letter, `*` can. Another symbol between them is fine.
 const styleDelimiters = (
   symbol: string,
   range: RawDraftInlineStyleRange,
   chars: string[],
-): { open: string; close: string } =>
-  isCodeSymbol(symbol)
-    ? codeDelimiters(symbol, chars.slice(range.offset, rangeEnd(range)).join(''))
-    : { open: symbol, close: symbol };
+  { opens, closes }: Boundaries,
+): { open: string; close: string } => {
+  const end = rangeEnd(range);
+  if (isCodeSymbol(symbol)) {
+    return codeDelimiters(symbol, chars.slice(range.offset, end).join(''));
+  }
+  const insideWord =
+    (isWordChar(chars[range.offset - 1]) && !closes.has(range.offset)) ||
+    (isWordChar(chars[end]) && !opens.has(end));
+  const delimiter = insideWord && /^_+$/.test(symbol) ? '*'.repeat(symbol.length) : symbol;
+  return { open: delimiter, close: delimiter };
+};
 
 const contains = (outer: RawDraftInlineStyleRange, inner: RawDraftInlineStyleRange): boolean =>
   outer.offset <= inner.offset && inner.offset + inner.length <= outer.offset + outer.length;
@@ -319,6 +337,13 @@ function draftjsToMd(
         ).flatMap((range) => trimRange(range, chars) ?? []),
       );
 
+      const boundaries: Boundaries = {
+        opens: new Set([...inlineStyleRanges, ...block.entityRanges].map((range) => range.offset)),
+        closes: new Set(
+          [...inlineStyleRanges, ...block.entityRanges].map((range) => range.offset + range.length),
+        ),
+      };
+
       // images inside a text block are written in place of their placeholder text
       const inlineImages =
         block.type === 'atomic'
@@ -337,6 +362,7 @@ function draftjsToMd(
               markdownDict[currentStyle.style],
               currentStyle,
               chars,
+              boundaries,
             );
             newText += open;
             appliedStyles.push({ close, end: currentStyle.offset + currentStyle.length - 1 });

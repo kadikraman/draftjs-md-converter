@@ -56,6 +56,12 @@ describe('round trip', () => {
     expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
   });
 
+  it('keeps bold that starts or ends inside a word', () => {
+    for (const markdown of ['**un**believable', '***un***believable']) {
+      expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
+    }
+  });
+
   it('brings escaped plain text back unchanged and unstyled', () => {
     const texts = [
       '__not_bold__ with *stars* and `ticks`',
