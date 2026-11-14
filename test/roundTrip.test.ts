@@ -41,6 +41,27 @@ describe('round trip', () => {
     expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
   });
 
+  it('keeps link and image addresses with spaces', () => {
+    const texts = [
+      '[docs](<https://example.com/my docs>)',
+      'Read the ![logo](<https://expo.dev/my logo.png>) docs',
+    ];
+    for (const markdown of texts) {
+      expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
+    }
+  });
+
+  it('keeps backticks in inline code', () => {
+    const markdown = '``a`b`` and `` `a ``';
+    expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
+  });
+
+  it('keeps bold that starts or ends inside a word', () => {
+    for (const markdown of ['**un**believable', '***un***believable']) {
+      expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
+    }
+  });
+
   it('brings escaped plain text back unchanged and unstyled', () => {
     const texts = [
       '__not_bold__ with *stars* and `ticks`',

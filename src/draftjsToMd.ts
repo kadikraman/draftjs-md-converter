@@ -31,7 +31,7 @@ const wrappingBlockStyleDict: Record<string, string> = {
 
 /** An opened inline style waiting for its closing symbol at character index `end`. */
 interface AppliedStyle {
-  symbol: string;
+  close: string;
   end: number;
 }
 
@@ -87,8 +87,23 @@ const getEntity = (
 const isImage = (entity: RawDraftEntity | undefined): boolean =>
   entity?.type.toUpperCase() === 'IMAGE';
 
+const hasBalancedParentheses = (url: string): boolean => {
+  let depth = 0;
+  for (const char of url) {
+    depth += char === '(' ? 1 : char === ')' ? -1 : 0;
+    if (depth < 0) return false;
+  }
+  return depth === 0;
+};
+
+// a bare destination cannot hold whitespace or unbalanced parentheses, or start with `<`
+const linkDestination = (url: string): string =>
+  /\s/u.test(url) || url.startsWith('<') || !hasBalancedParentheses(url)
+    ? `<${url.replace(/[\\<>]/g, '\\$&')}>`
+    : url;
+
 const imageMarkdown = ({ data }: RawDraftEntity): string =>
-  `![${data.alt || data.fileName || ''}](${data.url || data.src})`;
+  `![${data.alt || data.fileName || ''}](${linkDestination(String(data.url || data.src))})`;
 
 const applyAtomicStyle = (
   block: RawDraftContentBlock,
@@ -120,7 +135,7 @@ const getEntityStart = (entity: RawDraftEntity | undefined): string => {
 const getEntityEnd = (entity: RawDraftEntity | undefined): string => {
   switch (entity?.type) {
     case 'LINK':
-      return `](${entity.data.url || entity.data.href || ''})`;
+      return `](${linkDestination(String(entity.data.url || entity.data.href || ''))})`;
     default:
       return '';
   }
@@ -197,6 +212,43 @@ const escapeBlockStart = (text: string): string => {
 };
 
 const isCodeSymbol = (symbol: string | undefined): boolean => /^`+$/.test(symbol ?? '');
+
+const isWordChar = (char: string | undefined): boolean =>
+  char !== undefined && /[\p{L}\p{N}]/u.test(char);
+
+// the shortest backtick run, from the dict symbol up, that the code text does not contain
+const codeDelimiters = (symbol: string, text: string): { open: string; close: string } => {
+  const runs = new Set((text.match(/`+/g) ?? []).map((run) => run.length));
+  let length = symbol.length;
+  while (runs.has(length)) length++;
+  const fence = '`'.repeat(length);
+  const padding = text.startsWith('`') || text.endsWith('`') ? ' ' : '';
+  return { open: fence + padding, close: padding + fence };
+};
+
+/** Character indexes where some style or entity opens, and where one has just closed. */
+interface Boundaries {
+  opens: Set<number>;
+  closes: Set<number>;
+}
+
+// `_` cannot open or close emphasis next to a letter, `*` can. Another symbol between them is fine.
+const styleDelimiters = (
+  symbol: string,
+  range: RawDraftInlineStyleRange,
+  chars: string[],
+  { opens, closes }: Boundaries,
+): { open: string; close: string } => {
+  const end = rangeEnd(range);
+  if (isCodeSymbol(symbol)) {
+    return codeDelimiters(symbol, chars.slice(range.offset, end).join(''));
+  }
+  const insideWord =
+    (isWordChar(chars[range.offset - 1]) && !closes.has(range.offset)) ||
+    (isWordChar(chars[end]) && !opens.has(end));
+  const delimiter = insideWord && /^_+$/.test(symbol) ? '*'.repeat(symbol.length) : symbol;
+  return { open: delimiter, close: delimiter };
+};
 
 const contains = (outer: RawDraftInlineStyleRange, inner: RawDraftInlineStyleRange): boolean =>
   outer.offset <= inner.offset && inner.offset + inner.length <= outer.offset + outer.length;
@@ -285,6 +337,13 @@ function draftjsToMd(
         ).flatMap((range) => trimRange(range, chars) ?? []),
       );
 
+      const boundaries: Boundaries = {
+        opens: new Set([...inlineStyleRanges, ...block.entityRanges].map((range) => range.offset)),
+        closes: new Set(
+          [...inlineStyleRanges, ...block.entityRanges].map((range) => range.offset + range.length),
+        ),
+      };
+
       // images inside a text block are written in place of their placeholder text
       const inlineImages =
         block.type === 'atomic'
@@ -299,9 +358,14 @@ function draftjsToMd(
         // open styles starting here
         for (const currentStyle of inlineStyleRanges) {
           if (currentStyle.offset === index) {
-            const symbol = markdownDict[currentStyle.style];
-            newText += symbol;
-            appliedStyles.push({ symbol, end: currentStyle.offset + currentStyle.length - 1 });
+            const { open, close } = styleDelimiters(
+              markdownDict[currentStyle.style],
+              currentStyle,
+              chars,
+              boundaries,
+            );
+            newText += open;
+            appliedStyles.push({ close, end: currentStyle.offset + currentStyle.length - 1 });
           }
         }
 
@@ -331,7 +395,7 @@ function draftjsToMd(
         let endingStyle = lastAppliedStyle();
         while (endingStyle?.end === index) {
           appliedStyles.pop();
-          newText += endingStyle.symbol;
+          newText += endingStyle.close;
           endingStyle = lastAppliedStyle();
         }
 

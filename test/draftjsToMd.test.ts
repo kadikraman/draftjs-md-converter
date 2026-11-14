@@ -1311,6 +1311,92 @@ describe('draftjsToMd', () => {
     });
   });
 
+  describe('Markdown that parses back', () => {
+    const block = (
+      text: string,
+      inlineStyleRanges: RawDraftInlineStyleRange[] = [],
+      entityRanges: RawDraftContentState['blocks'][number]['entityRanges'] = [],
+    ) => ({
+      text,
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges,
+      entityRanges,
+    });
+    const linked = (url: string): RawDraftContentState => ({
+      entityMap: { 0: { type: 'LINK', mutability: 'MUTABLE', data: { url } } },
+      blocks: [block('docs', [], [{ offset: 0, length: 4, key: 0 }])],
+    });
+
+    it('writes bold that starts or ends inside a word with asterisks', () => {
+      const start = block('unbelievable', [{ offset: 0, length: 2, style: 'BOLD' }]);
+      const middle = block('unbelievable', [{ offset: 2, length: 4, style: 'BOLD' }]);
+      const accented = block('déjà', [{ offset: 2, length: 2, style: 'BOLD' }]);
+      expect(draftjsToMd({ entityMap: {}, blocks: [start] })).toBe('**un**believable');
+      expect(draftjsToMd({ entityMap: {}, blocks: [middle] })).toBe('un**beli**evable');
+      expect(draftjsToMd({ entityMap: {}, blocks: [accented] })).toBe('dé**jà**');
+    });
+
+    it('writes italic around bold inside a word with asterisks only', () => {
+      const raw = block('unbelievable', [
+        { offset: 0, length: 2, style: 'ITALIC' },
+        { offset: 0, length: 2, style: 'BOLD' },
+      ]);
+      expect(draftjsToMd({ entityMap: {}, blocks: [raw] })).toBe('***un***believable');
+    });
+
+    it('writes a custom underscore symbol inside a word with asterisks', () => {
+      const raw = block('unbelievable', [{ offset: 0, length: 2, style: 'ITALIC' }]);
+      expect(draftjsToMd({ entityMap: {}, blocks: [raw] }, { ITALIC: '_' })).toBe('*un*believable');
+    });
+
+    it('fences inline code that contains backticks with a longer run', () => {
+      const code = (text: string) => ({
+        entityMap: {},
+        blocks: [block(text, [{ offset: 0, length: Array.from(text).length, style: 'CODE' }])],
+      });
+      expect(draftjsToMd(code('a`b'))).toBe('``a`b``');
+      expect(draftjsToMd(code('a``b'))).toBe('`a``b`');
+      expect(draftjsToMd(code('`a'))).toBe('`` `a ``');
+      expect(draftjsToMd(code('`'))).toBe('`` ` ``');
+    });
+
+    it('wraps a link address that a bare destination cannot hold in angle brackets', () => {
+      expect(draftjsToMd(linked('https://example.com/my docs'))).toBe(
+        '[docs](<https://example.com/my docs>)',
+      );
+      expect(draftjsToMd(linked('https://example.com/a(b'))).toBe(
+        '[docs](<https://example.com/a(b>)',
+      );
+      expect(draftjsToMd(linked('https://example.com/a b>c'))).toBe(
+        '[docs](<https://example.com/a b\\>c>)',
+      );
+    });
+
+    it('keeps a link address with balanced parentheses or inner angle brackets bare', () => {
+      expect(draftjsToMd(linked('https://en.wikipedia.org/wiki/Expo_(app)'))).toBe(
+        '[docs](https://en.wikipedia.org/wiki/Expo_(app))',
+      );
+      expect(draftjsToMd(linked('https://example.com/a<b>c'))).toBe(
+        '[docs](https://example.com/a<b>c)',
+      );
+    });
+
+    it('wraps an image address with a space in angle brackets', () => {
+      const raw: RawDraftContentState = {
+        entityMap: {
+          0: {
+            type: 'IMAGE',
+            mutability: 'IMMUTABLE',
+            data: { src: 'https://expo.dev/my logo.png', alt: 'logo' },
+          },
+        },
+        blocks: [block(' ', [], [{ offset: 0, length: 1, key: 0 }])],
+      };
+      expect(draftjsToMd(raw)).toBe('![logo](<https://expo.dev/my logo.png>)');
+    });
+  });
+
   describe('input validation', () => {
     it('throws a clear error when there is no blocks array', () => {
       expect(() => draftjsToMd(undefined as unknown as RawDraftContentState)).toThrow(
