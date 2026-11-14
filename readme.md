@@ -80,7 +80,7 @@ This is not how standard Markdown treats paragraphs. There, a single newline con
 | A fenced code block                      | `code-block` block                                        |
 | `[[ embed url=https://example.com ]]`    | `draft-js-video-plugin-video` entity in an `atomic` block |
 
-`draftjsToMd` writes bold as `__bold__` and italic as `*italic*`. To change this, pass a [custom dictionary](#custom-markdown-symbols). Inline styles that are not in the dictionary, such as `UNDERLINE`, are written as plain text.
+`draftjsToMd` writes bold as `__bold__` and italic as `*italic*`. Bold that starts or ends inside a word is written as `**bold**`, because `__` does not work there. Inline code that contains backticks gets a longer fence, such as ``` ``a`b`` ```. A link or image address with a space or unbalanced parentheses, or one that starts with `<`, is wrapped in `<...>`. To change the symbols, pass a [custom dictionary](#custom-markdown-symbols). Inline styles that are not in the dictionary, such as `UNDERLINE`, are written as plain text.
 
 ### Links
 

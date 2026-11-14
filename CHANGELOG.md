@@ -6,6 +6,10 @@
 
 - The demo site is rebuilt with Vite, React 19 and TypeScript, with a new design and a dark mode. It runs the current source, shows the converter version and the commit it was built from, and deploys to GitHub Pages from a GitHub Actions workflow on each release. ([#104](https://github.com/kadikraman/draftjs-md-converter/pull/104))
 
+### Fixed
+
+- `draftjsToMd` wrote Markdown that `mdToDraftjs` and other CommonMark parsers could not read back in three cases. Bold that starts or ends inside a word, such as `__un__believable`, is now written with asterisks, `**un**believable`. This also applies to any symbol made of underscores in a custom dictionary. Inline code that contains a single backtick gets a longer fence, such as ``` ``a`b`` ```. A link or image address with a space or unbalanced parentheses, or one that starts with `<`, is wrapped in angle brackets, such as `[docs](<https://example.com/my docs>)`. Output for all other content is unchanged. ([#106](https://github.com/kadikraman/draftjs-md-converter/pull/106))
+
 ## 2.0.0 - 2026-11-03
 
 2.0 has breaking changes. [Upgrading to 2.0](https://github.com/kadikraman/draftjs-md-converter#upgrading-to-20) in the README sums up what to check.
