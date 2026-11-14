@@ -31,7 +31,7 @@ const wrappingBlockStyleDict: Record<string, string> = {
 
 /** An opened inline style waiting for its closing symbol at character index `end`. */
 interface AppliedStyle {
-  symbol: string;
+  close: string;
   end: number;
 }
 
@@ -213,6 +213,25 @@ const escapeBlockStart = (text: string): string => {
 
 const isCodeSymbol = (symbol: string | undefined): boolean => /^`+$/.test(symbol ?? '');
 
+// the shortest backtick run, from the dict symbol up, that the code text does not contain
+const codeDelimiters = (symbol: string, text: string): { open: string; close: string } => {
+  const runs = new Set((text.match(/`+/g) ?? []).map((run) => run.length));
+  let length = symbol.length;
+  while (runs.has(length)) length++;
+  const fence = '`'.repeat(length);
+  const padding = text.startsWith('`') || text.endsWith('`') ? ' ' : '';
+  return { open: fence + padding, close: padding + fence };
+};
+
+const styleDelimiters = (
+  symbol: string,
+  range: RawDraftInlineStyleRange,
+  chars: string[],
+): { open: string; close: string } =>
+  isCodeSymbol(symbol)
+    ? codeDelimiters(symbol, chars.slice(range.offset, rangeEnd(range)).join(''))
+    : { open: symbol, close: symbol };
+
 const contains = (outer: RawDraftInlineStyleRange, inner: RawDraftInlineStyleRange): boolean =>
   outer.offset <= inner.offset && inner.offset + inner.length <= outer.offset + outer.length;
 
@@ -314,9 +333,13 @@ function draftjsToMd(
         // open styles starting here
         for (const currentStyle of inlineStyleRanges) {
           if (currentStyle.offset === index) {
-            const symbol = markdownDict[currentStyle.style];
-            newText += symbol;
-            appliedStyles.push({ symbol, end: currentStyle.offset + currentStyle.length - 1 });
+            const { open, close } = styleDelimiters(
+              markdownDict[currentStyle.style],
+              currentStyle,
+              chars,
+            );
+            newText += open;
+            appliedStyles.push({ close, end: currentStyle.offset + currentStyle.length - 1 });
           }
         }
 
@@ -346,7 +369,7 @@ function draftjsToMd(
         let endingStyle = lastAppliedStyle();
         while (endingStyle?.end === index) {
           appliedStyles.pop();
-          newText += endingStyle.symbol;
+          newText += endingStyle.close;
           endingStyle = lastAppliedStyle();
         }
 

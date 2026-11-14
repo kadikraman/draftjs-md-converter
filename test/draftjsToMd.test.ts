@@ -1328,6 +1328,17 @@ describe('draftjsToMd', () => {
       blocks: [block('docs', [], [{ offset: 0, length: 4, key: 0 }])],
     });
 
+    it('fences inline code that contains backticks with a longer run', () => {
+      const code = (text: string) => ({
+        entityMap: {},
+        blocks: [block(text, [{ offset: 0, length: Array.from(text).length, style: 'CODE' }])],
+      });
+      expect(draftjsToMd(code('a`b'))).toBe('``a`b``');
+      expect(draftjsToMd(code('a``b'))).toBe('`a``b`');
+      expect(draftjsToMd(code('`a'))).toBe('`` `a ``');
+      expect(draftjsToMd(code('`'))).toBe('`` ` ``');
+    });
+
     it('wraps a link address that a bare destination cannot hold in angle brackets', () => {
       expect(draftjsToMd(linked('https://example.com/my docs'))).toBe(
         '[docs](<https://example.com/my docs>)',

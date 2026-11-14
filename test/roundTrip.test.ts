@@ -51,6 +51,11 @@ describe('round trip', () => {
     }
   });
 
+  it('keeps backticks in inline code', () => {
+    const markdown = '``a`b`` and `` `a ``';
+    expect(draftjsToMd(mdToDraftjs(markdown))).toBe(markdown);
+  });
+
   it('brings escaped plain text back unchanged and unstyled', () => {
     const texts = [
       '__not_bold__ with *stars* and `ticks`',
