@@ -87,8 +87,23 @@ const getEntity = (
 const isImage = (entity: RawDraftEntity | undefined): boolean =>
   entity?.type.toUpperCase() === 'IMAGE';
 
+const hasBalancedParentheses = (url: string): boolean => {
+  let depth = 0;
+  for (const char of url) {
+    depth += char === '(' ? 1 : char === ')' ? -1 : 0;
+    if (depth < 0) return false;
+  }
+  return depth === 0;
+};
+
+// a bare destination cannot hold whitespace or unbalanced parentheses, or start with `<`
+const linkDestination = (url: string): string =>
+  /\s/u.test(url) || url.startsWith('<') || !hasBalancedParentheses(url)
+    ? `<${url.replace(/[\\<>]/g, '\\$&')}>`
+    : url;
+
 const imageMarkdown = ({ data }: RawDraftEntity): string =>
-  `![${data.alt || data.fileName || ''}](${data.url || data.src})`;
+  `![${data.alt || data.fileName || ''}](${linkDestination(String(data.url || data.src))})`;
 
 const applyAtomicStyle = (
   block: RawDraftContentBlock,
@@ -120,7 +135,7 @@ const getEntityStart = (entity: RawDraftEntity | undefined): string => {
 const getEntityEnd = (entity: RawDraftEntity | undefined): string => {
   switch (entity?.type) {
     case 'LINK':
-      return `](${entity.data.url || entity.data.href || ''})`;
+      return `](${linkDestination(String(entity.data.url || entity.data.href || ''))})`;
     default:
       return '';
   }
